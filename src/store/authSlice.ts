@@ -1,18 +1,23 @@
 import { createSlice } from '@reduxjs/toolkit';
+
 import type { PayloadAction } from '@reduxjs/toolkit';
+
+type AuthUser = {
+  name:string;
+};
 
 export interface AuthState {
   token: string;
   isLoggedIn: boolean;
-  user: { name: string };
-}
+  user: AuthUser;
+};
 
-const retrieveUser = () => {
-  const user = localStorage.getItem('user');
-  if (user) {
-    return JSON.parse(user);
+const retrieveUser = ():{name:string} => {
+  const storedUser = localStorage.getItem('user');
+  if (storedUser) {
+    return JSON.parse(storedUser) as AuthUser;
   }
-  return { user: '' };
+  return { name: '' };
 };
 
 const initialState: AuthState = {
@@ -32,7 +37,7 @@ export const authSlice = createSlice({
       localStorage.setItem('token', action.payload.token);
       localStorage.setItem('user', JSON.stringify({ name: action.payload.name }));
     },
-    logout: (state) => {
+    logout: state => {
       state.token = '';
       state.isLoggedIn = false;
       state.user.name = '';

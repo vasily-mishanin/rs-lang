@@ -1,25 +1,24 @@
-import { FormEvent, useContext, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import classes from './AuthForm.module.css';
 
-const API_ENDPOINT = 'http://rss-rs-lang.herokuapp.com';
+import { FormEvent, useRef, useState } from 'react';
 
-//import AuthContext from '@/store/auth-context';
+import './AuthForm.pcss';
 
-//REDUX
-import { useSelector, useDispatch } from 'react-redux';
-import type { RootState } from '@/store/store';
+import * as api from '../../model/api';
+
+import type { User } from '@/model/app-types';
 import { authActions } from '@/store/authSlice';
 
+const errorMessage = (status: number) =>
+  status === 403 ? 'Incorrect e-mail or password' : 'Authentication Failed!';
+
 const AuthForm = (): JSX.Element => {
-  const [isLogin, setIsLogin] = useState(true);
+  // TODO validation
+  const [formIsLogin, setFormIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  console.log('isLogin', isLogin);
 
   const navigate = useNavigate();
-  //const authCtx = useContext(AuthContext);
-
-  const authState = useSelector((state: RootState) => state.authentication);
   const dispatch = useDispatch();
 
   const nameInputRef = useRef<HTMLInputElement>(null);
@@ -27,97 +26,96 @@ const AuthForm = (): JSX.Element => {
   const passwordInputRef = useRef<HTMLInputElement>(null);
 
   const switchAuthModeHandler = () => {
-    setIsLogin((prevState) => !prevState);
+    setFormIsLogin(prevState => !prevState);
   };
 
   const submitHandler = (e: FormEvent) => {
     e.preventDefault();
-    console.log('submitHandler');
-    let enteredName: string = '';
-    if (!isLogin) {
-      enteredName = nameInputRef.current!.value;
-    }
     const enteredEmail = emailInputRef.current!.value;
     const enteredPassword = passwordInputRef.current!.value;
-    let url;
-    let user;
 
-    if (!isLogin) {
-      // sign Up
-      url = `${API_ENDPOINT}/users`;
-      user = {
+    if (!formIsLogin) {
+      // SIGN UP
+      const enteredName = nameInputRef.current!.value;
+      const newUser: User = {
         name: enteredName,
         email: enteredEmail,
         password: enteredPassword,
       };
+      setIsLoading(true);
+      api
+        .registerUser(newUser)
+        .then(res => {
+          setIsLoading(false);
+          if (res.ok) {
+            return res.json();
+          }
+          throw new Error();
+        })
+        .then((res: User) => {
+          console.log('respond', res);
+          // switch to Login Form to sign in
+          switchAuthModeHandler();
+        })
+        .catch(err => console.error(err));
     } else {
-      //sign In
-      url = `${API_ENDPOINT}/signin`;
-      user = {
+      // SIGN IN
+      const user = {
         email: enteredEmail,
         password: enteredPassword,
       };
-    }
-    console.log('user', user);
-
-    setIsLoading(true);
-    fetch(url, {
-      method: 'POST',
-      headers: {
-        Accept: 'application.json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(user),
-    })
-      .then((res) => {
-        setIsLoading(false);
-        if (res.ok) {
-          return res.json();
-        } else {
-          return res.json().then((data) => {
-            let errorMessage = data?.error?.message ? data.error.message : 'Authentication Failed!';
-            console.log(errorMessage);
-            throw new Error(errorMessage);
-          });
-        }
-      })
-      .then((data) => {
-        console.log('respond', data);
-        if (!isLogin) {
-          //if it was sign UP switch to Login Form to sign in
-          switchAuthModeHandler();
-        } else {
-          // if it was sign IN  user -> navigate to Profile
-          //authCtx.login(data.token, data.name);
-          dispatch(authActions.login({ token: data.token, name: data.name }));
+      setIsLoading(true);
+      api
+        .signInUser(user)
+        .then(res => {
+          setIsLoading(false);
+          if (res.ok) {
+            return res.json();
+          }
+          throw new Error(errorMessage(res.status));
+        })
+        .then((res: User) => {
+          const token = res.token ? res.token : '';
+          const name = res.name ? res.name : '';
+          dispatch(authActions.login({ token, name }));
           navigate('/profile', { replace: true });
-        }
-      })
-      .catch((err) => alert(err));
+        })
+        .catch(err => console.log(err));
+    }
   };
 
   return (
-    <section className={classes.auth}>
-      <h2>{isLogin ? 'Login' : 'Sign Up'}</h2>
+    <section className="auth">
+      <h2>{formIsLogin ? 'Login' : 'Sign Up'}</h2>
       <form onSubmit={submitHandler}>
-        {!isLogin && (
-          <div className={classes.control}>
-            <label htmlFor='name'>Your Name</label>
-            <input ref={nameInputRef} type='text' id='name' required />
+        {!formIsLogin && (
+          <div className="control">
+            <label htmlFor="name">
+              Your Name
+              <input ref={nameInputRef} type="text" id="name" required />
+            </label>
           </div>
         )}
-        <div className={classes.control}>
-          <label htmlFor='email'>Your Email</label>
-          <input ref={emailInputRef} type='email' id='email' required />
+        <div className="control">
+          <label htmlFor="email">
+            Your Email
+            <input ref={emailInputRef} type="email" id="email" required />
+          </label>
         </div>
-        <div className={classes.control}>
-          <label htmlFor='password'>Your Password</label>
-          <input ref={passwordInputRef} type='password' id='password' required minLength={5} />
+        <div className="control">
+          <label htmlFor="password">
+            Your Password
+            <input ref={passwordInputRef} type="password" id="password" required minLength={5} />
+          </label>
         </div>
-        <div className={classes.actions}>
-          {isLoading ? <p>Sending Request ...</p> : <button>{isLogin ? 'LogIn' : 'Sign Up'}</button>}
-          <button type='button' className={classes.toggle} onClick={switchAuthModeHandler}>
-            {isLogin ? 'Create new account' : 'Login with existing account'}
+        <div className="actions">
+          {isLoading ? (
+            <p>Sending Request ...</p>
+          ) : (
+            <button type="submit">{formIsLogin ? 'LogIn' : 'Sign Up'}</button>
+          )}
+          <button type="button" className="toggle" onClick={switchAuthModeHandler}>
+            {formIsLogin ? 'Create new account' : 'Login with existing account'}
           </button>
         </div>
       </form>

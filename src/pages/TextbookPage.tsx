@@ -1,5 +1,6 @@
-import { Link, Outlet } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { Link, Outlet } from 'react-router-dom';
+
 import type { RootState } from '@/store/store';
 
 const TextbookPage = (): JSX.Element => {

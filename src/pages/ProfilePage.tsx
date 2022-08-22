@@ -1,12 +1,8 @@
-//import AuthContext from '@/store/auth-context';
-//import { useContext } from 'react';
-
 import { useSelector } from 'react-redux';
+
 import type { RootState } from '@/store/store';
 
 const ProfilePage = (): JSX.Element => {
-  //const authCtx = useContext(AuthContext);
-  console.log('PROFILE');
 
   const authState = useSelector((state: RootState) => state.authentication);
 
