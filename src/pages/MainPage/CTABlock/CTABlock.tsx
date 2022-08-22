@@ -1,4 +1,4 @@
-import { Button } from '../Button/Button';
+import { Button } from '@/components/Button/Button';
 import './CTABlock.pcss';
 
 export const CTABlock = (): JSX.Element => (
