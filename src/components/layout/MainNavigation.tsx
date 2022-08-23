@@ -7,7 +7,6 @@ import { authActions } from '@/store/authSlice';
 import { RootState } from '@/store/store';
 
 const MainNavigation = (): JSX.Element => {
-
   const authState = useSelector((state: RootState) => state.authentication);
   const { isLoggedIn } = authState;
   const dispatch = useDispatch();
@@ -17,14 +16,17 @@ const MainNavigation = (): JSX.Element => {
   };
 
   return (
-    <header className='header'>
+    <header className="header">
       <Link to="/">
-        <div className='logo'>RS Lang</div>
+        <div className="logo">RS Lang</div>
       </Link>
       <nav>
         <ul>
           <li>
             <NavLink to="/">Home</NavLink>
+          </li>
+          <li>
+            <NavLink to="/team">Team </NavLink>
           </li>
           <li>
             <NavLink to="/textbook">Textbook</NavLink>
@@ -44,7 +46,9 @@ const MainNavigation = (): JSX.Element => {
           )}
           {isLoggedIn && (
             <li>
-              <button type='button' onClick={logoutHandler}>Logout</button>
+              <button type="button" onClick={logoutHandler}>
+                Logout
+              </button>
             </li>
           )}
         </ul>

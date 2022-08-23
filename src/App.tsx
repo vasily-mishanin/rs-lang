@@ -11,8 +11,9 @@ import Statistics from './pages/Dictionary/Statistics';
 import GameAudio from './pages/Games/GameAudio';
 import GameSprint from './pages/Games/GameSprint';
 import GamesPage from './pages/Games/GamesPage';
-import HomePage from './pages/HomePage';
+import { MainPage } from './pages/MainPage/MainPage';
 import ProfilePage from './pages/ProfilePage';
+import { TeamPage } from './pages/TeamPage/TeamPage';
 import TextbookPage from './pages/TextbookPage';
 
 import type { RootState } from './store/store';
@@ -26,7 +27,8 @@ const App = (): JSX.Element => {
   return (
     <Layout>
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<MainPage />} />
+        <Route path="/team" element={<TeamPage />} />
         <Route path="/textbook" element={<TextbookPage />}>
           <Route
             path="dictionary"
