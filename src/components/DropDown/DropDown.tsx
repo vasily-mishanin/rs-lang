@@ -13,13 +13,12 @@ interface OptionsType {
 };
 
 interface DropDownProps {
-  label : string;
+  name : string;
   options: OptionsType[];
-  value: string;
   onChange?: ()=>void;
 }
 
-export const Dropdown = ({ label, value, options, onChange }: DropDownProps) => {
+export const Dropdown = ({ name, options, onChange }: DropDownProps) => {
   const [drawList, setDrawList] = useState(true);
   const [difficulty, setDifficulty] = useState(1);
 
@@ -36,11 +35,8 @@ export const Dropdown = ({ label, value, options, onChange }: DropDownProps) => 
   return (
     <div ref={ref} className="dropdown">
       <div className="dropdown_button" >
-        <Button text={`Level: ${difficulty}`} buttonType="secondary" onClick={clickHandler}/>
+        <Button text={`${name}: ${difficulty}`} buttonType="secondary" onClick={clickHandler}/>
       </div>
-
-      <span>{label}</span>
-      <span>{value}</span>
 
       <ul className={
         classNames(
@@ -52,9 +48,8 @@ export const Dropdown = ({ label, value, options, onChange }: DropDownProps) => 
           <li
             className='dropdown_item'
             key = {option.value}
-
           >
-            {option.label}</li>
+            {option.label} {option.value}</li>
         ))}
 
       </ul>
