@@ -31,6 +31,9 @@ const MainNavigation = (): JSX.Element => {
           <li>
             <NavLink to="/textbook">Textbook</NavLink>
           </li>
+          {isLoggedIn && <li>
+            <NavLink to="/dictionary">Dictionary</NavLink>
+          </li>}
           <li>
             <NavLink to="/games">Games</NavLink>
           </li>

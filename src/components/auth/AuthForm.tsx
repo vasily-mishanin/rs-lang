@@ -5,7 +5,7 @@ import { FormEvent, useRef, useState } from 'react';
 
 import './AuthForm.pcss';
 
-import * as api from '../../model/api';
+import * as api from '../../model/api-users';
 
 import type { User } from '@/model/app-types';
 import { authActions } from '@/store/authSlice';
