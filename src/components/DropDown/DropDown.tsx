@@ -7,51 +7,57 @@ import { Button } from '../Button/Button';
 
 import { useOnClickOutside } from '@/hooks/useOnClickOutside';
 
-interface OptionsType {
+export interface OptionsType {
   label: string;
   value: string;
 };
 
 interface DropDownProps {
-  name : string;
+  name: string;
   options: OptionsType[];
-  onChange?: ()=>void;
+  onChange: (val: string) => void;
+  initial: string;
 }
 
-export const Dropdown = ({ name, options, onChange }: DropDownProps) => {
-  const [drawList, setDrawList] = useState(true);
-  const [difficulty, setDifficulty] = useState(1);
+export const Dropdown = ({ name, options, onChange, initial }: DropDownProps) => {
+  const [drawList, setDrawList] = useState(false);
+  const [curValue, setCurValue] = useState(initial);
 
-  const clickHandler = () => {
-    setDrawList(prev=>!prev);
+  const closeHandler = () => { setDrawList(prev => !prev); };
+  const pickHandler = (val: string) => {
+    setCurValue(val);
+    closeHandler();
+    onChange(val);
   };
 
   const ref = useRef<HTMLDivElement | null>(null);
-
-  const onClickOutside = () =>{console.log('outside');  };
-
-  useOnClickOutside(ref, () => onClickOutside());
+  useOnClickOutside(ref, () => { if (drawList) closeHandler(); });
 
   return (
     <div ref={ref} className="dropdown">
       <div className="dropdown_button" >
-        <Button text={`${name}: ${difficulty}`} buttonType="secondary" onClick={clickHandler}/>
+        <Button text={`${name}: ${curValue}`} buttonType="secondary" onClick={closeHandler} />
       </div>
 
       <ul className={
         classNames(
           'dropdown_list',
-          drawList && 'dropdown_hide',
+          !drawList && 'dropdown_hide',
         )
       }>
         {options.map(option => (
           <li
+            role="menuitem"
             className='dropdown_item'
-            key = {option.value}
+            key={option.value}
+            onClick = {()=>pickHandler(option.value)}
+            onKeyPress={()=>pickHandler(option.value)}
           >
-            {option.label} {option.value}</li>
+            {option.label} {option.value}
+          </li>
         ))}
 
       </ul>
     </div>
-  );};
+  );
+};
