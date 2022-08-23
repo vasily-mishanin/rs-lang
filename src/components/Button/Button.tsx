@@ -1,13 +1,15 @@
 import classNames from 'classnames';
 import './Button.pcss';
 
-type ButtonType = 'primary' | 'secondary';
+type ButtonType = 'primary' | 'secondary' | 'accept' | 'decline';
 type ButtonTypeMap = {
   [key in ButtonType]: string;
 };
 export const buttonTypeMap: ButtonTypeMap = {
   primary: 'button_primary',
   secondary: 'button_secondary',
+  accept: 'button_accept',
+  decline: 'button_decline',
 };
 
 interface ButtonProps {
