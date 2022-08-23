@@ -10,10 +10,17 @@ export interface GameControlButtonProps  {
   initialState? : boolean;
   onChange :(value: boolean) =>void;
   icons:IconPack;
+  color?: string;
+  size?: string;
 }
 
 export const GameControlButton = (
-  { initialState=true, onChange, icons }: GameControlButtonProps): JSX.Element =>
+  { initialState=true,
+    onChange,
+    icons,
+    color = '#707070',
+    size = '2rem',
+  }: GameControlButtonProps): JSX.Element =>
 {
   const [state, setState] = useState(initialState);
 
@@ -26,6 +33,12 @@ export const GameControlButton = (
 
     <div
       className="control_button"
+      style = {
+        { 'color': color,
+          'width' : size,
+          'height' : size,
+        }
+      }
       onClick = {switchHandler}
       onKeyPress={switchHandler}
       role="button"
