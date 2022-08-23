@@ -1,11 +1,26 @@
+import { useSelector } from 'react-redux';
+
 import { useState } from 'react';
 
-import { Dropdown } from '@/components/DropDown/DropDown';
 import './SprintPage.pcss';
 
-export const SprintPage = (): JSX.Element => {
-  const [level, setLevel] = useState(1);
+import { SprintBody } from './SprintBody/SprintBody';
 
+import { Button } from '@/components/Button/Button';
+import { Dropdown, OptionsType } from '@/components/DropDown/DropDown';
+import type { RootState } from '@/store/store';
+
+export const SprintPage = (): JSX.Element => {
+  // const [level, setLevel] = useState(1);
+  const [gameStarted, setgameStarted] = useState(false);
+
+  const authState = useSelector((state: RootState) => state.authentication);
+  const { isLoggedIn } = authState;
+  const levelsCount = isLoggedIn? 7 : 6;
+
+  const dropDownArray: OptionsType[] = Array(levelsCount).fill(1).map((el, i)=> ({ label: 'Уровень ', value: `${+i+1}` }));
+  const dropDownChanged = (value: string) => {console.log(value);
+  };
   return (
 
     <div className="game">
@@ -16,14 +31,25 @@ export const SprintPage = (): JSX.Element => {
             Можно кликать по кнопкам, или нажимать клавиши стрелки  &#8678;&nbsp;&#8680;
       </p>
 
-      <Dropdown
-        options={[
-          { label: 'Уровень ', value: '1' },
-          { label: 'Уровень', value: '2' },
-          { label: 'Уровень', value: '3' },
-        ]}
-        name="Сложность"
-      />
+      {!gameStarted &&
+      <div className="game_start_buttons">
+        <Dropdown
+          options={dropDownArray}
+          name="Сложность"
+          initial="1"
+          onChange={dropDownChanged}
+        />
+        <Button buttonType='primary' text='Начать' onClick={()=>setgameStarted(true)} />
+      </div>
+      }
+
+      {gameStarted &&
+      <div className="game_body">
+        <p>game over</p>
+        <SprintBody />
+      </div>
+
+      }
 
     </div>
   );};
