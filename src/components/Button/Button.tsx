@@ -13,9 +13,10 @@ export const buttonTypeMap: ButtonTypeMap = {
 interface ButtonProps {
   text: string;
   buttonType: ButtonType;
+  onClick?: ()=>void;
 }
 
-export const Button = ({ text, buttonType }: ButtonProps): JSX.Element => (
+export const Button = ({ text, buttonType, onClick }: ButtonProps): JSX.Element => (
   <div className="button_wrapper">
     <button
       type = 'button'
@@ -25,6 +26,7 @@ export const Button = ({ text, buttonType }: ButtonProps): JSX.Element => (
           buttonType && buttonTypeMap[buttonType],
         )
       }
+      onClick = {onClick}
     >
       {text}
     </button>
