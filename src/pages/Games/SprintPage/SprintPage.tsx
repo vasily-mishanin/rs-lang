@@ -12,7 +12,7 @@ import type { RootState } from '@/store/store';
 
 export const SprintPage = (): JSX.Element => {
   // const [level, setLevel] = useState(1);
-  const [gameStarted, setgameStarted] = useState(false);
+  const [gameStarted, setgameStarted] = useState(true);
 
   const authState = useSelector((state: RootState) => state.authentication);
   const { isLoggedIn } = authState;
@@ -45,7 +45,6 @@ export const SprintPage = (): JSX.Element => {
 
       {gameStarted &&
       <div className="game_body">
-        <p>game over</p>
         <SprintBody />
       </div>
 
