@@ -1,6 +1,6 @@
+import { SprintPage } from './SprintPage/SprintPage';
+
 const GameSprint = (): JSX.Element => (
-  <section>
-    <h1>Sprint Game</h1>
-  </section>
+  <SprintPage />
 );
 export default GameSprint;

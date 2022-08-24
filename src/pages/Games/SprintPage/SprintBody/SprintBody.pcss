@@ -1,0 +1,58 @@
+.sprint {
+   @apply w-3/5 bg-sky-100 px-5 py-2;
+
+    & .sprint_info {
+        @apply flex justify-between items-center;
+    }
+
+    & .sprint_controls {
+        @apply flex justify-between;
+    }
+
+    & .sprint_score{
+        @apply text-3xl
+    }
+
+    & .sprint_form {
+        @apply flex flex-col items-center;
+    }
+
+    & .sprint_streak {
+        @apply py-1 text-2xl;
+    }
+
+    & .sprint_picture {
+        @apply text-7xl my-3;
+    }
+
+    & .smile_animate {
+        animation: zoom-in-zoom-out 0.5s ;
+    }
+
+    & .sprint_ask {
+        @apply flex items-baseline py-2 ;
+
+        & .ask_word {
+            @apply text-5xl text-blue-800 font-semibold mx-2;
+        }
+    }
+
+    & .sprint_answer {
+        @apply text-2xl text-blue-500 font-semibold	 py-2 ;
+    }
+
+    & .sprint_buttons {
+        @apply my-2 ;
+    }
+}
+
+@keyframes zoom-in-zoom-out {
+    0% {
+        transform: scale(1, 1);
+    }
+    100% {
+        transform: scale(1.25, 1.25);
+    }
+}
+
+/* @apply max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8 lg:flex lg:items-center lg:justify-between bg-gray-50; */
