@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './GameControlButton.pcss';
 
 export interface IconPack {
@@ -12,6 +12,8 @@ export interface GameControlButtonProps  {
   icons:IconPack;
   color?: string;
   size?: string;
+
+  changeStateOutside?: boolean;
 }
 
 export const GameControlButton = (
@@ -20,9 +22,14 @@ export const GameControlButton = (
     icons,
     color = '#707070',
     size = '2rem',
+    changeStateOutside,
   }: GameControlButtonProps): JSX.Element =>
 {
   const [state, setState] = useState(initialState);
+
+  useEffect(() => {
+    if (changeStateOutside) setState(changeStateOutside);
+  }, [changeStateOutside]);
 
   const switchHandler = () => {
     onChange(!state);

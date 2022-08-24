@@ -6,11 +6,13 @@ import { useEffect, useRef, useState } from 'react';
 
 import { GameControlButton } from '@/components/ui/GameControlButton/GameControlButton';
 
+export type AudioControlsType = 'default' | 'single-button';
 export interface PlayAudioProps {
   source: string;
+  type: AudioControlsType;
 }
 
-export const PlayAudio = ({ source }: PlayAudioProps): JSX.Element => {
+export const PlayAudio = ({ source, type }: PlayAudioProps): JSX.Element => {
   const [isPlaying, setisPlaying] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -30,13 +32,9 @@ export const PlayAudio = ({ source }: PlayAudioProps): JSX.Element => {
 
   }, [isPlaying]);
 
-  const onPlaying = () =>{
-    if (audioRef && audioRef.current?.paused) console.log('setPlaying(false)');
-  };
+  const onPlaying = () => { };
 
-  const onEnded = () =>{
-    console.log('Track ended');
-  };
+  const onEnded = () => setisPlaying(false);
 
   return (
     <div className="audio">
@@ -44,17 +42,19 @@ export const PlayAudio = ({ source }: PlayAudioProps): JSX.Element => {
         ref={audioRef}
         src={source}
         onTimeUpdate={onPlaying}
-        onEnded = {onEnded}
-        controls>
+        onEnded={onEnded}
+        controls={type === 'default'}
+      >
         <track kind="captions" />
       </audio>
 
-      <GameControlButton
-        icons={{ 'first': PlayIcon, 'second': PauseIcon }}
-        onChange={(value: boolean) => { setisPlaying(!value); }}
-      />
-
+      {type !== 'default' &&
+        <GameControlButton
+          changeStateOutside={!isPlaying}
+          icons={{ 'first': PlayIcon, 'second': PauseIcon }}
+          onChange={() => { setisPlaying(prev => !prev); }}
+        />
+      }
     </div>
-
   );
 };
