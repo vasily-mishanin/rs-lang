@@ -6,12 +6,12 @@ import { useState } from 'react';
 import { Timer } from '../Timer/Timer';
 
 import './SprintBody.pcss';
+import { PlayAudio } from '@/components/PlayAudio/PlayAudio';
 import { Button } from '@/components/ui/Button/Button';
 import { GameControlButton } from '@/components/ui/GameControlButton/GameControlButton';
-import { PlayAudio } from '@/components/PlayAudio/PlayAudio';
 
 export const SprintBody = (): JSX.Element => {
-  const [score, setScore] = useState(0);
+  const [score] = useState(0);
 
   return (
     <div className="sprint">
@@ -42,8 +42,11 @@ export const SprintBody = (): JSX.Element => {
         <div className="sprint_picture">😃</div>
 
         <div className="sprint_ask">
-          word
-          <PlayAudio source= "https://file-examples.com/storage/fe63a55b7d630545e96d964/2017/11/file_example_MP3_700KB.mp3" />
+          <span className = "ask_word">word</span>
+          <PlayAudio
+            source= "https://www.w3schools.com/html/horse.mp3"
+            type='single-button'
+          />
         </div>
         <div className="sprint_answer">answer</div>
 
