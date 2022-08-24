@@ -1,10 +1,10 @@
-import './PlayAudioButton.pcss';
+import './PlayAudio.pcss';
 
 import { PlayIcon, PauseIcon } from '@heroicons/react/solid';
 
 import { useEffect, useRef, useState } from 'react';
 
-import { GameControlButton } from '@/components/GameControlButton/GameControlButton';
+import { GameControlButton } from '@/components/ui/GameControlButton/GameControlButton';
 
 export interface PlayAudioProps {
   source: string;

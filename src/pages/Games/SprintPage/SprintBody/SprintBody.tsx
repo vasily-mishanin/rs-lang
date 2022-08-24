@@ -6,8 +6,8 @@ import { useState } from 'react';
 import { Timer } from '../Timer/Timer';
 
 import './SprintBody.pcss';
-import { Button } from '@/components/Button/Button';
-import { GameControlButton } from '@/components/GameControlButton/GameControlButton';
+import { Button } from '@/components/ui/Button/Button';
+import { GameControlButton } from '@/components/ui/GameControlButton/GameControlButton';
 import { PlayAudio } from '@/components/PlayAudio/PlayAudio';
 
 export const SprintBody = (): JSX.Element => {

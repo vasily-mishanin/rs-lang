@@ -6,8 +6,8 @@ import './SprintPage.pcss';
 
 import { SprintBody } from './SprintBody/SprintBody';
 
-import { Button } from '@/components/Button/Button';
-import { Dropdown, OptionsType } from '@/components/DropDown/DropDown';
+import { Button } from '@/components/ui/Button/Button';
+import { Dropdown, OptionsType } from '@/components/ui/DropDown/DropDown';
 import type { RootState } from '@/store/store';
 
 export const SprintPage = (): JSX.Element => {
