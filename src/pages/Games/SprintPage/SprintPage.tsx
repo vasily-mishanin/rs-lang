@@ -10,6 +10,27 @@ import { Button } from '@/components/ui/Button/Button';
 import { Dropdown, OptionsType } from '@/components/ui/DropDown/DropDown';
 import type { RootState } from '@/store/store';
 
+const words = [
+  {
+    id: '5e9f5ee35eb9e72bc21af4d0',
+    word:'instead',
+    audio:'files/03_0049.mp3',
+    wordTranslate:'вместо',
+  },
+  {
+    id: '5e9f5ee35eb9e72bc21af4d1',
+    word:'library',
+    audio:'files/03_0050.mp3',
+    wordTranslate:'библиотека',
+  },
+  {
+    id: '5e9f5ee35eb9e72bc21af4cc',
+    word:'describe',
+    audio:'files/03_0045.mp3',
+    wordTranslate:'описать',
+  },
+];
+
 export const SprintPage = (): JSX.Element => {
   const [level, setLevel] = useState(1);
   const [gameStarted, setgameStarted] = useState(false);
@@ -45,7 +66,10 @@ export const SprintPage = (): JSX.Element => {
 
       {gameStarted &&
       <div className="game_body">
-        <SprintBody level={level}/>
+        <SprintBody
+          level={level}
+          words={words}
+        />
       </div>
 
       }
