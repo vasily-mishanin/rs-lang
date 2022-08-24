@@ -1,3 +1,8 @@
+import WordCard from './WordCard';
+import './WordsList.pcss';
+
+import Card from '../ui/Card';
+
 import type { Word } from '@/model/app-types';
 
 interface ITextbookPage {
@@ -8,12 +13,16 @@ const TextbookPage = (props: ITextbookPage): JSX.Element => {
   const { words } = props;
   console.log('TextbookPage', words);
   return (
-    <section>
+    <section className="words-section">
       <h3>TextbookPage words ({words.length})</h3>
       <div>
-        <ul>
+        <ul className="words-list">
           {words.map(word => (
-            <li key={word.id}>{word.word}</li>
+            <li key={word.id}>
+              <Card>
+                <WordCard word={word} />
+              </Card>
+            </li>
           ))}
         </ul>
       </div>

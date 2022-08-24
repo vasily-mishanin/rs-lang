@@ -2,7 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 
 import { useEffect, useState } from 'react';
 
-import TextbookPage from './TextbookPage';
+import WordsList from './WordsList';
 
 import * as api from '../../model/api-words';
 import Pagination from '../Pagination/Pagination';
@@ -61,7 +61,7 @@ const TextbookGroup = (): JSX.Element => {
         paginate={paginate}
       />
 
-      {loading ? 'LOADING...' : <TextbookPage words={currentWords} />}
+      {loading ? 'LOADING...' : <WordsList words={currentWords} />}
     </section>
   );
 };
