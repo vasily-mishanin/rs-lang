@@ -9,9 +9,29 @@ import './SprintBody.pcss';
 import { PlayAudio } from '@/components/PlayAudio/PlayAudio';
 import { Button } from '@/components/ui/Button/Button';
 import { GameControlButton } from '@/components/ui/GameControlButton/GameControlButton';
+import {  useOnKeyUp } from '@/hooks/useOnKeyUpDocument';
 
-export const SprintBody = (): JSX.Element => {
+export interface SprintBodyProps {
+  level: number;
+}
+
+export const SprintBody = ({ level }: SprintBodyProps): JSX.Element => {
   const [score] = useState(0);
+
+  const acceptHandler = () => {
+    console.log('accept');
+
+  };
+
+  const declineHandler = () => {
+    console.log('decline');
+
+  };
+
+  useOnKeyUp((code: string) => {
+    if (code === 'ArrowLeft') declineHandler();
+    else if (code === 'ArrowRight') acceptHandler();
+  });
 
   return (
     <div className="sprint">
@@ -54,10 +74,12 @@ export const SprintBody = (): JSX.Element => {
           <Button
             text='&#9664; Неверно'
             buttonType='decline'
+            onClick={declineHandler}
           />
           <Button
             text='Верно &#9654;'
             buttonType='accept'
+            onClick={acceptHandler}
           />
         </div>
       </div>

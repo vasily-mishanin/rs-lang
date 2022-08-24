@@ -11,7 +11,7 @@ import { Dropdown, OptionsType } from '@/components/ui/DropDown/DropDown';
 import type { RootState } from '@/store/store';
 
 export const SprintPage = (): JSX.Element => {
-  // const [level, setLevel] = useState(1);
+  const [level, setLevel] = useState(1);
   const [gameStarted, setgameStarted] = useState(false);
 
   const authState = useSelector((state: RootState) => state.authentication);
@@ -19,7 +19,7 @@ export const SprintPage = (): JSX.Element => {
   const levelsCount = isLoggedIn? 7 : 6;
 
   const dropDownArray: OptionsType[] = Array(levelsCount).fill(1).map((el, i)=> ({ label: 'Уровень ', value: `${+i+1}` }));
-  const dropDownChanged = (value: string) => {console.log(value);
+  const dropDownChanged = (value: string) => {setLevel(+value);
   };
   return (
 
@@ -45,7 +45,7 @@ export const SprintPage = (): JSX.Element => {
 
       {gameStarted &&
       <div className="game_body">
-        <SprintBody />
+        <SprintBody level={level}/>
       </div>
 
       }
