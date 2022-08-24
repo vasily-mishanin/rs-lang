@@ -5,10 +5,10 @@ import { useState } from 'react';
 
 import { Timer } from '../Timer/Timer';
 
+import './SprintBody.pcss';
 import { Button } from '@/components/Button/Button';
 import { GameControlButton } from '@/components/GameControlButton/GameControlButton';
-
-import './SprintBody.pcss';
+import { PlayAudio } from '@/components/PlayAudio/PlayAudio';
 
 export const SprintBody = (): JSX.Element => {
   const [score, setScore] = useState(0);
@@ -41,7 +41,10 @@ export const SprintBody = (): JSX.Element => {
 
         <div className="sprint_picture">😃</div>
 
-        <div className="sprint_ask">word</div>
+        <div className="sprint_ask">
+          word
+          <PlayAudio source= "https://file-examples.com/storage/fe63a55b7d630545e96d964/2017/11/file_example_MP3_700KB.mp3" />
+        </div>
         <div className="sprint_answer">answer</div>
 
         <div className="sprint_buttons">
