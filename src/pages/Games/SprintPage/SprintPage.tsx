@@ -4,7 +4,8 @@ import { useState } from 'react';
 
 import './SprintPage.pcss';
 
-import { SprintBody } from './SprintBody/SprintBody';
+import { GameResults } from './GameResults/GameResults';
+import { IGameResults, SprintBody } from './SprintBody/SprintBody';
 
 import { Button } from '@/components/ui/Button/Button';
 import { Dropdown, OptionsType } from '@/components/ui/DropDown/DropDown';
@@ -13,6 +14,8 @@ import type { RootState } from '@/store/store';
 export const SprintPage = (): JSX.Element => {
   const [level, setLevel] = useState(1);
   const [gameStarted, setgameStarted] = useState(false);
+  const [gameEnded, setGameEnded] = useState(false);
+  const [gameResults, setGameResults] = useState<IGameResults>();
 
   const authState = useSelector((state: RootState) => state.authentication);
   const { isLoggedIn } = authState;
@@ -21,6 +24,13 @@ export const SprintPage = (): JSX.Element => {
   const dropDownArray: OptionsType[] = Array(levelsCount).fill(1).map((el, i)=> ({ label: 'Уровень ', value: `${+i+1}` }));
   const dropDownChanged = (value: string) => {setLevel(+value);
   };
+
+  const gameIsOver = (results: IGameResults) => {
+    setGameEnded(true);
+    setgameStarted(false);
+    setGameResults(results);
+  };
+
   return (
 
     <div className="game">
@@ -31,7 +41,7 @@ export const SprintPage = (): JSX.Element => {
             Можно кликать по кнопкам, или нажимать клавиши стрелки  &#8678;&nbsp;&#8680;
       </p>
 
-      {!gameStarted &&
+      {!gameStarted && !gameEnded &&
       <div className="game_start_buttons">
         <Dropdown
           options={dropDownArray}
@@ -48,9 +58,19 @@ export const SprintPage = (): JSX.Element => {
         <SprintBody
           level={level}
           page = {5}
+          onGameOver = {gameIsOver}
         />
       </div>
+      }
 
+      {gameEnded &&
+      <div className="game_body">
+        <GameResults
+          correctAnswers={gameResults!.correctAnswers}
+          wrongAnswers={gameResults!.wrongAnswers}
+          score = {gameResults!.score}
+        />
+      </div>
       }
 
     </div>

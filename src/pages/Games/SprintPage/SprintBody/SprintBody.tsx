@@ -33,14 +33,20 @@ export interface ISprintWord {
   translateProposal?: string;
 }
 
+export interface IGameResults {
+  correctAnswers: ISprintWord[];
+  wrongAnswers: ISprintWord[];
+  score: number;
+}
 export interface SprintBodyProps {
   level: number;
   page: number;
+  onGameOver: (results: IGameResults)=>void;
 }
 
 const getRandomIndex = (arrLength: number) => Math.floor(Math.random() * arrLength);
 
-export const SprintBody = ({ level, page }: SprintBodyProps): JSX.Element => {
+export const SprintBody = ({ level, page, onGameOver }: SprintBodyProps): JSX.Element => {
   const [firstRun, setFirstRun] = useState(true);
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
@@ -56,6 +62,9 @@ export const SprintBody = ({ level, page }: SprintBodyProps): JSX.Element => {
 
   const usedWords = useRef<ISprintWord[]>([]);
   const wordList = useRef<ISprintWord[]>([]);
+
+  const correctAnswers= useRef<ISprintWord[]>([]);
+  const wrongAnswers = useRef<ISprintWord[]>([]);
 
   const getAssignment = () => {
     if (wordList.current.length > 0) {
@@ -76,6 +85,17 @@ export const SprintBody = ({ level, page }: SprintBodyProps): JSX.Element => {
 
   };
 
+  const gameOver = () => {
+    console.log('time us up!');
+    const gameResults: IGameResults = {
+      correctAnswers : correctAnswers.current,
+      wrongAnswers :  wrongAnswers.current,
+      score,
+    };
+
+    onGameOver(gameResults);
+  };
+
   useEffect(() => {
     if (firstRun) {
       getWords(`${level}`, `${page}`)
@@ -85,7 +105,8 @@ export const SprintBody = ({ level, page }: SprintBodyProps): JSX.Element => {
           wordList.current = [...data];
           getAssignment();
         })
-        .catch(() => { });
+        .catch(err => {console.log(err);
+        });
 
       setFirstRun(false);
     }
@@ -98,6 +119,7 @@ export const SprintBody = ({ level, page }: SprintBodyProps): JSX.Element => {
 
     setSmileFace(getSmile);
     setAnimateSmile(true);
+
   };
 
   const handleStreak = (isCorrect: boolean) => {
@@ -113,20 +135,26 @@ export const SprintBody = ({ level, page }: SprintBodyProps): JSX.Element => {
   };
 
   const handleAnswer = (answer: AnswerType) => {
-    let isAnswerCorect = false;
-    if (task?.wordTranslate === task?.translateProposal && answer === 'accept') isAnswerCorect = true;
-    else if (task?.wordTranslate !== task?.translateProposal && answer === 'decline') isAnswerCorect = true;
-    else isAnswerCorect = false;
+    if (task){
+      let isAnswerCorect = false;
+      if (task?.wordTranslate === task?.translateProposal && answer === 'accept') isAnswerCorect = true;
+      else if (task?.wordTranslate !== task?.translateProposal && answer === 'decline') isAnswerCorect = true;
+      else isAnswerCorect = false;
 
-    setAnswerEffects(isAnswerCorect);
+      if (isAnswerCorect) correctAnswers.current.push(task);
+      else wrongAnswers.current.push(task);
 
-    handleStreak(isAnswerCorect);
+      setAnswerEffects(isAnswerCorect);
 
-    const scoreIncrement = isAnswerCorect ? multiplier * baseScore : 0;
-    setScore(prev => prev + scoreIncrement);
-    if (isAnswerCorect) setAnimateScore(true);
+      handleStreak(isAnswerCorect);
 
-    getAssignment();
+      const scoreIncrement = isAnswerCorect ? multiplier * baseScore : 0;
+      setScore(prev => prev + scoreIncrement);
+      if (isAnswerCorect) setAnimateScore(true);
+
+      getAssignment();
+    }
+
   };
 
   const acceptHandler = () => { handleAnswer('accept'); };
@@ -163,7 +191,7 @@ export const SprintBody = ({ level, page }: SprintBodyProps): JSX.Element => {
           </div>
         </div>
         <div className="sprint_timer">
-          <Timer seconds={60} onTimeUp={() => console.log('time us up!')} />
+          <Timer seconds={60} onTimeUp={gameOver} />
         </div>
 
       </div>
