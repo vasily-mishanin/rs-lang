@@ -56,17 +56,16 @@ export const SprintBody = ({ level, page, onGameOver }: SprintBodyProps): JSX.El
   const [animateSmile, setAnimateSmile] = useState(false);
   const [animateScore, setAnimateScore] = useState(false);
   const [animateMultiplier, setAnimateMultiplier] = useState(false);
-  const [currentWords, setCurrentWords] = useState<Word[]>([]);
-
-  // const [searchParams] = useSearchParams();
 
   const usedWords = useRef<ISprintWord[]>([]);
   const wordList = useRef<ISprintWord[]>([]);
+  const currentWords = useRef<ISprintWord[]>([]);
 
   const correctAnswers= useRef<ISprintWord[]>([]);
   const wrongAnswers = useRef<ISprintWord[]>([]);
 
   const getAssignment = () => {
+
     if (wordList.current.length > 0) {
       const index = getRandomIndex(wordList.current.length);
       const assigment = wordList.current[index];
@@ -75,8 +74,9 @@ export const SprintBody = ({ level, page, onGameOver }: SprintBodyProps): JSX.El
       usedWords.current.push(assigment);
 
       if (Math.random() < 0.5) {
-        const randomIndex = getRandomIndex(currentWords.length);
-        assigment.translateProposal = currentWords[randomIndex].wordTranslate;
+        const randomIndex = getRandomIndex(currentWords.current.length);
+
+        assigment.translateProposal = currentWords.current[randomIndex].wordTranslate;
       } else assigment.translateProposal = assigment.wordTranslate;
 
       setTask(assigment);
@@ -101,8 +101,8 @@ export const SprintBody = ({ level, page, onGameOver }: SprintBodyProps): JSX.El
       getWords(`${level}`, `${page}`)
         .then(res => res.json())
         .then((data: Word[]) => {
-          setCurrentWords(data);
           wordList.current = [...data];
+          currentWords.current = [...data];
           getAssignment();
         })
         .catch(err => {console.log(err);
