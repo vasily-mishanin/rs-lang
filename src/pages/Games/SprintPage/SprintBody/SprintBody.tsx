@@ -4,6 +4,7 @@ import classNames from 'classnames';
 
 import { useEffect, useRef, useState } from 'react';
 
+import { StreakCounter } from '../StreakCounter/StreakCounter';
 import { Timer } from '../Timer/Timer';
 
 import './SprintBody.pcss';
@@ -11,8 +12,12 @@ import { PlayAudio } from '@/components/PlayAudio/PlayAudio';
 import { Button } from '@/components/ui/Button/Button';
 import { GameControlButton } from '@/components/ui/GameControlButton/GameControlButton';
 import { useOnKeyUp } from '@/hooks/useOnKeyUpDocument';
+import { getWords } from '@/model/api-words';
+import { Word } from '@/model/app-types';
 
 const FILESTORAGE_URL = 'https://rss-rs-lang.herokuapp.com/';
+
+const baseScore = 10;
 
 const happySmiles = ['😊', '😆', '😁', '😄', '😅', '🙃', '😃', '😋'];
 const sadSmiles = ['😬', '😐', '🤔', '😑', '🙄', '😕'];
@@ -29,21 +34,24 @@ export interface ISprintWord {
 
 export interface SprintBodyProps {
   level: number;
-  words: ISprintWord[];
+  page: number;
 }
 
 const getRandomIndex = (arrLength: number) => Math.floor(Math.random() * arrLength);
 
-export const SprintBody = ({ level, words }: SprintBodyProps): JSX.Element => {
+export const SprintBody = ({ level, page }: SprintBodyProps): JSX.Element => {
   const [firstRun, setFirstRun] = useState(true);
   const [score, setScore] = useState(0);
+  const [streak, setStreak] = useState(0);
+  const [multiplier, setmultiplier] = useState(1);
   const [task, setTask] = useState<ISprintWord>();
   const [smileFace, setSmileFace] = useState('🙂');
   const [animateSmile, setAnimateSmile] = useState(false);
 
+  const [currentWords, setCurrentWords] = useState<Word[]>([]);
+
   const usedWords = useRef<ISprintWord[]>([]);
-  const wordsClone = Array.from(words);
-  const wordList = useRef<ISprintWord[]>(wordsClone);
+  const wordList = useRef<ISprintWord[]>([]);
 
   const getAssignment = () => {
     if (wordList.current.length > 0) {
@@ -54,8 +62,8 @@ export const SprintBody = ({ level, words }: SprintBodyProps): JSX.Element => {
       usedWords.current.push(assigment);
 
       if (Math.random() < 0.5) {
-        const randomIndex = getRandomIndex(words.length);
-        assigment.translateProposal = words[randomIndex].wordTranslate;
+        const randomIndex = getRandomIndex(currentWords.length);
+        assigment.translateProposal = currentWords[randomIndex].wordTranslate;
       } else assigment.translateProposal = assigment.wordTranslate;
 
       setTask(assigment);
@@ -66,7 +74,15 @@ export const SprintBody = ({ level, words }: SprintBodyProps): JSX.Element => {
 
   useEffect(() => {
     if (firstRun) {
-      getAssignment();
+      getWords(`${level}`, `${page}`)
+        .then(res => res.json())
+        .then((data: Word[]) => {
+          setCurrentWords(data);
+          wordList.current = [...data];
+          getAssignment();
+        })
+        .catch(err => console.log(err));
+
       setFirstRun(false);
     }
   }, []);
@@ -80,6 +96,15 @@ export const SprintBody = ({ level, words }: SprintBodyProps): JSX.Element => {
     setAnimateSmile(true);
   };
 
+  const handleStreak = (isCorrect: boolean) => {
+    if (isCorrect) {
+      if (streak === 3) {
+        setStreak(0);
+        setmultiplier(prev => prev + 1);
+      } else setStreak(prev => prev + 1);
+    } else setStreak(0);
+  };
+
   const handleAnswer = (answer: AnswerType) => {
     let isAnswerCorect = false;
     if (task?.wordTranslate === task?.translateProposal && answer === 'accept') isAnswerCorect = true;
@@ -87,6 +112,12 @@ export const SprintBody = ({ level, words }: SprintBodyProps): JSX.Element => {
     else isAnswerCorect = false;
 
     setAnswerEffects(isAnswerCorect);
+
+    handleStreak(isAnswerCorect);
+
+    const scoreIncrement = isAnswerCorect ? multiplier * baseScore : 0;
+    setScore(prev => prev + scoreIncrement);
+
     getAssignment();
   };
 
@@ -121,12 +152,12 @@ export const SprintBody = ({ level, words }: SprintBodyProps): JSX.Element => {
       <div className="sprint_form">
 
         <div className="sprint_streak">
-          <span>✔️</span><span>✔️</span><span>✔️</span>
-          <span>x10</span>
+          <StreakCounter currentStreak={streak} />
+          <span>x{baseScore * multiplier}</span>
         </div>
 
         <div
-          onAnimationEnd ={()=>setAnimateSmile(false)}
+          onAnimationEnd={() => setAnimateSmile(false)}
           className={
             classNames(
               'sprint_picture',
