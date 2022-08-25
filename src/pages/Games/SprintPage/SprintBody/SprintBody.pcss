@@ -10,7 +10,15 @@
     }
 
     & .sprint_score{
-        @apply text-3xl
+        @apply text-3xl flex;
+
+        & .score_text {
+            @apply mx-2;
+        }
+    }
+
+    & .score_animate {
+        animation: zoom-in-zoom-out 0.5s ;
     }
 
     & .sprint_form {
@@ -18,7 +26,15 @@
     }
 
     & .sprint_streak {
-        @apply py-1 text-2xl;
+        @apply py-1 text-2xl flex items-center w-full;
+
+        & .streak_line_cell {
+            @apply w-full  ;
+        }
+
+        & .multi_value {
+            @apply max-w-max;
+        }
     }
 
     & .sprint_picture {
@@ -30,7 +46,11 @@
     }
 
     & .sprint_ask {
-        @apply flex items-baseline py-2 ;
+        @apply flex items-baseline py-2 w-full justify-center;
+
+        & .streak_ask_cell {
+            @apply w-full justify-center text-center;
+        }
 
         & .ask_word {
             @apply text-5xl text-blue-800 font-semibold mx-2;

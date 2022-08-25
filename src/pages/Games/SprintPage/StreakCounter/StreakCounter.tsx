@@ -14,7 +14,7 @@ export const StreakCounter = ({ currentStreak }: StreakCounterProps): JSX.Elemen
     <p className="streak_line">
       {checkMarks.map((el: number, index) => (
         <div key={el} className="streak_item">
-          {(index <= currentStreak)
+          {(index < currentStreak)
             ? <BadgeCheckIcon className="streak_done" aria-hidden="true" />
             : <BadgeCheckIcon className="streak_await" aria-hidden="true" />}
         </div>

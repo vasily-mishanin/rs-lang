@@ -1,6 +1,7 @@
 import { ArrowsExpandIcon } from '@heroicons/react/outline';
 import { VolumeOffIcon, VolumeUpIcon, ViewGridIcon } from '@heroicons/react/solid';
 import classNames from 'classnames';
+// import { useSearchParams } from 'react-router-dom';
 
 import { useEffect, useRef, useState } from 'react';
 
@@ -47,8 +48,11 @@ export const SprintBody = ({ level, page }: SprintBodyProps): JSX.Element => {
   const [task, setTask] = useState<ISprintWord>();
   const [smileFace, setSmileFace] = useState('🙂');
   const [animateSmile, setAnimateSmile] = useState(false);
-
+  const [animateScore, setAnimateScore] = useState(false);
+  const [animateMultiplier, setAnimateMultiplier] = useState(false);
   const [currentWords, setCurrentWords] = useState<Word[]>([]);
+
+  // const [searchParams] = useSearchParams();
 
   const usedWords = useRef<ISprintWord[]>([]);
   const wordList = useRef<ISprintWord[]>([]);
@@ -81,7 +85,7 @@ export const SprintBody = ({ level, page }: SprintBodyProps): JSX.Element => {
           wordList.current = [...data];
           getAssignment();
         })
-        .catch(err => console.log(err));
+        .catch(() => { });
 
       setFirstRun(false);
     }
@@ -98,10 +102,13 @@ export const SprintBody = ({ level, page }: SprintBodyProps): JSX.Element => {
 
   const handleStreak = (isCorrect: boolean) => {
     if (isCorrect) {
-      if (streak === 3) {
-        setStreak(0);
+      if (streak === 2) {
         setmultiplier(prev => prev + 1);
-      } else setStreak(prev => prev + 1);
+        setAnimateMultiplier(true);
+        setStreak(prev => prev + 1);
+      } else if (streak === 3) setStreak(0);
+      else setStreak(prev => prev + 1);
+
     } else setStreak(0);
   };
 
@@ -117,6 +124,7 @@ export const SprintBody = ({ level, page }: SprintBodyProps): JSX.Element => {
 
     const scoreIncrement = isAnswerCorect ? multiplier * baseScore : 0;
     setScore(prev => prev + scoreIncrement);
+    if (isAnswerCorect) setAnimateScore(true);
 
     getAssignment();
   };
@@ -132,6 +140,8 @@ export const SprintBody = ({ level, page }: SprintBodyProps): JSX.Element => {
 
   return (
     <div className="sprint">
+      {/* <p>Page: {searchParams.get('page')}</p>
+      <p>Level: {searchParams.get('level')}</p> */}
       <div className="sprint_info" >
         <div className="sprint_controls">
           <GameControlButton
@@ -143,7 +153,15 @@ export const SprintBody = ({ level, page }: SprintBodyProps): JSX.Element => {
             onChange={value => { console.log(value); }}
           />
         </div>
-        <div className="sprint_score">Score: {score}</div>
+        <div className='sprint_score'>
+          <span className="score_text">Score: </span>
+          <div
+            className={animateScore ? 'score_animate' : ''}
+            onAnimationEnd={() => setAnimateScore(false)}
+          >
+            {score}
+          </div>
+        </div>
         <div className="sprint_timer">
           <Timer seconds={60} onTimeUp={() => console.log('time us up!')} />
         </div>
@@ -152,27 +170,39 @@ export const SprintBody = ({ level, page }: SprintBodyProps): JSX.Element => {
       <div className="sprint_form">
 
         <div className="sprint_streak">
-          <StreakCounter currentStreak={streak} />
-          <span>x{baseScore * multiplier}</span>
+          <div className="streak_line_cell" />
+          <div className="streak_line_cell">
+            <StreakCounter currentStreak={streak} />
+          </div>
+          <div
+            className="streak_line_cell"
+          >
+            <div
+              className={classNames('multi_value', animateMultiplier ? 'score_animate' : '')}
+              onAnimationEnd={() => setAnimateMultiplier(false)}
+            >
+               x {baseScore * multiplier}
+            </div>
+          </div>
         </div>
 
         <div
           onAnimationEnd={() => setAnimateSmile(false)}
-          className={
-            classNames(
-              'sprint_picture',
-              animateSmile && 'smile_animate',
-            )}
+          className={classNames('sprint_picture', animateSmile && 'smile_animate')}
         >
           {smileFace}
         </div>
 
         <div className="sprint_ask">
+          <div className="streak_ask_cell" />
           <span className="ask_word">{task?.word}</span>
-          <PlayAudio
-            source={task ? FILESTORAGE_URL + task.audio : ''}
-            type='single-button'
-          />
+          <div className="streak_ask_cell">
+            <PlayAudio
+              source={task ? FILESTORAGE_URL + task.audio : ''}
+              type='single-button'
+            />
+          </div>
+
         </div>
         <div className="sprint_answer">{task?.translateProposal}</div>
 
