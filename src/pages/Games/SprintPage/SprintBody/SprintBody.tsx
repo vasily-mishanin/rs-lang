@@ -199,9 +199,7 @@ export const SprintBody = ({ level, page, onGameOver }: SprintBodyProps): JSX.El
 
         <div className="sprint_streak">
           <div className="streak_line_cell" />
-          <div className="streak_line_cell">
-            <StreakCounter currentStreak={streak} />
-          </div>
+          <StreakCounter currentStreak={streak} />
           <div
             className="streak_line_cell"
           >
