@@ -42,7 +42,7 @@ export interface IGameResults {
 export interface SprintBodyProps {
   level: number;
   page: number;
-  onGameOver: (results: IGameResults)=>void;
+  onGameOver: (results: IGameResults) => void;
 }
 
 const getRandomIndex = (arrLength: number) => Math.floor(Math.random() * arrLength);
@@ -59,12 +59,13 @@ export const SprintBody = ({ level, page, onGameOver }: SprintBodyProps): JSX.El
   const [animateMultiplier, setAnimateMultiplier] = useState(false);
 
   const [playSoundItem, setPlaySoundItem] = useState<PlaySoundItem>();
+  const [gameSound, setGameSound] = useState(true);
 
   const usedWords = useRef<ISprintWord[]>([]);
   const wordList = useRef<ISprintWord[]>([]);
   const currentWords = useRef<ISprintWord[]>([]);
 
-  const correctAnswers= useRef<ISprintWord[]>([]);
+  const correctAnswers = useRef<ISprintWord[]>([]);
   const wrongAnswers = useRef<ISprintWord[]>([]);
 
   const getAssignment = () => {
@@ -91,8 +92,8 @@ export const SprintBody = ({ level, page, onGameOver }: SprintBodyProps): JSX.El
   const gameOver = () => {
     // console.log('time us up!');
     const gameResults: IGameResults = {
-      correctAnswers : correctAnswers.current,
-      wrongAnswers :  wrongAnswers.current,
+      correctAnswers: correctAnswers.current,
+      wrongAnswers: wrongAnswers.current,
       score,
     };
 
@@ -108,12 +109,13 @@ export const SprintBody = ({ level, page, onGameOver }: SprintBodyProps): JSX.El
           currentWords.current = [...data];
           getAssignment();
         })
-        .catch(err => {console.log(err);
+        .catch(err => {
+          console.log(err);
         });
 
       setFirstRun(false);
     }
-  }, []);
+  }, [firstRun, level, page]);
 
   const setAnswerEffects = (isCorrect: boolean) => {
     const getSmile = isCorrect
@@ -123,7 +125,8 @@ export const SprintBody = ({ level, page, onGameOver }: SprintBodyProps): JSX.El
     setSmileFace(getSmile);
     setAnimateSmile(true);
 
-    setPlaySoundItem({ id: task!.id , isPlaying: true, sourceId: ((isCorrect? 0 : 1)) });
+    if (gameSound)
+      setPlaySoundItem({ id: task!.id, isPlaying: true, sourceId: ((isCorrect ? 0 : 1)) });
 
   };
 
@@ -140,7 +143,7 @@ export const SprintBody = ({ level, page, onGameOver }: SprintBodyProps): JSX.El
   };
 
   const handleAnswer = (answer: AnswerType) => {
-    if (task){
+    if (task) {
       let isAnswerCorect = false;
       if (task?.wordTranslate === task?.translateProposal && answer === 'accept') isAnswerCorect = true;
       else if (task?.wordTranslate !== task?.translateProposal && answer === 'decline') isAnswerCorect = true;
@@ -179,7 +182,7 @@ export const SprintBody = ({ level, page, onGameOver }: SprintBodyProps): JSX.El
         <div className="sprint_controls">
           <GameControlButton
             icons={{ 'first': VolumeUpIcon, 'second': VolumeOffIcon }}
-            onChange={value => { console.log(value); }}
+            onChange={value => setGameSound(value)}
           />
           <GameControlButton
             icons={{ 'first': ArrowsExpandIcon, 'second': ViewGridIcon }}
@@ -212,7 +215,7 @@ export const SprintBody = ({ level, page, onGameOver }: SprintBodyProps): JSX.El
               className={classNames('multi_value', animateMultiplier ? 'score_animate' : '')}
               onAnimationEnd={() => setAnimateMultiplier(false)}
             >
-               x {baseScore * multiplier}
+              x {baseScore * multiplier}
             </div>
           </div>
         </div>
