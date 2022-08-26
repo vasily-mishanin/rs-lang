@@ -1,4 +1,4 @@
-const API_ENDPOINT = 'https://rss-rs-lang.herokuapp.com';
+export const API_ENDPOINT = 'https://rss-rs-lang.herokuapp.com';
 
 export function getWords (group: string, page: string) {
   const url = new URL(`${API_ENDPOINT}/words`);

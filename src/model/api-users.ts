@@ -2,7 +2,7 @@ import type { User } from './app-types';
 
 const API_ENDPOINT = 'https://rss-rs-lang.herokuapp.com';
 
-export function registerUser (user:User){
+export function registerUser (user: User) {
   return fetch(`${API_ENDPOINT}/users`, {
     method: 'POST',
     headers: {
@@ -13,7 +13,7 @@ export function registerUser (user:User){
   });
 }
 
-export function signInUser (user:User){
+export function signInUser (user: User) {
   return fetch(`${API_ENDPOINT}/signin`, {
     method: 'POST',
     headers: {

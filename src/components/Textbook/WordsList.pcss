@@ -1,0 +1,20 @@
+.words-section{
+
+}
+
+.words-list {
+  @apply flex flex-1 flex-wrap gap-4 justify-center;
+  
+
+  &-item:nth-child(even){
+    & img {
+      transform: rotate(2deg);
+    }
+  }
+
+  &-item:nth-child(3){
+    & img {
+      transform: rotate(-2deg);
+    }
+  }
+}

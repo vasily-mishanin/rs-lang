@@ -47,6 +47,8 @@ const App = (): JSX.Element => {
         <Route path="/games" element={<GamesPage />}>
           <Route path="audio" element={<GameAudio />} />
           <Route path="sprint" element={<GameSprint />} />
+          <Route path="audio/:group/:page" element={<GameAudio />} />
+          <Route path="sprint/:group/:page" element={<GameSprint />} />
         </Route>
 
         <Route path="/auth" element={!isLoggedIn ? <AuthPage /> : <Navigate to="/profile" />} />

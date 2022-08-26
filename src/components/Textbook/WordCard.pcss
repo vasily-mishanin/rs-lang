@@ -1,0 +1,29 @@
+.word-card {
+  @apply w-72 flex flex-col justify-between;
+
+  & img {
+    transform: rotate(-1deg);
+    @apply rounded-md mb-4 ;
+   
+  }
+
+  
+
+  &-essence{
+    @apply flex gap-4 mb-2 justify-between;
+  }
+
+  &-controls {
+    @apply w-12;
+
+    button {
+      @apply w-8;
+
+      :hover{
+        cursor: pointer;
+      }
+    }
+  }
+
+  
+}
