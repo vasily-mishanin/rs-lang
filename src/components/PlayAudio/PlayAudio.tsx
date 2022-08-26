@@ -9,13 +9,20 @@ import { GameControlButton } from '@/components/ui/GameControlButton/GameControl
 export type AudioControlsType = 'default' | 'single-button';
 export interface PlayAudioProps {
   source: string;
+  additionalSources?: string [];
   type: AudioControlsType;
 }
 
-export const PlayAudio = ({ source, type }: PlayAudioProps): JSX.Element => {
-  const [isPlaying, setisPlaying] = useState(false);
+export const PlayAudio = ({ source, additionalSources, type }: PlayAudioProps): JSX.Element => {
+  console.log('PLAYAUDIO');
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  let sources:string[];
+
+  if(additionalSources && additionalSources.length > 0 ){
+    sources = [...additionalSources];
+  }
 
   const setPlayer = async (playState: boolean) => {
     if (audioRef && audioRef.current) {
@@ -32,27 +39,40 @@ export const PlayAudio = ({ source, type }: PlayAudioProps): JSX.Element => {
 
   }, [isPlaying]);
 
-  const onPlaying = () => { };
+  const onPlaying = () => {};
 
-  const onEnded = () => setisPlaying(false);
+  const onEnded = async () => {
+    if(sources && sources.length > 0 ){
+      if(audioRef && audioRef.current){
+        audioRef.current.src = sources[0];
+        await audioRef.current.play();
+        sources = sources.filter(s => s!==sources[0]);
+      }
+    } else {
+      if(audioRef && audioRef.current) {
+        audioRef.current.src = source;
+      }
+      setIsPlaying(false);
+    }
+  };
 
   return (
     <div className="audio">
       <audio
         ref={audioRef}
         src={source}
-        onTimeUpdate={onPlaying}
-        onEnded={onEnded}
         controls={type === 'default'}
+        onTimeUpdate={onPlaying}
+        onEnded={() => { onEnded().catch(()=>{});}}
       >
-        <track kind="captions" />
+        <track kind="captions" />s
       </audio>
 
       {type !== 'default' &&
         <GameControlButton
           changeStateOutside={!isPlaying}
           icons={{ 'first': PlayIcon, 'second': PauseIcon }}
-          onChange={() => { setisPlaying(prev => !prev); }}
+          onChange={() => { setIsPlaying(prev => !prev); }}
         />
       }
     </div>

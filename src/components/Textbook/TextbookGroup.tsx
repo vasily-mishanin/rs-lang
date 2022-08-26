@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 
 import { useEffect, useState } from 'react';
 
@@ -49,17 +49,35 @@ const TextbookGroup = (): JSX.Element => {
     }
   };
 
+  const gamePath = (gameName:string) =>{
+    let path = `/games/${gameName}`;
+    if(group){
+      path += `/${group}`;
+      if(page){
+        path+=`/${page}`;
+      }
+    }
+    console.log(path);
+    return path;
+  };
+
   return (
-    <section>
-      <h2>
-        TextbookGroup - {params.group && parseInt(params.group, 10) + 1} Page -{' '}
+    <section className='textbook-group'>
+      <h1>
+        {params.group && parseInt(params.group, 10) + 1} -{' '}
         {params.page && parseInt(params.page, 10) + 1}
-      </h2>
-      <Pagination
-        totalElements={WORDS_PER_GROUP}
-        elementsPerPage={WORDS_PER_PAGE}
-        paginate={paginate}
-      />
+      </h1>
+      <div className='textbook-group-controls'>
+        <Pagination
+          totalElements={WORDS_PER_GROUP}
+          elementsPerPage={WORDS_PER_PAGE}
+          paginate={paginate}
+        />
+        <div className='textbook-group-games-links' >
+          <Link to={gamePath('sprint')}>Sprint</Link>
+          <Link to={gamePath('audio')}>Audio</Link>
+        </div>
+      </div>
 
       {loading ? 'LOADING...' : <WordsList words={currentWords} />}
     </section>

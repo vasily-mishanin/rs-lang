@@ -51,7 +51,7 @@ export const GameControlButton = (
       role="button"
       tabIndex={0}
     >
-      <div className="control_icon">{state ? <icons.first/> : <icons.second />}</div>
+      <div className={`control_icon ${state ? '' : 'active'}`}>{state ? <icons.first/> : <icons.second />}</div>
     </div>
 
   );};
