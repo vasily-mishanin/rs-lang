@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 
+import failSound from '@/assets/sound/error-3.mp3';
+import okSound from '@/assets/sound/success-1.mp3';
+
 export interface PlaySoundItem {
   id: string;
   sourceId: number;
@@ -7,18 +10,19 @@ export interface PlaySoundItem {
 }
 
 export interface PlaySoundProps {
-  sources: string[];
-  playItem: PlaySoundItem;
+  playEvent: PlaySoundItem;
 }
 
-export const PlaySound = ({ sources, playItem }: PlaySoundProps): JSX.Element => {
-  const [playingItem, setPlayItem ]= useState(playItem);
+const sources = [okSound, failSound];
+
+export const PlaySoundEffect = ({ playEvent }: PlaySoundProps): JSX.Element => {
+  const [playingItem, setPlayItem ]= useState(playEvent);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    setPlayItem(playItem);
-  }, [playItem]);
+    setPlayItem(playEvent);
+  }, [playEvent]);
 
   useEffect(() => {
 

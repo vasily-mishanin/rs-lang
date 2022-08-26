@@ -5,12 +5,12 @@ import classNames from 'classnames';
 
 import { useEffect, useRef, useState } from 'react';
 
-import { PlaySound, PlaySoundItem } from '../PlaySound/PlaySound';
 import { StreakCounter } from '../StreakCounter/StreakCounter';
 import { Timer } from '../Timer/Timer';
 
 import './SprintBody.pcss';
 import { PlayAudio } from '@/components/PlayAudio/PlayAudio';
+import { PlaySoundEffect, PlaySoundItem } from '@/components/PlaySoundEffect/PlaySoundEffect';
 import { Button } from '@/components/ui/Button/Button';
 import { GameControlButton } from '@/components/ui/GameControlButton/GameControlButton';
 import { useOnKeyUp } from '@/hooks/useOnKeyUpDocument';
@@ -251,9 +251,8 @@ export const SprintBody = ({ level, page, onGameOver }: SprintBodyProps): JSX.El
         </div>
       </div>
 
-      <PlaySound
-        sources={['https://www.w3schools.com/html/horse.mp3', 'https://www2.cs.uic.edu/~i101/SoundFiles/taunt.wav']}
-        playItem={playSoundItem!}
+      <PlaySoundEffect
+        playEvent={playSoundItem!}
       />
 
     </div>
