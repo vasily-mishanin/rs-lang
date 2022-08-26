@@ -5,6 +5,7 @@ import classNames from 'classnames';
 
 import { useEffect, useRef, useState } from 'react';
 
+import { PlaySound, PlaySoundItem } from '../PlaySound/PlaySound';
 import { StreakCounter } from '../StreakCounter/StreakCounter';
 import { Timer } from '../Timer/Timer';
 
@@ -57,6 +58,8 @@ export const SprintBody = ({ level, page, onGameOver }: SprintBodyProps): JSX.El
   const [animateScore, setAnimateScore] = useState(false);
   const [animateMultiplier, setAnimateMultiplier] = useState(false);
 
+  const [playSoundItem, setPlaySoundItem] = useState<PlaySoundItem>();
+
   const usedWords = useRef<ISprintWord[]>([]);
   const wordList = useRef<ISprintWord[]>([]);
   const currentWords = useRef<ISprintWord[]>([]);
@@ -86,7 +89,7 @@ export const SprintBody = ({ level, page, onGameOver }: SprintBodyProps): JSX.El
   };
 
   const gameOver = () => {
-    console.log('time us up!');
+    // console.log('time us up!');
     const gameResults: IGameResults = {
       correctAnswers : correctAnswers.current,
       wrongAnswers :  wrongAnswers.current,
@@ -119,6 +122,8 @@ export const SprintBody = ({ level, page, onGameOver }: SprintBodyProps): JSX.El
 
     setSmileFace(getSmile);
     setAnimateSmile(true);
+
+    setPlaySoundItem({ id: task!.id , isPlaying: true, sourceId: ((isCorrect? 0 : 1)) });
 
   };
 
@@ -245,6 +250,11 @@ export const SprintBody = ({ level, page, onGameOver }: SprintBodyProps): JSX.El
           />
         </div>
       </div>
+
+      <PlaySound
+        sources={['https://www.w3schools.com/html/horse.mp3', 'https://www2.cs.uic.edu/~i101/SoundFiles/taunt.wav']}
+        playItem={playSoundItem!}
+      />
 
     </div>
 
