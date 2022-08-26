@@ -1,5 +1,4 @@
-import { ArrowsExpandIcon } from '@heroicons/react/outline';
-import { VolumeOffIcon, VolumeUpIcon, ViewGridIcon } from '@heroicons/react/solid';
+import { VolumeOffIcon, VolumeUpIcon } from '@heroicons/react/solid';
 import classNames from 'classnames';
 // import { useSearchParams } from 'react-router-dom';
 
@@ -90,7 +89,6 @@ export const SprintBody = ({ level, page, onGameOver }: SprintBodyProps): JSX.El
   };
 
   const gameOver = () => {
-    // console.log('time us up!');
     const gameResults: IGameResults = {
       correctAnswers: correctAnswers.current,
       wrongAnswers: wrongAnswers.current,
@@ -183,10 +181,6 @@ export const SprintBody = ({ level, page, onGameOver }: SprintBodyProps): JSX.El
           <GameControlButton
             icons={{ 'first': VolumeUpIcon, 'second': VolumeOffIcon }}
             onChange={value => setGameSound(value)}
-          />
-          <GameControlButton
-            icons={{ 'first': ArrowsExpandIcon, 'second': ViewGridIcon }}
-            onChange={value => { console.log(value); }}
           />
         </div>
         <div className='sprint_score'>
