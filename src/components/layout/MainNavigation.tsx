@@ -1,62 +1,93 @@
+import { Link, useNavigate } from '@tanstack/react-location';
 import { useSelector, useDispatch } from 'react-redux';
-import { NavLink, Link } from 'react-router-dom';
+
+import React from 'react';
 
 import './MainNavigation.pcss';
 
 import { authActions } from '@/store/authSlice';
 import { RootState } from '@/store/store';
 
-const MainNavigation = (): JSX.Element => {
+const MainNavigation = ({ children }:React.PropsWithChildren): JSX.Element => {
+  console.log('MainNavigation');
   const authState = useSelector((state: RootState) => state.authentication);
   const { isLoggedIn } = authState;
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const logoutHandler = () => {
     dispatch(authActions.logout());
+    navigate({ to:'/', replace:true });
+    window.location.reload(); // bad
   };
 
+  const getActiveProps = () => ({
+    style: { color: 'rgb(120 53 15)' },
+  });
+
   return (
-    <header className="header">
-      <Link to="/">
-        <div className="logo">RS Lang</div>
-      </Link>
-      <nav>
-        <ul>
-          <li>
-            <NavLink to="/">Home</NavLink>
-          </li>
-          <li>
-            <NavLink to="/team">Team </NavLink>
-          </li>
-          <li>
-            <NavLink to="/textbook">Textbook</NavLink>
-          </li>
-          {isLoggedIn && <li>
-            <NavLink to="/dictionary">Dictionary</NavLink>
-          </li>}
-          <li>
-            <NavLink to="/games">Games</NavLink>
-          </li>
-          {!isLoggedIn && (
+    <>
+      <header className="header">
+
+        <Link to="/" getActiveProps={getActiveProps}>
+          <div className="logo">RS Lang</div>
+        </Link>
+        <nav>
+          <ul>
             <li>
-              <NavLink to="/auth">Login|SignUp</NavLink>
+              <Link to="/" getActiveProps={getActiveProps}>
+              Home
+              </Link>
             </li>
-          )}
-          {isLoggedIn && (
             <li>
-              <NavLink to="/profile">Profile {authState.user.name}</NavLink>
+              <Link to="/team" getActiveProps={getActiveProps}>
+              Team{' '}
+              </Link>
             </li>
-          )}
-          {isLoggedIn && (
             <li>
-              <button type="button" onClick={logoutHandler}>
+              <Link to="/textbook" getActiveProps={getActiveProps}>
+              Textbook
+              </Link>
+            </li>
+            {isLoggedIn && (
+              <li>
+                <Link to="/dictionary" getActiveProps={getActiveProps}>
+                Dictionary
+                </Link>
+              </li>
+            )}
+            <li>
+              <Link to="/games" getActiveProps={getActiveProps}>
+              Games
+              </Link>
+            </li>
+            {!isLoggedIn && (
+              <li>
+                <Link to="/auth" getActiveProps={getActiveProps}>
+                Login|SignUp
+                </Link>
+              </li>
+            )}
+            {isLoggedIn && (
+              <li>
+                <Link to="/profile" getActiveProps={getActiveProps}>
+                Profile {authState.user.name}
+                </Link>
+              </li>
+            )}
+            {isLoggedIn && (
+              <li>
+                <button type="button" onClick={logoutHandler}>
                 Logout
-              </button>
-            </li>
-          )}
-        </ul>
-      </nav>
-    </header>
+                </button>
+              </li>
+            )}
+          </ul>
+        </nav>
+      </header>
+      {children}
+
+    </>
   );
 };
 

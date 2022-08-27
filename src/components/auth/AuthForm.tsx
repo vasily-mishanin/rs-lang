@@ -1,5 +1,5 @@
+import { useNavigate } from '@tanstack/react-location';
 import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 
 import { FormEvent, useRef, useState } from 'react';
 
@@ -30,6 +30,7 @@ const AuthForm = (): JSX.Element => {
   };
 
   const submitHandler = (e: FormEvent) => {
+    console.log('submitHandler');
     e.preventDefault();
     const enteredEmail = emailInputRef.current!.value;
     const enteredPassword = passwordInputRef.current!.value;
@@ -78,7 +79,8 @@ const AuthForm = (): JSX.Element => {
           const token = res.token ? res.token : '';
           const name = res.name ? res.name : '';
           dispatch(authActions.login({ token, name }));
-          navigate('/profile', { replace: true });
+          navigate({ to: '/profile', replace: true });
+          window.location.reload(); // bad
         })
         .catch(err => console.log(err));
     }

@@ -1,8 +1,10 @@
+import { ReactLocation, Router, Navigate, Outlet } from '@tanstack/react-location';
 import { useSelector } from 'react-redux';
-import { Routes, Route, Navigate } from 'react-router-dom';
 
 import TextbookGroup from './components/Textbook/TextbookGroup';
-import Layout from './components/layout/Layout';
+import MainNavigation from './components/layout/MainNavigation';
+import Spinner from './components/ui/Spinner';
+import * as api from './model/api-words';
 import AuthPage from './pages/AuthPage';
 import DictionaryPage from './pages/Dictionary/DictionaryPage';
 import DifficultWords from './pages/Dictionary/DifficultWords';
@@ -17,45 +19,78 @@ import ProfilePage from './pages/ProfilePage';
 import { TeamPage } from './pages/TeamPage/TeamPage';
 import TextbookMainPage from './pages/TextbookMainPage/TextbookMainPage';
 
+import type { LocationGenerics } from './model/app-types';
 import type { RootState } from './store/store';
+import type { Route } from '@tanstack/react-location';
 
 const App = (): JSX.Element => {
   const authState = useSelector((state: RootState) => state.authentication);
   const { isLoggedIn } = authState;
-  // console.log('APP', 'isLoggedIn', isLoggedIn, user);
-  // console.log('token:', token);
+
+  const location = new ReactLocation<LocationGenerics>();
+
+  const appRoutes: Route<LocationGenerics>[] = [
+    { path: '/', element: <MainPage /> },
+    { path: '/team', element: <TeamPage /> },
+    {
+      path: '/textbook',
+      element: <TextbookMainPage />,
+      children: [
+        {
+          path: ':group/:page',
+          element: <TextbookGroup />,
+          pendingElement: <Spinner />,
+          pendingMs: 100,
+          loader: async ({ params }) => {
+            const currentWords = await api.getWords(params.group, params.page);
+            return {
+              words: currentWords || undefined,
+            };
+          },
+        },
+      ],
+    },
+    {
+      path: '/dictionary',
+      element: isLoggedIn ? <DictionaryPage /> : <Navigate to="/textbook" />,
+      children: [
+        { path: 'difficult', element: <DifficultWords /> },
+        { path: 'learned', element: <LearnedWords /> },
+        { path: 'progress', element: <Progress /> },
+        { path: 'statistics', element: <Statistics /> },
+      ],
+    },
+    {
+      path: '/games',
+      element: <GamesPage />,
+      children: [
+        { path: 'audio', element: <GameAudio /> },
+        {
+          path: 'sprint',
+          element: <GameSprint />,
+        },
+      ],
+    },
+    { path: '/auth', element: !isLoggedIn ? <AuthPage /> : <Navigate to="/profile" /> },
+    { path: '/profile', element: isLoggedIn ? <ProfilePage /> : <Navigate to="/auth" /> },
+    { path: '*', element: <Navigate to="/" /> },
+  ];
+
+  // setRoutes(appRoutes);
+
+  console.log('APP', 'location', location);
+  console.log('APP', 'appRoutes', appRoutes);
 
   return (
-    <Layout>
-      <Routes>
-        <Route path="/" element={<MainPage />} />
-        <Route path="/team" element={<TeamPage />} />
-        <Route path="/textbook" element={<TextbookMainPage />}>
-          <Route path=":group/:page" element={<TextbookGroup />} />
-        </Route>
-
-        <Route
-          path="/dictionary"
-          element={isLoggedIn ? <DictionaryPage /> : <Navigate to="/textbook" />}
-        >
-          <Route path="difficult" element={<DifficultWords />} />
-          <Route path="learned" element={<LearnedWords />} />
-          <Route path="progress" element={<Progress />} />
-          <Route path="statistics" element={<Statistics />} />
-        </Route>
-
-        <Route path="/games" element={<GamesPage />}>
-          <Route path="audio" element={<GameAudio />} />
-          <Route path="sprint" element={<GameSprint />} />
-          <Route path="audio/:group/:page" element={<GameAudio />} />
-          <Route path="sprint/:group/:page" element={<GameSprint />} />
-        </Route>
-
-        <Route path="/auth" element={!isLoggedIn ? <AuthPage /> : <Navigate to="/profile" />} />
-        <Route path="/profile" element={isLoggedIn ? <ProfilePage /> : <Navigate to="/auth" />} />
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
-    </Layout>
+    <Router
+      location={location}
+      routes={appRoutes}
+      defaultPendingElement={<Spinner />}
+      defaultPendingMs={10}
+    >
+      <MainNavigation/>
+      <Outlet />
+    </Router>
   );
 };
 export default App;

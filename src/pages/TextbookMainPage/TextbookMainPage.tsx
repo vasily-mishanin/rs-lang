@@ -1,5 +1,5 @@
 // import { useSelector } from 'react-redux';
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link } from '@tanstack/react-location';
 
 import './TextbookMainPage.pcss';
 

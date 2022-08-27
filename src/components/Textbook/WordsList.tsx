@@ -12,6 +12,7 @@ interface ITextbookPage {
 const TextbookPage = (props: ITextbookPage): JSX.Element => {
   const { words } = props;
   console.log('TextbookPage');
+
   return (
     <section className="words-section">
       <h3>TextbookPage words ({words.length})</h3>
