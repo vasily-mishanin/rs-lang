@@ -2,16 +2,43 @@ import { useSearchParams } from 'react-router-dom';
 
 import { useEffect, useRef, useState } from 'react';
 
-import './SprintPage.pcss';
+import './CommonGamePage.pcss';
 
-import { IGameResults, SprintBody } from './SprintBody/SprintBody';
+import { IGameResults, SprintBody } from '../SprintPage/SprintBody/SprintBody';
 
 import { GameDescription } from '@/components/games/GameDescription/GameDescription';
 import { GameDifficulty } from '@/components/games/GameDifficulty/GameDifficulty';
 import { GameResults } from '@/components/games/GameResults/GameResults';
 import { Button } from '@/components/ui/Button/Button';
 
-export const SprintPage = (): JSX.Element => {
+export type GameType = 'sprint' | 'audio';
+type GameNameMap = {
+  [key in GameType]: string ;
+};
+type GameDescrMap = {
+  [key in GameType]: string[];
+};
+export const gameName: GameNameMap = {
+  sprint: 'Спринт',
+  audio: 'Аудиовызов',
+};
+export const gameDescription: GameDescrMap = {
+  sprint: [
+    'В течение одной минуты отвечай соответствует ли слово предложенному переводу.',
+    'Можно кликать по кнопкам, или нажимать клавиши стрелки',
+  ],
+  audio: [
+    'Тренировка восприятия слов на слух.',
+    'Надо выбрать правильный ответ из предложенных вариантов',
+  ],
+};
+
+export interface GamePageProps {
+  game: GameType;
+
+}
+
+export const CommonGamePage = ({ game }: GamePageProps): JSX.Element => {
   const [level, setLevel] = useState(1);
   const [currPage, setCurrPage] = useState(1);
 
@@ -66,11 +93,8 @@ export const SprintPage = (): JSX.Element => {
 
       {!gameStarted && !gameEnded &&
       <GameDescription
-        name='Спринт'
-        description={[
-          'В течение одной минуты отвечай соответствует ли слово предложенному переводу.',
-          'Можно кликать по кнопкам, или нажимать клавиши стрелки',
-        ]}
+        name={gameName[game]}
+        description={gameDescription[game]}
       />
       }
 
@@ -82,21 +106,33 @@ export const SprintPage = (): JSX.Element => {
 
       {gameStarted &&
       <div className="game_body">
-        <SprintBody
-          level={level}
-          page = {currPage}
-          startedFromBook = {startedFromTextBook}
-          onGameOver = {gameIsOver}
-        />
+
+        {game === 'sprint' &&
+                <SprintBody
+                  level={level}
+                  page = {currPage}
+                  startedFromBook = {startedFromTextBook}
+                  onGameOver = {gameIsOver}
+                />
+        }
+        {game === 'audio' &&
+                <SprintBody
+                  level={level}
+                  page = {currPage}
+                  startedFromBook = {startedFromTextBook}
+                  onGameOver = {gameIsOver}
+                />
+        }
+
       </div>
       }
 
-      {gameEnded &&
+      {gameEnded && gameResults &&
       <div className="game_body">
         <GameResults
-          correctAnswers={gameResults!.correctAnswers}
-          wrongAnswers={gameResults!.wrongAnswers}
-          score = {gameResults!.score}
+          correctAnswers={gameResults.correctAnswers}
+          wrongAnswers={gameResults.wrongAnswers}
+          score = {gameResults.score}
         />
         <div className="game_restart">
           <Button buttonType='primary' text='Играть снова' onClick={restartGame} />
