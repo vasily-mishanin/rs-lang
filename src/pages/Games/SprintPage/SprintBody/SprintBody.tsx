@@ -18,7 +18,8 @@ import { Word } from '@/model/app-types';
 const FILESTORAGE_URL = 'https://rss-rs-lang.herokuapp.com/';
 const PAGES_PER_GROUP = 30;
 
-const baseScore = 10;
+const BASE_SCORE = 10;
+const MAX_MULTIPLIER = 8;
 
 const happySmiles = ['😊', '😆', '😁', '😄', '😅', '🙃', '😃', '😋'];
 const sadSmiles = ['😬', '😐', '🤔', '😑', '🙄', '😕'];
@@ -83,7 +84,7 @@ export const SprintBody = (
 
   const getRandomPage = () => {
     let index = getRandomIndex(PAGES_PER_GROUP);
-    while (usedPages.current.includes(index)){
+    while (usedPages.current.includes(index)) {
       index = getRandomIndex(PAGES_PER_GROUP);
     }
     return index;
@@ -107,7 +108,7 @@ export const SprintBody = (
       setTask(assigment);
     }
 
-    else if (startedFromBook) { gameOver();}
+    else if (startedFromBook) { gameOver(); }
     else {
       const nextPage = getRandomPage();
       usedPages.current.push(nextPage);
@@ -156,13 +157,16 @@ export const SprintBody = (
   const handleStreak = (isCorrect: boolean) => {
     if (isCorrect) {
       if (streak === 2) {
-        setmultiplier(prev => prev + 1);
-        setAnimateMultiplier(true);
+        setmultiplier(prev => prev < MAX_MULTIPLIER ? prev * 2 : prev);
+        if (multiplier < MAX_MULTIPLIER) setAnimateMultiplier(true);
         setStreak(prev => prev + 1);
       } else if (streak === 3) setStreak(0);
       else setStreak(prev => prev + 1);
 
-    } else setStreak(0);
+    } else {
+      setStreak(0);
+      setmultiplier(prev => prev > 1 ? prev / 2 : prev);
+    }
   };
 
   const handleAnswer = (answer: AnswerType) => {
@@ -179,7 +183,7 @@ export const SprintBody = (
 
       handleStreak(isAnswerCorect);
 
-      const scoreIncrement = isAnswerCorect ? multiplier * baseScore : 0;
+      const scoreIncrement = isAnswerCorect ? multiplier * BASE_SCORE : 0;
       setScore(prev => prev + scoreIncrement);
       if (isAnswerCorect) setAnimateScore(true);
 
@@ -232,7 +236,7 @@ export const SprintBody = (
               className={classNames('multi_value', animateMultiplier ? 'score_animate' : '')}
               onAnimationEnd={() => setAnimateMultiplier(false)}
             >
-              x {baseScore * multiplier}
+              x {BASE_SCORE * multiplier}
             </div>
           </div>
         </div>
