@@ -2,7 +2,8 @@ import classNames from 'classnames';
 
 import { GameResultItem } from './GameResultItem/GameResultItem';
 
-import { IGameResults } from '../../../pages/Games/SprintPage/SprintBody/SprintBody';
+import { IGameResults } from '@/types/gameTypes';
+
 import './GameResults.pcss';
 
 export const GameResults =

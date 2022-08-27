@@ -15,6 +15,7 @@ import { useOnKeyUp } from '@/hooks/useOnKeyUpDocument';
 import { getWords } from '@/model/api-words';
 import { Word } from '@/model/app-types';
 import { FILESTORAGE_URL, PAGES_PER_GROUP, GAME_RULES } from '@/model/constants';
+import { IGameResults, ISprintWord } from '@/types/gameTypes';
 
 const { BASE_SCORE } = GAME_RULES.sprint;
 const { MAX_MULTIPLIER } = GAME_RULES.sprint;
@@ -24,19 +25,6 @@ const sadSmiles = ['😬', '😐', '🤔', '😑', '🙄', '😕'];
 
 type AnswerType = 'accept' | 'decline';
 
-export interface ISprintWord {
-  id: string;
-  word: string;
-  audio: string;
-  wordTranslate: string;
-  translateProposal?: string;
-}
-
-export interface IGameResults {
-  correctAnswers: ISprintWord[];
-  wrongAnswers: ISprintWord[];
-  score: number;
-}
 export interface SprintBodyProps {
   level: number;
   page: number;

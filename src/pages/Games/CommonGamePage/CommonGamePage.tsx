@@ -4,12 +4,13 @@ import { useEffect, useRef, useState } from 'react';
 
 import './CommonGamePage.pcss';
 
-import { IGameResults, SprintBody } from '../SprintPage/SprintBody/SprintBody';
+import { SprintBody } from '../SprintPage/SprintBody/SprintBody';
 
 import { GameDescription } from '@/components/games/GameDescription/GameDescription';
 import { GameDifficulty } from '@/components/games/GameDifficulty/GameDifficulty';
 import { GameResults } from '@/components/games/GameResults/GameResults';
 import { Button } from '@/components/ui/Button/Button';
+import { IGameResults } from '@/types/gameTypes';
 
 export type GameType = 'sprint' | 'audio';
 type GameNameMap = {

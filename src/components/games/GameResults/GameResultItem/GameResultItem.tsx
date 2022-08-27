@@ -2,8 +2,8 @@ import classNames from 'classnames';
 
 import { PlayAudio } from '@/components/PlayAudio/PlayAudio';
 import { FILESTORAGE_URL } from '@/model/constants';
-import { ISprintWord } from '@/pages/Games/SprintPage/SprintBody/SprintBody';
 import './GameResultItem.pcss';
+import { ISprintWord } from '@/types/gameTypes';
 
 export interface GameResultItemProps {
   item: ISprintWord;
