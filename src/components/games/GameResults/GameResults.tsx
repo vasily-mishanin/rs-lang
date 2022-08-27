@@ -1,18 +1,25 @@
 import classNames from 'classnames';
 
-import { IGameResults } from '../SprintBody/SprintBody';
+import { IGameResults } from '../../../pages/Games/SprintPage/SprintBody/SprintBody';
 import './GameResults.pcss';
 
 export const GameResults =
 (  { correctAnswers,  wrongAnswers, score }: IGameResults): JSX.Element => {
-  const x = 0;
+
+  const getResultDesision = () => {
+    if (wrongAnswers.length === 0) return 'Отличный результат!';
+    if (correctAnswers.length > wrongAnswers.length) return 'Хороший результат, продолжай учиться!';
+    return 'Продолжай учиться, в следующий раз получится';
+  };
+
   return (
     <div className="results">
-      <h4>Your score is : {score}</h4>
+      <h4>Твой счет : {score}</h4>
+      <h4>{getResultDesision()}</h4>
       <div className="results_table">
 
         <div className={classNames('results_list', 'results_correct')}>
-          <h4>Correct answers</h4>
+          <h4>Правильные ответы:</h4>
           {correctAnswers.map(el => (
             <div key={el.id} className="">
               {el.word}
@@ -20,7 +27,7 @@ export const GameResults =
           ))}
         </div>
         <div className={classNames('results_list', 'results_wrong')}>
-          <h4>Wrong answers</h4>
+          <h4>Ошибки:</h4>
           {wrongAnswers.map(el => (
             <div key={el.id} className="">
               {el.word}

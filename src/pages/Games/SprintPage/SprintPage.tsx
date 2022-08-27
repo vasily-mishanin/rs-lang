@@ -5,9 +5,9 @@ import { useEffect, useRef, useState } from 'react';
 
 import './SprintPage.pcss';
 
-import { GameResults } from './GameResults/GameResults';
 import { IGameResults, SprintBody } from './SprintBody/SprintBody';
 
+import { GameResults } from '@/components/games/GameResults/GameResults';
 import { Button } from '@/components/ui/Button/Button';
 import { Dropdown, OptionsType } from '@/components/ui/DropDown/DropDown';
 import type { RootState } from '@/store/store';
