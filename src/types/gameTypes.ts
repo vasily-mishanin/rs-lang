@@ -9,5 +9,12 @@ export interface ISprintWord {
   word: string;
   audio: string;
   wordTranslate: string;
-  translateProposal?: string;
+  translateProposal?: string[];
+}
+
+export interface GameBodyProps {
+  level: number;
+  page: number;
+  startedFromBook: boolean;
+  onGameOver: (results: IGameResults) => void;
 }

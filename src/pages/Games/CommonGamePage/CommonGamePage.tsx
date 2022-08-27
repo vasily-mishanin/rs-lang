@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import './CommonGamePage.pcss';
 
+import { AudioTrainBody } from '../AudioTrainPage/AudioTrainBody/AudioTrainBody';
 import { SprintBody } from '../SprintPage/SprintBody/SprintBody';
 
 import { GameDescription } from '@/components/games/GameDescription/GameDescription';
@@ -117,7 +118,7 @@ export const CommonGamePage = ({ game }: GamePageProps): JSX.Element => {
                 />
         }
         {game === 'audio' &&
-                <SprintBody
+                <AudioTrainBody
                   level={level}
                   page = {currPage}
                   startedFromBook = {startedFromTextBook}
