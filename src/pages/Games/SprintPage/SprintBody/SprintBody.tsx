@@ -14,12 +14,10 @@ import { GameControlButton } from '@/components/ui/GameControlButton/GameControl
 import { useOnKeyUp } from '@/hooks/useOnKeyUpDocument';
 import { getWords } from '@/model/api-words';
 import { Word } from '@/model/app-types';
+import { FILESTORAGE_URL, PAGES_PER_GROUP, GAME_RULES } from '@/model/constants';
 
-const FILESTORAGE_URL = 'https://rss-rs-lang.herokuapp.com/';
-const PAGES_PER_GROUP = 30;
-
-const BASE_SCORE = 10;
-const MAX_MULTIPLIER = 8;
+const { BASE_SCORE } = GAME_RULES.sprint;
+const { MAX_MULTIPLIER } = GAME_RULES.sprint;
 
 const happySmiles = ['😊', '😆', '😁', '😄', '😅', '🙃', '😃', '😋'];
 const sadSmiles = ['😬', '😐', '🤔', '😑', '🙄', '😕'];
