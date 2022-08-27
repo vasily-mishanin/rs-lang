@@ -209,7 +209,7 @@ export const SprintBody = (
           />
         </div>
         <div className='sprint_score'>
-          <span className="score_text">Score: </span>
+          <span className="score_text">Результат: </span>
           <div
             className={animateScore ? 'score_animate' : ''}
             onAnimationEnd={() => setAnimateScore(false)}
