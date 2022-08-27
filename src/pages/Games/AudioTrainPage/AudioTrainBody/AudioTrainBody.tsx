@@ -1,9 +1,15 @@
+import { VolumeOffIcon, VolumeUpIcon } from '@heroicons/react/solid';
+
 import { useEffect, useRef, useState } from 'react';
 
 import { getRandomIndex, getRandomPage, loadWords } from '../../CommonGamePage/index';
 
-import { PlaySoundItem } from '@/components/PlaySoundEffect/PlaySoundEffect';
+import { PlayAudio } from '@/components/PlayAudio/PlayAudio';
+import { PlaySoundEffect, PlaySoundItem } from '@/components/PlaySoundEffect/PlaySoundEffect';
+import { Button } from '@/components/ui/Button/Button';
+import { GameControlButton } from '@/components/ui/GameControlButton/GameControlButton';
 import { Word } from '@/model/app-types';
+import { FILESTORAGE_URL } from '@/model/constants';
 import { IGameResults, GameBodyProps, ISprintWord } from '@/types/gameTypes';
 
 import './AudioTrainBody.pcss';
@@ -71,6 +77,31 @@ export const AudioTrainBody = (
 
   };
 
+  const setAnswerEffects = (isCorrect: boolean) => {
+    if (gameSound)
+      setPlaySoundItem({ id: task!.id, isPlaying: true, sourceId: ((isCorrect ? 0 : 1)) });
+
+  };
+
+  const handleAnswer = (answer: string) => {
+
+    if (task) {
+      const isAnswerCorect = (task?.wordTranslate === answer);
+
+      if (isAnswerCorect) correctAnswers.current.push(task);
+      else wrongAnswers.current.push(task);
+
+      setAnswerEffects(isAnswerCorect);
+
+      const scoreIncrement = isAnswerCorect ? 1 : 0;
+      setScore(prev => prev + scoreIncrement);
+      // if (isAnswerCorect) setAnimateScore(true);
+
+      getAssignment();
+    }
+
+  };
+
   useEffect(() => {
     if (firstRun) {
       usedPages.current.push(page);
@@ -88,7 +119,48 @@ export const AudioTrainBody = (
   }, [firstRun, level, page]);
 
   return (
-    <div className="streak_line">AUDIO</div>
+    <div className="sprint">
+      <div className="sprint_info" >
+        <div className="sprint_controls">
+          <GameControlButton
+            icons={{ 'first': VolumeUpIcon, 'second': VolumeOffIcon }}
+            onChange={value => setGameSound(value)}
+          />
+        </div>
+      </div>
+
+      <div className="sprint_form">
+
+        <div className="sprint_ask">
+          <div className="streak_ask_cell" />
+          <span className="ask_word">{task?.word}</span>
+          <div className="streak_ask_cell">
+            <PlayAudio
+              source={task ? FILESTORAGE_URL + task.audio : ''}
+              type='single-button'
+            />
+          </div>
+
+        </div>
+        <div className="sprint_answer">
+
+          {task?.translateProposal?.map((el, i) => (
+            <Button
+              text={el}
+              buttonType='secondary'
+              key={`${i*Math.random()}`}
+              onClick={()=>handleAnswer(el)}
+            />
+          ))}
+        </div>
+
+      </div>
+
+      <PlaySoundEffect
+        playEvent={playSoundItem!}
+      />
+
+    </div>
 
   );
 };
