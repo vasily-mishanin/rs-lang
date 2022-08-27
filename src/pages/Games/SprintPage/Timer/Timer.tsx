@@ -1,4 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+
+import { useInterval } from '@/hooks/useInterval';
 import './Timer.pcss';
 
 export interface IconPack {
@@ -18,22 +20,16 @@ export const Timer = (
   { seconds, onTimeUp }: TimerProps): JSX.Element =>
 {
   const [secondsLeft, setSecondsLeft ] =  useState(seconds);
-  useEffect(()=>{
-    const interval = setInterval(() => {
-      if (secondsLeft > 0) {
-        setSecondsLeft(secondsLeft - 1);
-      }
-      else {
-        clearInterval(interval);
-        onTimeUp();
-      }
-    }, 1000);
+  const [isRunning, setIsRunning] = useState(true);
 
-    return ()=> {
-      clearInterval(interval);
-    };
-
-  });
+  useInterval(() => {
+    if (secondsLeft > 0) {
+      setSecondsLeft(secondsLeft - 1);
+    } else {
+      setIsRunning(false);
+      onTimeUp();
+    }
+  },  isRunning ?  1000 : null);
 
   return (
     <div className="timer">

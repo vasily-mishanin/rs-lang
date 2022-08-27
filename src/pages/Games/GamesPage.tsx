@@ -4,8 +4,7 @@ import './GamesPage.pcss';
 
 const GamesPage = (): JSX.Element => (
   <section className="games">
-    <h1>GamesPage</h1>
-    <ul>
+    <ul className='games_list'>
       <li>
         <Link to="/games/audio">Audio</Link>
       </li>

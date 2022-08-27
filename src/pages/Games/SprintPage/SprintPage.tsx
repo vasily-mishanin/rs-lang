@@ -1,77 +1,108 @@
-import { useSelector } from 'react-redux';
+import { useSearchParams } from 'react-router-dom';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import './SprintPage.pcss';
 
-import { SprintBody } from './SprintBody/SprintBody';
+import { IGameResults, SprintBody } from './SprintBody/SprintBody';
 
+import { GameDescription } from '@/components/games/GameDescription/GameDescription';
+import { GameDifficulty } from '@/components/games/GameDifficulty/GameDifficulty';
+import { GameResults } from '@/components/games/GameResults/GameResults';
 import { Button } from '@/components/ui/Button/Button';
-import { Dropdown, OptionsType } from '@/components/ui/DropDown/DropDown';
-import type { RootState } from '@/store/store';
-
-const words = [
-  {
-    id: '5e9f5ee35eb9e72bc21af4d0',
-    word:'instead',
-    audio:'files/03_0049.mp3',
-    wordTranslate:'вместо',
-  },
-  {
-    id: '5e9f5ee35eb9e72bc21af4d1',
-    word:'library',
-    audio:'files/03_0050.mp3',
-    wordTranslate:'библиотека',
-  },
-  {
-    id: '5e9f5ee35eb9e72bc21af4cc',
-    word:'describe',
-    audio:'files/03_0045.mp3',
-    wordTranslate:'описать',
-  },
-];
 
 export const SprintPage = (): JSX.Element => {
   const [level, setLevel] = useState(1);
+  const [currPage, setCurrPage] = useState(1);
+
+  const [startedFromTextBook, setstartedFromTextBook] = useState(false);
   const [gameStarted, setgameStarted] = useState(false);
+  const [gameEnded, setGameEnded] = useState(false);
+  const [gameResults, setGameResults] = useState<IGameResults>();
 
-  const authState = useSelector((state: RootState) => state.authentication);
-  const { isLoggedIn } = authState;
-  const levelsCount = isLoggedIn? 7 : 6;
+  const [firstRun, setFirstRun] = useState(true);
 
-  const dropDownArray: OptionsType[] = Array(levelsCount).fill(1).map((el, i)=> ({ label: 'Уровень ', value: `${+i+1}` }));
-  const dropDownChanged = (value: string) => {setLevel(+value);
+  const page = useRef('');
+  const group = useRef('');
+
+  const dropDownChanged = (value: string) => {setLevel(+value - 1);  };
+
+  const gameIsOver = (results: IGameResults) => {
+    setGameEnded(true);
+    setgameStarted(false);
+    setGameResults(results);
   };
+
+  const restartGame = () => {
+    setGameEnded(false);
+    setgameStarted(true);
+  };
+
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (firstRun) {
+
+      page.current = searchParams.get('page') || '';
+      group.current = searchParams.get('group') || '';
+
+      if (page.current && group.current){
+        if (+page.current >=0 && +page.current <= 29 && +group.current >=0 && +group.current <= 5) {
+          setLevel(+group.current);
+          setCurrPage(+page.current);
+
+          setgameStarted(true);
+          setstartedFromTextBook(true);
+        }
+      }
+
+      setFirstRun(false);
+
+    }
+  }, [firstRun, searchParams]);
+
   return (
-
     <div className="game">
-      <h2 className="game_heading">Мини игра &quot;Спринт&quot;</h2>
-      <p className="game_subheading">
-            В течение одной минуты отвечай соответствует ли слово предложенному переводу.
-        <br/>
-            Можно кликать по кнопкам, или нажимать клавиши стрелки  &#8678;&nbsp;&#8680;
-      </p>
 
-      {!gameStarted &&
-      <div className="game_start_buttons">
-        <Dropdown
-          options={dropDownArray}
-          name="Сложность"
-          initial="1"
-          onChange={dropDownChanged}
-        />
-        <Button buttonType='primary' text='Начать' onClick={()=>setgameStarted(true)} />
-      </div>
+      {!gameStarted && !gameEnded &&
+      <GameDescription
+        name='Спринт'
+        description={[
+          'В течение одной минуты отвечай соответствует ли слово предложенному переводу.',
+          'Можно кликать по кнопкам, или нажимать клавиши стрелки',
+        ]}
+      />
+      }
+
+      {!gameStarted && !gameEnded &&
+      <GameDifficulty
+        onChangeDiff={dropDownChanged}
+        onStart={()=>setgameStarted(true)}/>
       }
 
       {gameStarted &&
       <div className="game_body">
         <SprintBody
           level={level}
-          words={words}
+          page = {currPage}
+          startedFromBook = {startedFromTextBook}
+          onGameOver = {gameIsOver}
         />
       </div>
+      }
 
+      {gameEnded &&
+      <div className="game_body">
+        <GameResults
+          correctAnswers={gameResults!.correctAnswers}
+          wrongAnswers={gameResults!.wrongAnswers}
+          score = {gameResults!.score}
+        />
+        <div className="game_restart">
+          <Button buttonType='primary' text='Играть снова' onClick={restartGame} />
+        </div>
+
+      </div>
       }
 
     </div>
