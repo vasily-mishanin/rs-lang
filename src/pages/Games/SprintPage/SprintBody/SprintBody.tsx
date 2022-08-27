@@ -1,6 +1,5 @@
 import { VolumeOffIcon, VolumeUpIcon } from '@heroicons/react/solid';
 import classNames from 'classnames';
-// import { useSearchParams } from 'react-router-dom';
 
 import { useEffect, useRef, useState } from 'react';
 
@@ -17,6 +16,7 @@ import { getWords } from '@/model/api-words';
 import { Word } from '@/model/app-types';
 
 const FILESTORAGE_URL = 'https://rss-rs-lang.herokuapp.com/';
+const PAGES_PER_GROUP = 30;
 
 const baseScore = 10;
 
@@ -41,12 +41,15 @@ export interface IGameResults {
 export interface SprintBodyProps {
   level: number;
   page: number;
+  startedFromBook: boolean;
   onGameOver: (results: IGameResults) => void;
 }
 
 const getRandomIndex = (arrLength: number) => Math.floor(Math.random() * arrLength);
 
-export const SprintBody = ({ level, page, onGameOver }: SprintBodyProps): JSX.Element => {
+export const SprintBody = (
+  { level, page, startedFromBook, onGameOver }: SprintBodyProps,
+): JSX.Element => {
   const [firstRun, setFirstRun] = useState(true);
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
@@ -61,11 +64,30 @@ export const SprintBody = ({ level, page, onGameOver }: SprintBodyProps): JSX.El
   const [gameSound, setGameSound] = useState(true);
 
   const usedWords = useRef<ISprintWord[]>([]);
+  const usedPages = useRef<number[]>([]);
   const wordList = useRef<ISprintWord[]>([]);
   const currentWords = useRef<ISprintWord[]>([]);
 
   const correctAnswers = useRef<ISprintWord[]>([]);
   const wrongAnswers = useRef<ISprintWord[]>([]);
+
+  const gameOver = () => {
+    const gameResults: IGameResults = {
+      correctAnswers: correctAnswers.current,
+      wrongAnswers: wrongAnswers.current,
+      score,
+    };
+
+    onGameOver(gameResults);
+  };
+
+  const getRandomPage = () => {
+    let index = getRandomIndex(PAGES_PER_GROUP);
+    while (usedPages.current.includes(index)){
+      index = getRandomIndex(PAGES_PER_GROUP);
+    }
+    return index;
+  };
 
   const getAssignment = () => {
 
@@ -84,34 +106,37 @@ export const SprintBody = ({ level, page, onGameOver }: SprintBodyProps): JSX.El
 
       setTask(assigment);
     }
-    else console.log('no more words');
 
-  };
+    else if (startedFromBook) { gameOver();}
+    else {
+      const nextPage = getRandomPage();
+      usedPages.current.push(nextPage);
 
-  const gameOver = () => {
-    const gameResults: IGameResults = {
-      correctAnswers: correctAnswers.current,
-      wrongAnswers: wrongAnswers.current,
-      score,
-    };
-
-    onGameOver(gameResults);
-  };
-
-  useEffect(() => {
-    if (firstRun) {
-      getWords(`${level}`, `${page}`)
+      getWords(`${level}`, `${nextPage}`)
         .then(res => res.json())
         .then((data: Word[]) => {
           wordList.current = [...data];
           currentWords.current = [...data];
           getAssignment();
         })
-        .catch(err => {
-          console.log(err);
-        });
+        .catch(err => { console.log(err); });
+    }
+  };
 
-      setFirstRun(false);
+  useEffect(() => {
+    if (firstRun) {
+      usedPages.current.push(page);
+
+      getWords(`${level}`, `${page}`)
+        .then(res => res.json())
+        .then((data: Word[]) => {
+          wordList.current = [...data];
+          currentWords.current = [...data];
+          setFirstRun(false);
+          getAssignment();
+        })
+        .catch(err => { console.log(err); });
+
     }
   }, [firstRun, level, page]);
 
@@ -174,8 +199,6 @@ export const SprintBody = ({ level, page, onGameOver }: SprintBodyProps): JSX.El
 
   return (
     <div className="sprint">
-      {/* <p>Page: {searchParams.get('page')}</p>
-      <p>Level: {searchParams.get('level')}</p> */}
       <div className="sprint_info" >
         <div className="sprint_controls">
           <GameControlButton

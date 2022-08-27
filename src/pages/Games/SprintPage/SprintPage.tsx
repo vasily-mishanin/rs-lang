@@ -1,6 +1,7 @@
 import { useSelector } from 'react-redux';
+import { useSearchParams } from 'react-router-dom';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import './SprintPage.pcss';
 
@@ -13,9 +14,17 @@ import type { RootState } from '@/store/store';
 
 export const SprintPage = (): JSX.Element => {
   const [level, setLevel] = useState(1);
+  const [currPage, setCurrPage] = useState(1);
+
+  const [startedFromTextBook, setstartedFromTextBook] = useState(false);
   const [gameStarted, setgameStarted] = useState(false);
   const [gameEnded, setGameEnded] = useState(false);
   const [gameResults, setGameResults] = useState<IGameResults>();
+
+  const [firstRun, setFirstRun] = useState(true);
+
+  const page = useRef('');
+  const group = useRef('');
 
   const authState = useSelector((state: RootState) => state.authentication);
   const { isLoggedIn } = authState;
@@ -30,6 +39,29 @@ export const SprintPage = (): JSX.Element => {
     setgameStarted(false);
     setGameResults(results);
   };
+
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (firstRun) {
+
+      page.current = searchParams.get('page') || '';
+      group.current = searchParams.get('group') || '';
+
+      if (page.current && group.current){
+        if (+page.current >=0 && +page.current <= 29 && +group.current >=0 && +group.current <= 5) {
+          setLevel(+group.current);
+          setCurrPage(+page.current);
+
+          setgameStarted(true);
+          setstartedFromTextBook(true);
+        }
+      }
+
+      setFirstRun(false);
+
+    }
+  }, [firstRun, searchParams]);
 
   return (
 
@@ -57,7 +89,8 @@ export const SprintPage = (): JSX.Element => {
       <div className="game_body">
         <SprintBody
           level={level}
-          page = {5}
+          page = {currPage}
+          startedFromBook = {startedFromTextBook}
           onGameOver = {gameIsOver}
         />
       </div>
