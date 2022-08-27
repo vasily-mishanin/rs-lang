@@ -9,6 +9,7 @@ import { IGameResults, SprintBody } from './SprintBody/SprintBody';
 import { GameDescription } from '@/components/games/GameDescription/GameDescription';
 import { GameDifficulty } from '@/components/games/GameDifficulty/GameDifficulty';
 import { GameResults } from '@/components/games/GameResults/GameResults';
+import { Button } from '@/components/ui/Button/Button';
 
 export const SprintPage = (): JSX.Element => {
   const [level, setLevel] = useState(1);
@@ -30,6 +31,11 @@ export const SprintPage = (): JSX.Element => {
     setGameEnded(true);
     setgameStarted(false);
     setGameResults(results);
+  };
+
+  const restartGame = () => {
+    setGameEnded(false);
+    setgameStarted(true);
   };
 
   const [searchParams] = useSearchParams();
@@ -92,6 +98,10 @@ export const SprintPage = (): JSX.Element => {
           wrongAnswers={gameResults!.wrongAnswers}
           score = {gameResults!.score}
         />
+        <div className="game_restart">
+          <Button buttonType='primary' text='Играть снова' onClick={restartGame} />
+        </div>
+
       </div>
       }
 
