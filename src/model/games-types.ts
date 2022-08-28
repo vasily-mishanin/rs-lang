@@ -18,3 +18,9 @@ export interface GameBodyProps {
   startedFromBook: boolean;
   onGameOver: (results: IGameResults) => void;
 }
+
+export interface PlaySoundItem {
+  id: string;
+  sourceId: number;
+  isPlaying: boolean;
+}

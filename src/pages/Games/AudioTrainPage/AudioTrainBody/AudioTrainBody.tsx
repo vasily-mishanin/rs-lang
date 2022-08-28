@@ -2,15 +2,16 @@ import { VolumeOffIcon, VolumeUpIcon } from '@heroicons/react/solid';
 
 import { useEffect, useRef, useState } from 'react';
 
-import { getRandomIndex, getRandomPage, loadWords } from '../../CommonGamePage/index';
+import { getRandomIndex, loadWords } from '../../CommonGamePage/index';
 
 import { PlayAudio } from '@/components/PlayAudio/PlayAudio';
-import { PlaySoundEffect, PlaySoundItem } from '@/components/PlaySoundEffect/PlaySoundEffect';
+import { PlaySoundEffect } from '@/components/PlaySoundEffect/PlaySoundEffect';
+import { Speaker } from '@/components/games/Speaker/Speaker';
 import { Button } from '@/components/ui/Button/Button';
 import { GameControlButton } from '@/components/ui/GameControlButton/GameControlButton';
 import { Word } from '@/model/app-types';
 import { FILESTORAGE_URL } from '@/model/constants';
-import { IGameResults, GameBodyProps, ISprintWord } from '@/model/games-types';
+import { IGameResults, GameBodyProps, ISprintWord, PlaySoundItem } from '@/model/games-types';
 
 import './AudioTrainBody.pcss';
 
@@ -23,6 +24,7 @@ export const AudioTrainBody = (
   const [task, setTask] = useState<ISprintWord>();
 
   const [playSoundItem, setPlaySoundItem] = useState<PlaySoundItem>();
+  const [playTaskAudio, setPlayTaskAudio] = useState<PlaySoundItem>();
   const [gameSound, setGameSound] = useState(true);
 
   const usedWords = useRef<ISprintWord[]>([]);
@@ -52,7 +54,7 @@ export const AudioTrainBody = (
       usedWords.current.push(assigment);
 
       assigment.translateProposal = Array(4).fill('')
-        .map(()=>currentWords.current[getRandomIndex(
+        .map(() => currentWords.current[getRandomIndex(
           currentWords.current.length, index)].wordTranslate);
 
       assigment.translateProposal.push(assigment.wordTranslate);
@@ -60,20 +62,9 @@ export const AudioTrainBody = (
       assigment.translateProposal.sort();
 
       setTask(assigment);
-    }
-    else if (!startedFromBook) {
-      const nextPage = getRandomPage(usedPages.current);
-      usedPages.current.push(nextPage);
+      setPlayTaskAudio({ id: assigment.id, isPlaying: true, sourceId: 1 });
 
-      loadWords(level, nextPage)
-        .then((data: Word[]) => {
-          wordList.current = [...data];
-          currentWords.current = [...data];
-          getAssignment();
-        })
-        .catch(() => { });
-    }
-    else gameOver();
+    } else gameOver();
 
   };
 
@@ -107,14 +98,14 @@ export const AudioTrainBody = (
       usedPages.current.push(page);
 
       loadWords(level, page)
-        .then((data: Word[])=>{
+        .then((data: Word[]) => {
 
           wordList.current = [...data];
           currentWords.current = [...data];
           setFirstRun(false);
           getAssignment();
 
-        }).catch(()=>{});
+        }).catch(() => { });
     }
   }, [firstRun, level, page]);
 
@@ -133,6 +124,10 @@ export const AudioTrainBody = (
 
         <div className="sprint_ask">
           <div className="streak_ask_cell" />
+          <Speaker
+            source={task ? FILESTORAGE_URL + task.audio : ''}
+            playEvent={playTaskAudio!}
+          />
           <span className="ask_word">{task?.word}</span>
           <div className="streak_ask_cell">
             <PlayAudio
@@ -148,8 +143,8 @@ export const AudioTrainBody = (
             <Button
               text={el}
               buttonType='secondary'
-              key={`${i*Math.random()}`}
-              onClick={()=>handleAnswer(el)}
+              key={`${i * Math.random()}`}
+              onClick={() => handleAnswer(el)}
             />
           ))}
         </div>
