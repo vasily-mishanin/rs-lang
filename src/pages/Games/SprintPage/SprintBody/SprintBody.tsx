@@ -3,6 +3,7 @@ import classNames from 'classnames';
 
 import { useEffect, useRef, useState } from 'react';
 
+import { getRandomIndex, loadWords ,getRandomPage } from '../../CommonGamePage/index';
 import { StreakCounter } from '../StreakCounter/StreakCounter';
 import { Timer } from '../Timer/Timer';
 
@@ -12,9 +13,9 @@ import { PlaySoundEffect, PlaySoundItem } from '@/components/PlaySoundEffect/Pla
 import { Button } from '@/components/ui/Button/Button';
 import { GameControlButton } from '@/components/ui/GameControlButton/GameControlButton';
 import { useOnKeyUp } from '@/hooks/useOnKeyUpDocument';
-import { getWords } from '@/model/api-words';
 import { Word } from '@/model/app-types';
-import { FILESTORAGE_URL, PAGES_PER_GROUP, GAME_RULES } from '@/model/constants';
+import { FILESTORAGE_URL, GAME_RULES } from '@/model/constants';
+import { GameBodyProps, IGameResults, ISprintWord } from '@/types/gameTypes';
 
 const { BASE_SCORE } = GAME_RULES.sprint;
 const { MAX_MULTIPLIER } = GAME_RULES.sprint;
@@ -24,30 +25,8 @@ const sadSmiles = ['😬', '😐', '🤔', '😑', '🙄', '😕'];
 
 type AnswerType = 'accept' | 'decline';
 
-export interface ISprintWord {
-  id: string;
-  word: string;
-  audio: string;
-  wordTranslate: string;
-  translateProposal?: string;
-}
-
-export interface IGameResults {
-  correctAnswers: ISprintWord[];
-  wrongAnswers: ISprintWord[];
-  score: number;
-}
-export interface SprintBodyProps {
-  level: number;
-  page: number;
-  startedFromBook: boolean;
-  onGameOver: (results: IGameResults) => void;
-}
-
-const getRandomIndex = (arrLength: number) => Math.floor(Math.random() * arrLength);
-
 export const SprintBody = (
-  { level, page, startedFromBook, onGameOver }: SprintBodyProps,
+  { level, page, startedFromBook, onGameOver }: GameBodyProps,
 ): JSX.Element => {
   const [firstRun, setFirstRun] = useState(true);
   const [score, setScore] = useState(0);
@@ -80,45 +59,36 @@ export const SprintBody = (
     onGameOver(gameResults);
   };
 
-  const getRandomPage = () => {
-    let index = getRandomIndex(PAGES_PER_GROUP);
-    while (usedPages.current.includes(index)) {
-      index = getRandomIndex(PAGES_PER_GROUP);
-    }
-    return index;
-  };
-
   const getAssignment = () => {
-
     if (wordList.current.length > 0) {
-      const index = getRandomIndex(wordList.current.length);
+
+      const index = getRandomIndex(wordList.current.length, -1);
       const assigment = wordList.current[index];
 
       wordList.current.splice(index, 1);
       usedWords.current.push(assigment);
 
       if (Math.random() < 0.5) {
-        const randomIndex = getRandomIndex(currentWords.current.length);
+        const randomIndex = getRandomIndex(currentWords.current.length, index);
 
-        assigment.translateProposal = currentWords.current[randomIndex].wordTranslate;
-      } else assigment.translateProposal = assigment.wordTranslate;
+        assigment.translateProposal = [(currentWords.current[randomIndex].wordTranslate)];
+      } else assigment.translateProposal = [(assigment.wordTranslate)];
 
       setTask(assigment);
     }
 
     else if (startedFromBook) { gameOver(); }
     else {
-      const nextPage = getRandomPage();
+      const nextPage = getRandomPage(usedPages.current);
       usedPages.current.push(nextPage);
 
-      getWords(`${level}`, `${nextPage}`)
-        .then(res => res.json())
+      loadWords(level, nextPage)
         .then((data: Word[]) => {
           wordList.current = [...data];
           currentWords.current = [...data];
           getAssignment();
         })
-        .catch(err => { console.log(err); });
+        .catch(() => { });
     }
   };
 
@@ -126,23 +96,22 @@ export const SprintBody = (
     if (firstRun) {
       usedPages.current.push(page);
 
-      getWords(`${level}`, `${page}`)
-        .then(res => res.json())
-        .then((data: Word[]) => {
+      loadWords(level, page)
+        .then((data: Word[])=>{
+
           wordList.current = [...data];
           currentWords.current = [...data];
           setFirstRun(false);
           getAssignment();
-        })
-        .catch(err => { console.log(err); });
 
+        }).catch(()=>{});
     }
   }, [firstRun, level, page]);
 
   const setAnswerEffects = (isCorrect: boolean) => {
     const getSmile = isCorrect
-      ? happySmiles[getRandomIndex(happySmiles.length)]
-      : sadSmiles[getRandomIndex(sadSmiles.length)];
+      ? happySmiles[getRandomIndex(happySmiles.length, happySmiles.indexOf(smileFace))]
+      : sadSmiles[getRandomIndex(sadSmiles.length,  sadSmiles.indexOf(smileFace))];
 
     setSmileFace(getSmile);
     setAnimateSmile(true);
@@ -170,8 +139,8 @@ export const SprintBody = (
   const handleAnswer = (answer: AnswerType) => {
     if (task) {
       let isAnswerCorect = false;
-      if (task?.wordTranslate === task?.translateProposal && answer === 'accept') isAnswerCorect = true;
-      else if (task?.wordTranslate !== task?.translateProposal && answer === 'decline') isAnswerCorect = true;
+      if (task?.wordTranslate === task.translateProposal![0] && answer === 'accept') isAnswerCorect = true;
+      else if (task?.wordTranslate !== task.translateProposal![0] && answer === 'decline') isAnswerCorect = true;
       else isAnswerCorect = false;
 
       if (isAnswerCorect) correctAnswers.current.push(task);

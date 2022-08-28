@@ -1,6 +1,6 @@
-import { SprintPage } from './SprintPage/SprintPage';
+import { CommonGamePage } from './CommonGamePage/CommonGamePage';
 
 const GameSprint = (): JSX.Element => (
-  <SprintPage />
+  <CommonGamePage game='sprint' />
 );
 export default GameSprint;

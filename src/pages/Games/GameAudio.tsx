@@ -1,7 +1,6 @@
-const GameAudio = (): JSX.Element => (
-  <section>
-    <h1>Audio Game</h1>
-  </section>
-);
+import { CommonGamePage } from './CommonGamePage/CommonGamePage';
 
+const GameAudio = (): JSX.Element => (
+  <CommonGamePage game='audio' />
+);
 export default GameAudio;
