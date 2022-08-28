@@ -4,14 +4,13 @@ import { useEffect, useRef, useState } from 'react';
 
 import { getRandomIndex, loadWords } from '../../CommonGamePage/index';
 
-import { PlayAudio } from '@/components/PlayAudio/PlayAudio';
 import { PlaySoundEffect } from '@/components/PlaySoundEffect/PlaySoundEffect';
 import { Speaker } from '@/components/games/Speaker/Speaker';
-import { Button } from '@/components/ui/Button/Button';
 import { GameControlButton } from '@/components/ui/GameControlButton/GameControlButton';
+import { MarkButton } from '@/components/ui/MarkButton/MarkButton';
 import { Word } from '@/model/app-types';
 import { FILESTORAGE_URL } from '@/model/constants';
-import { IGameResults, GameBodyProps, ISprintWord, PlaySoundItem } from '@/model/games-types';
+import { IGameResults, GameBodyProps, ISprintWord, PlaySoundItem, MButtonEvent } from '@/model/games-types';
 
 import './AudioTrainBody.pcss';
 
@@ -22,6 +21,9 @@ export const AudioTrainBody = (
   const [score, setScore] = useState(0);
 
   const [task, setTask] = useState<ISprintWord>();
+
+  const [buttonEvent, setButtonEvent] = useState<MButtonEvent>();
+  const [showCorrectAnswer, setshowCorrectAnswer] = useState(false);
 
   const [playSoundItem, setPlaySoundItem] = useState<PlaySoundItem>();
   const [playTaskAudio, setPlayTaskAudio] = useState<PlaySoundItem>();
@@ -35,6 +37,8 @@ export const AudioTrainBody = (
   const correctAnswers = useRef<ISprintWord[]>([]);
   const wrongAnswers = useRef<ISprintWord[]>([]);
 
+  const lastPickedAnswer = useRef('');
+
   const gameOver = () => {
     const gameResults: IGameResults = {
       correctAnswers: correctAnswers.current,
@@ -45,7 +49,18 @@ export const AudioTrainBody = (
     onGameOver(gameResults);
   };
 
+  const resetAnswerButtons = () => {
+    setButtonEvent (
+      {
+        drawIcon: false,
+        correctValue: '',
+        pickedValue: '',
+      },
+    );
+  };
+
   const getAssignment = () => {
+
     if (wordList.current.length > 0) {
       const index = getRandomIndex(wordList.current.length, -1);
       const assigment = wordList.current[index];
@@ -72,6 +87,14 @@ export const AudioTrainBody = (
     if (gameSound)
       setPlaySoundItem({ id: task!.id, isPlaying: true, sourceId: ((isCorrect ? 0 : 1)) });
 
+    setButtonEvent (
+      {
+        drawIcon: true,
+        correctValue: task!.wordTranslate,
+        pickedValue:  lastPickedAnswer.current,
+      },
+    );
+
   };
 
   const handleAnswer = (answer: string) => {
@@ -82,13 +105,21 @@ export const AudioTrainBody = (
       if (isAnswerCorect) correctAnswers.current.push(task);
       else wrongAnswers.current.push(task);
 
+      lastPickedAnswer.current = answer;
+
       setAnswerEffects(isAnswerCorect);
 
       const scoreIncrement = isAnswerCorect ? 1 : 0;
       setScore(prev => prev + scoreIncrement);
       // if (isAnswerCorect) setAnimateScore(true);
 
-      getAssignment();
+      setshowCorrectAnswer(true);
+      // setTimeout(() => {
+      //   resetAnswerButtons();
+      //   getAssignment();
+      //   setshowCorrectAnswer(false);
+      // }, 2000);
+
     }
 
   };
@@ -103,6 +134,7 @@ export const AudioTrainBody = (
           wordList.current = [...data];
           currentWords.current = [...data];
           setFirstRun(false);
+          resetAnswerButtons();
           getAssignment();
 
         }).catch(() => { });
@@ -110,9 +142,9 @@ export const AudioTrainBody = (
   }, [firstRun, level, page]);
 
   return (
-    <div className="sprint">
-      <div className="sprint_info" >
-        <div className="sprint_controls">
+    <div className="audiogame">
+      <div className="audiogame_info" >
+        <div className="audiogame_controls">
           <GameControlButton
             icons={{ 'first': VolumeUpIcon, 'second': VolumeOffIcon }}
             onChange={value => setGameSound(value)}
@@ -120,32 +152,47 @@ export const AudioTrainBody = (
         </div>
       </div>
 
-      <div className="sprint_form">
+      <div className="audiogame_form">
 
-        <div className="sprint_ask">
-          <div className="streak_ask_cell" />
-          <Speaker
-            source={task ? FILESTORAGE_URL + task.audio : ''}
-            playEvent={playTaskAudio!}
-          />
-          <span className="ask_word">{task?.word}</span>
-          <div className="streak_ask_cell">
-            <PlayAudio
-              source={task ? FILESTORAGE_URL + task.audio : ''}
-              type='single-button'
-            />
+        <div className="audiogame_ask">
+
+          {!showCorrectAnswer &&
+                    <Speaker
+                      source={task ? FILESTORAGE_URL + task.audio : ''}
+                      playEvent={playTaskAudio!}
+                    />
+          }
+
+          {showCorrectAnswer &&
+          <div className="audiogame_ans">
+            <div className="answer_image_wrapper">
+              <img
+                className='answer_image'
+                src={task ? FILESTORAGE_URL + task.image : ''}
+                alt={task?.word} />
+            </div>
+
+            <p className='answer_text'>{task?.word}</p>
           </div>
 
+          }
+
         </div>
-        <div className="sprint_answer">
+
+        <div className="audiogame_answers">
 
           {task?.translateProposal?.map((el, i) => (
-            <Button
-              text={el}
-              buttonType='secondary'
-              key={`${i * Math.random()}`}
-              onClick={() => handleAnswer(el)}
-            />
+            <div className='audiogame_answer' key={`${(i+1) * Math.random()}`} >
+
+              <MarkButton
+                event={buttonEvent!}
+                text={el}
+                index={i}
+                onClick={() => handleAnswer(el)}
+              />
+
+              <span className ='audiogame_answer_index' >[{i}]</span>
+            </div>
           ))}
         </div>
 

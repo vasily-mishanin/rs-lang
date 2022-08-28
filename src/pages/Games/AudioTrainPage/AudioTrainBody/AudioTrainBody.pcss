@@ -1,0 +1,103 @@
+.audiogame {
+    @apply w-3/5 bg-sky-100 px-5 py-2 border border-transparent shadow rounded-lg;
+    
+     & .saudiogame_info {
+         @apply flex justify-between items-center;
+     }
+ 
+     & .audiogame_controls {
+         @apply flex justify-between w-1/3;
+     }
+ 
+     & .audiogame_score{
+         @apply text-3xl flex;
+ 
+         & .audiogame_text {
+             @apply mx-2;
+         }
+     }
+ 
+     & .audiogame_form {
+         @apply flex flex-col items-center;
+
+
+         & .audiogame_ask {
+            @apply flex justify-center items-center h-56;
+         }
+
+         & .audiogame_answers {
+            @apply flex w-full justify-between flex-wrap py-6; 
+         }
+
+         & .audiogame_answer {
+            @apply flex justify-center w-1/5 flex-col items-center px-2;
+         }
+
+         & .audiogame_answer_index {
+            @apply py-2 text-slate-700 font-semibold; 
+         }
+
+         & .audiogame_ans {
+            @apply flex flex-col items-center;
+
+            & .answer_image_wrapper {
+                @apply h-44 w-44  my-2;
+            }
+
+            & .answer_image {
+                @apply w-full h-full rounded-full border border-transparent shadow-2xl;
+            }
+
+            & .answer_text{
+                @apply text-2xl text-blue-500 font-semibold	py-2;
+
+            }
+         }
+
+
+
+     }
+ 
+
+
+
+
+
+     & .sprint_picture {
+         @apply text-7xl my-3;
+     }
+ 
+     & .smile_animate {
+         animation: zoom-in-zoom-out 0.5s ;
+     }
+ 
+     & .sprint_ask {
+         @apply flex items-baseline py-2 w-full justify-center;
+ 
+         & .streak_ask_cell {
+             @apply w-full justify-center text-center;
+         }
+ 
+         & .ask_word {
+             @apply text-5xl text-blue-800 font-semibold mx-2;
+         }
+     }
+ 
+     & .sprint_answer {
+         @apply text-2xl text-blue-500 font-semibold	 py-2 ;
+     }
+ 
+     & .sprint_buttons {
+         @apply my-2 ;
+     }
+ }
+ 
+ @keyframes zoom-in-zoom-out {
+     0% {
+         transform: scale(1, 1);
+     }
+     100% {
+         transform: scale(1.25, 1.25);
+     }
+ }
+ 
