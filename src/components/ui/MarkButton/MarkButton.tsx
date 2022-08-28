@@ -1,7 +1,6 @@
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/solid';
-import classNames from 'classnames';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { MButtonEvent } from '@/model/games-types';
 import './MarkButton.pcss';
@@ -30,13 +29,7 @@ const icons : ButtonIconMap = {
 };
 
 export const MarkButton = ({ text, index, event,  onClick }: MarkButtonProps): JSX.Element => {
-  // const [showIcon, setShowIcon] = useState(false);
-  const [buttonEvent, setButtonEvent ]= useState(event);
-
-  useEffect(() => {
-    console.log(buttonEvent);
-
-  }, [buttonEvent]);
+  const [buttonEvent ]= useState(event);
 
   return(
     <div className="markbutton_wrapper">
@@ -46,7 +39,6 @@ export const MarkButton = ({ text, index, event,  onClick }: MarkButtonProps): J
         className='markbutton_button markbutton_default'
         onClick = {onClick}
       >
-
         <div className='markbutton_content'>
 
           {buttonEvent.drawIcon &&

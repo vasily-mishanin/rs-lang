@@ -1,7 +1,7 @@
 export interface IGameResults {
   correctAnswers: ISprintWord[];
   wrongAnswers: ISprintWord[];
-  score: number;
+  score: string;
 }
 
 export interface ISprintWord {

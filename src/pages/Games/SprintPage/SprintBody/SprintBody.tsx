@@ -3,7 +3,7 @@ import classNames from 'classnames';
 
 import { useEffect, useRef, useState } from 'react';
 
-import { getRandomIndex, loadWords ,getRandomPage } from '../../CommonGamePage/index';
+import { getRandomIndex, loadWords, getRandomPage } from '../../CommonGamePage/index';
 import { StreakCounter } from '../StreakCounter/StreakCounter';
 import { Timer } from '../Timer/Timer';
 
@@ -53,7 +53,7 @@ export const SprintBody = (
     const gameResults: IGameResults = {
       correctAnswers: correctAnswers.current,
       wrongAnswers: wrongAnswers.current,
-      score,
+      score: `${score} баллов`,
     };
 
     onGameOver(gameResults);
@@ -62,14 +62,14 @@ export const SprintBody = (
   const getAssignment = () => {
     if (wordList.current.length > 0) {
 
-      const index = getRandomIndex(wordList.current.length, -1);
+      const index = getRandomIndex(wordList.current.length);
       const assigment = wordList.current[index];
 
       wordList.current.splice(index, 1);
       usedWords.current.push(assigment);
 
       if (Math.random() < 0.5) {
-        const randomIndex = getRandomIndex(currentWords.current.length, index);
+        const randomIndex = getRandomIndex(currentWords.current.length, [index]);
 
         assigment.translateProposal = [(currentWords.current[randomIndex].wordTranslate)];
       } else assigment.translateProposal = [(assigment.wordTranslate)];
@@ -110,8 +110,8 @@ export const SprintBody = (
 
   const setAnswerEffects = (isCorrect: boolean) => {
     const getSmile = isCorrect
-      ? happySmiles[getRandomIndex(happySmiles.length, happySmiles.indexOf(smileFace))]
-      : sadSmiles[getRandomIndex(sadSmiles.length,  sadSmiles.indexOf(smileFace))];
+      ? happySmiles[getRandomIndex(happySmiles.length, [happySmiles.indexOf(smileFace)])]
+      : sadSmiles[getRandomIndex(sadSmiles.length,  [sadSmiles.indexOf(smileFace)])];
 
     setSmileFace(getSmile);
     setAnimateSmile(true);
