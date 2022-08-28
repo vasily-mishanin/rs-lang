@@ -47,6 +47,6 @@ export const authSlice = createSlice({
   },
 });
 
-export const authActions = authSlice.actions;
+export const authActions = authSlice.actions; // for subscriber (AuthForm, ...)
 
-export default authSlice;
+export default authSlice; // for store

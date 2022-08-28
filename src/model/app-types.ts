@@ -1,3 +1,5 @@
+import { MakeGenerics } from '@tanstack/react-location';
+
 export interface User {
   userId?: string;
   email: string;
@@ -24,3 +26,17 @@ export interface Word {
   textMeaningTranslate: string;
   textExampleTranslate: string;
 }
+
+export type LocationGenerics = MakeGenerics<{
+  LoaderData: {
+    words?: Word[];
+  };
+  Params: {
+    group: string;
+    page: string;
+  };
+  Search: {
+    group: string;
+    page: string;
+  };
+}>;

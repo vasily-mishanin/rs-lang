@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from 'react-router-dom';
+import { Link, Outlet } from '@tanstack/react-location';
 
 const DictionaryPage = (): JSX.Element => (
   <section>
@@ -6,16 +6,16 @@ const DictionaryPage = (): JSX.Element => (
     <nav>
       <ul>
         <li>
-          <NavLink to='difficult'>Difficult Words</NavLink>
+          <Link to="difficult">Difficult Words</Link>
         </li>
         <li>
-          <NavLink to='learned'>Learned Words</NavLink>
+          <Link to="learned">Learned Words</Link>
         </li>
         <li>
-          <NavLink to='progress'>Progress</NavLink>
+          <Link to="progress">Progress</Link>
         </li>
         <li>
-          <NavLink to='statistics'>Statistics</NavLink>
+          <Link to="statistics">Statistics</Link>
         </li>
       </ul>
     </nav>
