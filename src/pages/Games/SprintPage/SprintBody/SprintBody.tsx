@@ -15,7 +15,7 @@ import { GameControlButton } from '@/components/ui/GameControlButton/GameControl
 import { useOnKeyUp } from '@/hooks/useOnKeyUpDocument';
 import { Word } from '@/model/app-types';
 import { FILESTORAGE_URL, GAME_RULES } from '@/model/constants';
-import { GameBodyProps, IGameResults, ISprintWord } from '@/types/gameTypes';
+import { GameBodyProps, IGameResults, ISprintWord } from '@/model/games-types';
 
 const { BASE_SCORE } = GAME_RULES.sprint;
 const { MAX_MULTIPLIER } = GAME_RULES.sprint;

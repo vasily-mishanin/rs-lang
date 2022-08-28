@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/Button/Button';
 import { GameControlButton } from '@/components/ui/GameControlButton/GameControlButton';
 import { Word } from '@/model/app-types';
 import { FILESTORAGE_URL } from '@/model/constants';
-import { IGameResults, GameBodyProps, ISprintWord } from '@/types/gameTypes';
+import { IGameResults, GameBodyProps, ISprintWord } from '@/model/games-types';
 
 import './AudioTrainBody.pcss';
 

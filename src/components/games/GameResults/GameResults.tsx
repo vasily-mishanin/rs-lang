@@ -2,7 +2,7 @@ import classNames from 'classnames';
 
 import { GameResultItem } from './GameResultItem/GameResultItem';
 
-import { IGameResults } from '@/types/gameTypes';
+import { IGameResults } from '@/model/games-types';
 
 import './GameResults.pcss';
 

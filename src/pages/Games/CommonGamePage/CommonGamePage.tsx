@@ -12,7 +12,7 @@ import { GameDifficulty } from '@/components/games/GameDifficulty/GameDifficulty
 import { GameResults } from '@/components/games/GameResults/GameResults';
 import { Button } from '@/components/ui/Button/Button';
 import type { LocationGenerics } from '@/model/app-types';
-import { IGameResults } from '@/types/gameTypes';
+import { IGameResults } from '@/model/games-types';
 
 export type GameType = 'sprint' | 'audio';
 type GameNameMap = {
