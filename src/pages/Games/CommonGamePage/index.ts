@@ -12,7 +12,6 @@ export const getRandomIndex = (max: number, notEqual: number) => {
 
 export const loadWords = (g: number, p: number) => new Promise(resolve => {
   getWords(`${g}`, `${p}`)
-    .then(res => res.json())
     .then((data: Word[]) => {
       resolve(data);
     })

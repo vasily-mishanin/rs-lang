@@ -1,4 +1,4 @@
-import { useSearchParams } from 'react-router-dom';
+import { useSearch } from '@tanstack/react-location';
 
 import { useEffect, useRef, useState } from 'react';
 
@@ -11,6 +11,7 @@ import { GameDescription } from '@/components/games/GameDescription/GameDescript
 import { GameDifficulty } from '@/components/games/GameDifficulty/GameDifficulty';
 import { GameResults } from '@/components/games/GameResults/GameResults';
 import { Button } from '@/components/ui/Button/Button';
+import type { LocationGenerics } from '@/model/app-types';
 import { IGameResults } from '@/types/gameTypes';
 
 export type GameType = 'sprint' | 'audio';
@@ -67,13 +68,14 @@ export const CommonGamePage = ({ game }: GamePageProps): JSX.Element => {
     setgameStarted(true);
   };
 
-  const [searchParams] = useSearchParams();
+  const searchParams = useSearch<LocationGenerics>();
+  const { group:groupFromSearch, page:pageFromSearch } = searchParams;
 
   useEffect(() => {
     if (firstRun) {
 
-      page.current = searchParams.get('page') || '';
-      group.current = searchParams.get('group') || '';
+      page.current = pageFromSearch || '';
+      group.current = groupFromSearch || '';
 
       if (page.current && group.current){
         if (+page.current >=0 && +page.current <= 29 && +group.current >=0 && +group.current <= 5) {
