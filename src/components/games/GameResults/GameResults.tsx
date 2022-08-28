@@ -2,7 +2,7 @@ import classNames from 'classnames';
 
 import { GameResultItem } from './GameResultItem/GameResultItem';
 
-import { IGameResults } from '@/types/gameTypes';
+import { IGameResults } from '@/model/games-types';
 
 import './GameResults.pcss';
 
@@ -20,7 +20,7 @@ export const GameResults =
 
     return (
       <div className="results">
-        <h2 className='results_heading'>Твой результат : {score} баллов</h2>
+        <h2 className='results_heading'>Твой результат : {score}</h2>
         {resultDesision && <h4>{resultDesision}</h4>}
         <div className="results_table">
 

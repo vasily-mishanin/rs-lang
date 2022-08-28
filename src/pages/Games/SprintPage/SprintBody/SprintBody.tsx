@@ -3,19 +3,19 @@ import classNames from 'classnames';
 
 import { useEffect, useRef, useState } from 'react';
 
-import { getRandomIndex, loadWords ,getRandomPage } from '../../CommonGamePage/index';
+import { getRandomIndex, loadWords, getRandomPage } from '../../CommonGamePage/index';
 import { StreakCounter } from '../StreakCounter/StreakCounter';
 import { Timer } from '../Timer/Timer';
 
 import './SprintBody.pcss';
 import { PlayAudio } from '@/components/PlayAudio/PlayAudio';
-import { PlaySoundEffect, PlaySoundItem } from '@/components/PlaySoundEffect/PlaySoundEffect';
+import { PlaySoundEffect } from '@/components/PlaySoundEffect/PlaySoundEffect';
 import { Button } from '@/components/ui/Button/Button';
 import { GameControlButton } from '@/components/ui/GameControlButton/GameControlButton';
 import { useOnKeyUp } from '@/hooks/useOnKeyUpDocument';
 import { Word } from '@/model/app-types';
 import { FILESTORAGE_URL, GAME_RULES } from '@/model/constants';
-import { GameBodyProps, IGameResults, ISprintWord } from '@/types/gameTypes';
+import { GameBodyProps, IGameResults, ISprintWord, PlaySoundItem } from '@/model/games-types';
 
 const { BASE_SCORE } = GAME_RULES.sprint;
 const { MAX_MULTIPLIER } = GAME_RULES.sprint;
@@ -53,7 +53,7 @@ export const SprintBody = (
     const gameResults: IGameResults = {
       correctAnswers: correctAnswers.current,
       wrongAnswers: wrongAnswers.current,
-      score,
+      score: `${score} баллов`,
     };
 
     onGameOver(gameResults);
@@ -62,14 +62,14 @@ export const SprintBody = (
   const getAssignment = () => {
     if (wordList.current.length > 0) {
 
-      const index = getRandomIndex(wordList.current.length, -1);
+      const index = getRandomIndex(wordList.current.length);
       const assigment = wordList.current[index];
 
       wordList.current.splice(index, 1);
       usedWords.current.push(assigment);
 
       if (Math.random() < 0.5) {
-        const randomIndex = getRandomIndex(currentWords.current.length, index);
+        const randomIndex = getRandomIndex(currentWords.current.length, [index]);
 
         assigment.translateProposal = [(currentWords.current[randomIndex].wordTranslate)];
       } else assigment.translateProposal = [(assigment.wordTranslate)];
@@ -110,8 +110,8 @@ export const SprintBody = (
 
   const setAnswerEffects = (isCorrect: boolean) => {
     const getSmile = isCorrect
-      ? happySmiles[getRandomIndex(happySmiles.length, happySmiles.indexOf(smileFace))]
-      : sadSmiles[getRandomIndex(sadSmiles.length,  sadSmiles.indexOf(smileFace))];
+      ? happySmiles[getRandomIndex(happySmiles.length, [happySmiles.indexOf(smileFace)])]
+      : sadSmiles[getRandomIndex(sadSmiles.length,  [sadSmiles.indexOf(smileFace)])];
 
     setSmileFace(getSmile);
     setAnimateSmile(true);

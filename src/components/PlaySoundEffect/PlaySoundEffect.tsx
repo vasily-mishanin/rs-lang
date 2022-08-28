@@ -2,12 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import failSound from '@/assets/sound/error-3.mp3';
 import okSound from '@/assets/sound/success-1.mp3';
-
-export interface PlaySoundItem {
-  id: string;
-  sourceId: number;
-  isPlaying: boolean;
-}
+import { PlaySoundItem } from '@/model/games-types';
 
 export interface PlaySoundProps {
   playEvent: PlaySoundItem;

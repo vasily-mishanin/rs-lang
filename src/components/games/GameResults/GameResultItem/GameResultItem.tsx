@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { PlayAudio } from '@/components/PlayAudio/PlayAudio';
 import { FILESTORAGE_URL } from '@/model/constants';
 import './GameResultItem.pcss';
-import { ISprintWord } from '@/types/gameTypes';
+import { ISprintWord } from '@/model/games-types';
 
 export interface GameResultItemProps {
   item: ISprintWord;

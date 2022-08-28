@@ -7,4 +7,7 @@ export const GAME_RULES = {
     BASE_SCORE : 10,
     MAX_MULTIPLIER : 8,
   },
+  audiogame: {
+    TASKS_COUNT : 20,
+  },
 };
