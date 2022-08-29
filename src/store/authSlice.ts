@@ -4,44 +4,68 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 
 type AuthUser = {
   name:string;
-};
+  email?:string;
+} | Record<string, never>;
 
 export interface AuthState {
+  message:string;
   token: string;
+  refreshToken: string;
   isLoggedIn: boolean;
   user: AuthUser;
+  userId: string;
 };
 
-const retrieveUser = ():{name:string} => {
+const retrieveUserFromLocalStorage = ():AuthUser => {
   const storedUser = localStorage.getItem('user');
   if (storedUser) {
     return JSON.parse(storedUser) as AuthUser;
   }
-  return { name: '' };
+  return {};
 };
 
 const initialState: AuthState = {
+  message: localStorage.getItem('message') || '',
   token: localStorage.getItem('token') || '',
+  refreshToken: localStorage.getItem('refreshToken') || '',
   isLoggedIn: !!localStorage.getItem('token'),
-  user: retrieveUser(),
+  user: retrieveUserFromLocalStorage(),
+  userId: localStorage.getItem('userId') || '',
 };
 
 export const authSlice = createSlice({
   name: 'authentication',
   initialState,
   reducers: {
-    login: (state, action: PayloadAction<{ token: string; name: string }>) => {
-      state.token = action.payload.token;
-      state.isLoggedIn = !!action.payload.token;
-      state.user.name = action.payload.name;
-      localStorage.setItem('token', action.payload.token);
-      localStorage.setItem('user', JSON.stringify({ name: action.payload.name }));
+    create: (state, action:PayloadAction<AuthUser>) => {
+      const user:AuthUser = { name:action.payload.name, email:action.payload.email };
+      state.user = user;
+      localStorage.setItem('user', JSON.stringify(user));
+    },
+    login: (state, action: PayloadAction<AuthState>) => {
+      const { message, token, refreshToken, userId, user:{ name } } = action.payload;
+      state.message = message;
+      state.token = token;
+      state.refreshToken = refreshToken;
+      state.userId = userId;
+      state.isLoggedIn = !!token;
+      state.user.name = name; // we have it from registration
+      localStorage.setItem('message', message);
+      localStorage.setItem('token', token);
+      localStorage.setItem('refreshToken', refreshToken);
+      localStorage.setItem('userId', userId);
+      localStorage.setItem('user', JSON.stringify(state.user));
     },
     logout: state => {
+      state.message = '';
       state.token = '';
+      state.refreshToken = '';
       state.isLoggedIn = false;
-      state.user.name = '';
+      state.user = {};
+      localStorage.removeItem('message');
       localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('userId');
       localStorage.removeItem('user');
     },
   },

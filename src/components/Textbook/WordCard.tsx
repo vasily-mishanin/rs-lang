@@ -1,11 +1,14 @@
 import './WordCard.pcss';
 import { CheckIcon, PuzzleIcon } from '@heroicons/react/solid';
 import htmlParser from 'html-react-parser';
+import { useSelector } from 'react-redux';
 
+import * as apiUsersWords from '../../model/api-userWords';
 import { PlayAudio } from '../PlayAudio/PlayAudio';
 
 import { API_ENDPOINT } from '@/model/api-words';
 import type { Word } from '@/model/app-types';
+import { RootState } from '@/store/store';
 
 // export interface IconPack {
 //   hardWord: (props: React.SVGProps<SVGSVGElement>) => JSX.Element;
@@ -17,11 +20,13 @@ type TSVGIcon = {
 };
 
 const WordCard = (props: { word: Word }): JSX.Element => {
+  const authState = useSelector((state:RootState) => state.authentication);
+
   const { word: wordObj } = props;
   const {
-    id,
-    group,
-    page,
+    // id,
+    // group,
+    // page,
     word,
     image,
     audio,
@@ -42,12 +47,15 @@ const WordCard = (props: { word: Word }): JSX.Element => {
   const hardWordIcon:TSVGIcon = { icon:PuzzleIcon };
   const learnedWord:TSVGIcon = { icon:CheckIcon };
 
-  const handleHardWord = () => {
+  const handleHardWord = async () => {
     console.log('handleHardWord');
+    await apiUsersWords.createUserWord(authState.userId, wordObj, 'hard', authState.token).catch(() => {});
   };
 
-  const handleLearnedWord = () => {
+  const handleLearnedWord = async () => {
     console.log('handleLearnedWord');
+    await apiUsersWords.createUserWord(authState.userId, wordObj, 'learned', authState.token).catch(() => {});
+
   };
 
   return (
@@ -65,7 +73,7 @@ const WordCard = (props: { word: Word }): JSX.Element => {
         <PlayAudio source={wordAudio} additionalSources={additionalAudio} type='single-button'/>
 
         <div className='word-card-controls'>
-          <button  type='button' onClick={handleHardWord}>
+          <button  type='button' onClick={() => {handleHardWord().catch(() => {});}}>
             <hardWordIcon.icon/>
           </button>
           <button type='button' onClick={handleLearnedWord}>

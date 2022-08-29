@@ -27,6 +27,19 @@ export interface Word {
   textExampleTranslate: string;
 }
 
+export interface UserWord {
+  difficulty:string;
+  optional:{
+    numberOfMistakesSprint?: number;
+    numberOfMistakesAudio?: number;
+    numberOfRightGuessSprint?: number;
+    numberOfRightGuessAudio?: number;
+    postDate?: Date;
+    lastUpdatedDate?: Date;
+    word:Word;
+  };
+}
+
 export type LocationGenerics = MakeGenerics<{
   LoaderData: {
     words?: Word[];
