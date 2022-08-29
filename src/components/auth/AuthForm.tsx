@@ -54,7 +54,8 @@ const AuthForm = (): JSX.Element => {
           throw new Error();
         })
         .then((res: User) => {
-          console.log('respond', res);
+          console.log('registerUser', res);
+          dispatch(authActions.create({ name:res.name ? res.name : '', email:res.email ? res.email : '' }));
           // switch to Login Form to sign in
           switchAuthModeHandler();
         })
@@ -76,9 +77,20 @@ const AuthForm = (): JSX.Element => {
           throw new Error(errorMessage(res.status));
         })
         .then((res: User) => {
+          const message = res.message ? res.message : '';
           const token = res.token ? res.token : '';
-          const name = res.name ? res.name : '';
-          dispatch(authActions.login({ token, name }));
+          const refreshToken = res.refreshToken ? res.refreshToken : '';
+          const userId = res.userId ? res.userId : '';
+          console.log('signInUser:', res);
+          const authState = {
+            message,
+            token,
+            refreshToken,
+            userId,
+            isLoggedIn:!!token,
+            user:{ name:res.name ? res.name : '' },
+          };
+          dispatch(authActions.login(authState));
           navigate({ to: '/profile', replace: true });
           window.location.reload(); // bad
         })

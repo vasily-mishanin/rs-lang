@@ -2,6 +2,16 @@ import type { Word } from './app-types';
 
 export const API_ENDPOINT = 'https://rss-rs-lang.herokuapp.com';
 
+export function getWord (id:string){
+  const url = new URL(`${API_ENDPOINT}/words/${id}`);
+  return fetch(url, { method: 'GET' }).then(res => {
+    if(res.ok){
+      return res.json();
+    }
+    throw new Error(res.statusText);
+  }).then((word:Word) => word).catch(err => {console.log(err);}).finally(() => {});;
+}
+
 export function getWords (group: string, page: string) {
   const url = new URL(`${API_ENDPOINT}/words`);
   const params = [

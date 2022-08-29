@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import TextbookGroup from './components/Textbook/TextbookGroup';
 import MainNavigation from './components/layout/MainNavigation';
 import Spinner from './components/ui/Spinner';
+import * as apiUserWords from './model/api-userWords';
 import * as api from './model/api-words';
 import AuthPage from './pages/AuthPage';
 import DictionaryPage from './pages/Dictionary/DictionaryPage';
@@ -23,7 +24,7 @@ import type { LocationGenerics } from './model/app-types';
 import type { RootState } from './store/store';
 import type { Route } from '@tanstack/react-location';
 
-const App = (): JSX.Element => {
+const App = ():JSX.Element => {
   const authState = useSelector((state: RootState) => state.authentication);
   const { isLoggedIn } = authState;
 
@@ -76,10 +77,20 @@ const App = (): JSX.Element => {
     { path: '*', element: <Navigate to="/" /> },
   ];
 
-  // setRoutes(appRoutes);
+  // console.log('APP', 'location', location);
+  // console.log('APP', 'appRoutes', appRoutes);
 
-  console.log('APP', 'location', location);
-  console.log('APP', 'appRoutes', appRoutes);
+  // const testUpdate = async () => {
+  //   await apiUserWords.deleteUserWord(authState.userId, '5e9f5ee35eb9e72bc21b0065', authState.token);
+  //   const oldWord = await apiUserWords.getUserWordById(authState.userId, '5e9f5ee35eb9e72bc21b0066', authState.token).catch(() => {});
+  //   const optPrev = oldWord?.optional;
+  //   if(optPrev){
+  //     await apiUserWords
+  //       .updateUserWord(authState.userId, authState.token, { difficulty: 'hard', optional:{ ...optPrev, numberOfMistakesSprint: 47 } })
+  //       .catch(() => {});
+  //   }
+  // };
+  // testUpdate().catch(() => {});
 
   return (
     <Router
