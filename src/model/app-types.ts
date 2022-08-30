@@ -56,8 +56,19 @@ export type LocationGenerics = MakeGenerics<{
   };
 }>;
 
+export interface ProgressWordMap {
+  [id: string] : GameStatsProgressWord;
+}
+
+export interface GameStatsProgressWord {
+  word?: string;
+  guessed: number;
+  failed: number;
+  guessStreak : number;
+}
 export interface IUserStats {
-  [index: string]: string ;
+  // [index: string]: string ;
+  gamesWordsProgress: ProgressWordMap;
 }
 
 export interface IUserStatistic {
