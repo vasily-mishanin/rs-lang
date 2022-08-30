@@ -24,7 +24,7 @@ const WordsList = (props: IWordsList): JSX.Element => {
             </Card>
           </li>
         );
-      })};
+      })}
     </ul>
   );
 };

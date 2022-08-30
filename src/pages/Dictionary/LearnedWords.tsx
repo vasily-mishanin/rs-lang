@@ -14,9 +14,10 @@ const LearnedWords = (): JSX.Element => {
   const authState = useSelector((state: RootState) => state.authentication);
 
   const filter = '{"$and":[{"userWord.difficulty":"learned"}]}';
+  // const groupPage = { group: '5', page:'0' };
 
   useEffect(() => {
-    apiUserWords.getUserAggregatedWords(authState.userId, authState.token, { group: '5', page:'0', filter })
+    apiUserWords.getUserAggregatedWords(authState.userId, authState.token, { filter })
       .then(res => {
         console.log(res);
         if(res){

@@ -37,7 +37,8 @@ export interface UserWord {
     numberOfRightGuessAudio?: number;
     postDate?: Date;
     lastUpdatedDate?: Date;
-    word:Word;
+    theWord:string;
+    wordId:string;
   };
 }
 

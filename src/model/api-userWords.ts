@@ -34,7 +34,8 @@ export async function createUserWord (userId: string, word:Word, difficulty:stri
     optional:{
       postDate:new Date(),
       lastUpdatedDate: new Date(),
-      word,
+      theWord: word.word,
+      wordId: word.id,
     },
   };
   let rawResponse;
@@ -98,7 +99,7 @@ export async function updateUserWord (userId:string, token:string, updUserWord:U
   const updatedWord = updUserWord;
   updatedWord.optional.lastUpdatedDate = new Date();
   try{
-    rawResponse = fetch(`${API_ENDPOINT}/users/${userId}/words/${updatedWord.optional.word.id}`, {
+    rawResponse = fetch(`${API_ENDPOINT}/users/${userId}/words/${updatedWord.optional.wordId}`, {
       method: 'PUT',
       headers:{
         'Authorization': `Bearer ${token}`,

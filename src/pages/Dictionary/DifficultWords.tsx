@@ -14,9 +14,10 @@ const DifficultWords = (): JSX.Element =>{
   const authState = useSelector((state: RootState) => state.authentication);
 
   const filter = '{"$and":[{"userWord.difficulty":"hard"}]}';
+  // const groupPage = { group: '5', page:'0' };
 
   useEffect(() => {
-    apiUserWords.getUserAggregatedWords(authState.userId, authState.token, { group: '5', page:'0', filter })
+    apiUserWords.getUserAggregatedWords(authState.userId, authState.token, { filter })
       .then(res => {
         console.log(res);
         if(res){
@@ -26,9 +27,9 @@ const DifficultWords = (): JSX.Element =>{
       .catch(() => {});
   }, []);
 
-  return (<section className='difficult-words'>
+  return <section className='difficult-words'>
     <h1>DifficultWords</h1>
     <WordsList words={words}/>
-  </section>);
+  </section>;
 };
 export default DifficultWords;
