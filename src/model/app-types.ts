@@ -53,3 +53,12 @@ export type LocationGenerics = MakeGenerics<{
     page: string;
   };
 }>;
+
+export interface IUserStats {
+  [index: string]: string ;
+}
+
+export interface IUserStatistic {
+  learnedWords: number;
+  optional : IUserStats;
+}
