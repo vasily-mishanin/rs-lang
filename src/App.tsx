@@ -80,17 +80,21 @@ const App = ():JSX.Element => {
   // console.log('APP', 'location', location);
   // console.log('APP', 'appRoutes', appRoutes);
 
-  // const testUpdate = async () => {
-  //   await apiUserWords.deleteUserWord(authState.userId, '5e9f5ee35eb9e72bc21b0065', authState.token);
-  //   const oldWord = await apiUserWords.getUserWordById(authState.userId, '5e9f5ee35eb9e72bc21b0066', authState.token).catch(() => {});
-  //   const optPrev = oldWord?.optional;
-  //   if(optPrev){
-  //     await apiUserWords
-  //       .updateUserWord(authState.userId, authState.token, { difficulty: 'hard', optional:{ ...optPrev, numberOfMistakesSprint: 47 } })
-  //       .catch(() => {});
-  //   }
-  // };
-  // testUpdate().catch(() => {});
+  const testFetch = async () => {
+  // await apiUserWords.deleteUserWord(authState.userId, '5e9f5ee35eb9e72bc21b0065', authState.token);
+  // const oldWord = await apiUserWords.getUserWordById(authState.userId, '5e9f5ee35eb9e72bc21b0066', authState.token).catch(() => {});
+  // const optPrev = oldWord?.optional;
+  // if(optPrev){
+  //   await apiUserWords
+  //     .updateUserWord(authState.userId, authState.token, { difficulty: 'hard', optional:{ ...optPrev, numberOfMistakesSprint: 47 } })
+  //     .catch(() => {});
+  // }
+
+    const obtainedWord = await apiUserWords.getUserAggregatedWordById(authState.userId, '5e9f5ee35eb9e72bc21af4a3', authState.token);
+    const oneMore = await apiUserWords.getUserWordById(authState.userId, '5e9f5ee35eb9e72bc21af4a3', authState.token);
+    console.log(obtainedWord, oneMore);
+  };
+  testFetch().catch(() => {});
 
   return (
     <Router

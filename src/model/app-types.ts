@@ -12,6 +12,7 @@ export interface User {
 
 export interface Word {
   id: string;
+  _id? :string;
   group: number;
   page: number;
   word: string;
@@ -36,7 +37,8 @@ export interface UserWord {
     numberOfRightGuessAudio?: number;
     postDate?: Date;
     lastUpdatedDate?: Date;
-    word:Word;
+    theWord:string;
+    wordId:string;
   };
 }
 
