@@ -117,6 +117,7 @@ export const CommonGamePage = ({ game }: GamePageProps): JSX.Element => {
                   page = {currPage}
                   startedFromBook = {startedFromTextBook}
                   onGameOver = {gameIsOver}
+                  gameName = {gameName[game]}
                 />
         }
         {game === 'audio' &&
@@ -125,6 +126,7 @@ export const CommonGamePage = ({ game }: GamePageProps): JSX.Element => {
                   page = {currPage}
                   startedFromBook = {startedFromTextBook}
                   onGameOver = {gameIsOver}
+                  gameName = {gameName[game]}
                 />
         }
 
@@ -137,6 +139,7 @@ export const CommonGamePage = ({ game }: GamePageProps): JSX.Element => {
           correctAnswers={gameResults.correctAnswers}
           wrongAnswers={gameResults.wrongAnswers}
           score = {gameResults.score}
+          gameName = {game}
         />
         <div className="game_restart">
           <Button buttonType='primary' text='Играть снова' onClick={restartGame} />

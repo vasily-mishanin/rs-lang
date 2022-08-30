@@ -18,7 +18,7 @@ import { IGameResults, GameBodyProps, ISprintWord, PlaySoundItem, MButtonEvent }
 import './AudioTrainBody.pcss';
 
 export const AudioTrainBody = (
-  { level, onGameOver, page }: GameBodyProps): JSX.Element => {
+  { level, onGameOver, page, gameName }: GameBodyProps): JSX.Element => {
 
   const [firstRun, setFirstRun] = useState(true);
   const [score, setScore] = useState(0);
@@ -51,6 +51,7 @@ export const AudioTrainBody = (
       correctAnswers: correctAnswers.current,
       wrongAnswers: wrongAnswers.current,
       score: `${score}/${GAME_RULES.audiogame.TASKS_COUNT}`,
+      gameName,
     };
 
     onGameOver(gameResults);
