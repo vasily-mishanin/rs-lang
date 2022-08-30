@@ -2,6 +2,7 @@ export interface IGameResults {
   correctAnswers: ISprintWord[];
   wrongAnswers: ISprintWord[];
   score: string;
+  gameName: string;
 }
 
 export interface ISprintWord {
@@ -18,6 +19,7 @@ export interface GameBodyProps {
   page: number;
   startedFromBook: boolean;
   onGameOver: (results: IGameResults) => void;
+  gameName: string;
 }
 
 export interface PlaySoundItem {

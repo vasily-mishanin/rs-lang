@@ -26,7 +26,7 @@ const sadSmiles = ['😬', '😐', '🤔', '😑', '🙄', '😕'];
 type AnswerType = 'accept' | 'decline';
 
 export const SprintBody = (
-  { level, page, startedFromBook, onGameOver }: GameBodyProps,
+  { level, page, startedFromBook, onGameOver, gameName }: GameBodyProps,
 ): JSX.Element => {
   const [firstRun, setFirstRun] = useState(true);
   const [score, setScore] = useState(0);
@@ -54,6 +54,7 @@ export const SprintBody = (
       correctAnswers: correctAnswers.current,
       wrongAnswers: wrongAnswers.current,
       score: `${score} баллов`,
+      gameName,
     };
 
     onGameOver(gameResults);

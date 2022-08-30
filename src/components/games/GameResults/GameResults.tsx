@@ -1,13 +1,17 @@
 import classNames from 'classnames';
+import { useSelector } from 'react-redux';
+
+import { saveGameResultStats } from './index';
 
 import { GameResultItem } from './GameResultItem/GameResultItem';
 
-import { IGameResults } from '@/model/games-types';
-
 import './GameResults.pcss';
 
+import { IGameResults } from '@/model/games-types';
+import { RootState } from '@/store/store';
+
 export const GameResults =
-  ({ correctAnswers, wrongAnswers, score }: IGameResults): JSX.Element => {
+  ({ correctAnswers, wrongAnswers, score, gameName }: IGameResults): JSX.Element => {
 
     const getResultDesision = () => {
       if (correctAnswers.length === 0) return '';
@@ -17,6 +21,10 @@ export const GameResults =
     };
 
     const resultDesision = getResultDesision();
+
+    const authState = useSelector((state:RootState) => state.authentication);
+    if (authState.isLoggedIn)
+      saveGameResultStats(gameName, authState.userId, authState.token, correctAnswers, wrongAnswers);
 
     return (
       <div className="results">
