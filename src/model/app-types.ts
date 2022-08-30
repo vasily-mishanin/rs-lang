@@ -12,6 +12,7 @@ export interface User {
 
 export interface Word {
   id: string;
+  _id? :string;
   group: number;
   page: number;
   word: string;

@@ -72,15 +72,15 @@ const WordCard = (props: { word: Word }): JSX.Element => {
         </div>
         <PlayAudio source={wordAudio} additionalSources={additionalAudio} type='single-button'/>
 
-        <div className='word-card-controls'>
+        { authState.isLoggedIn && <div className='word-card-controls'>
           <button  type='button' onClick={() => {handleHardWord().catch(() => {});}}>
             <hardWordIcon.icon/>
           </button>
-          <button type='button' onClick={handleLearnedWord}>
+          <button type='button' onClick={()=>{handleLearnedWord().catch(()=>{});}}>
             <learnedWord.icon/>
           </button>
+        </div> }
 
-        </div>
       </div>
 
       <img src={`${API_ENDPOINT}/${image}`} alt={word} />

@@ -136,3 +136,59 @@ export async function deleteUserWord (userId:string, wordId:string, token:string
   }catch(err){console.log(err);}
 
 }
+
+export type TAggrWordsQuery = {
+  filter?: string;
+  group?:string ;
+  page?: string;
+};
+
+export type TAggrResponse = [{paginatedResults:Word []}];
+
+// GET user's aggregated WORDS
+
+export async function getUserAggregatedWords (userId:string, token:string, query:TAggrWordsQuery){
+  const url = new URL (`${API_ENDPOINT}/users/${userId}/aggregatedWords`);
+  const params = Object.entries(query);
+  const queryParams = new URLSearchParams(params);
+  url.search = queryParams.toString(); // url + ? + params
+  let rawResponse;
+  try{
+    rawResponse = await fetch(url, {
+      method:'GET',
+      headers:{
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    }).then(res => {
+      if (res.ok) {
+        return res.json();
+      }
+      throw new Error(res.statusText);
+    }).then(((res:TAggrResponse) => res[0].paginatedResults));
+  }catch(err){console.log(err);}
+  return rawResponse;
+};
+
+// GET user's aggregated WORD
+export async function getUserAggregatedWordById (userId:string, wordId:string, token:string){
+  const url = new URL (`${API_ENDPOINT}/users/${userId}/aggregatedWords/${wordId}`);
+  let rawResponse;
+  try{
+    rawResponse = await fetch(url, {
+      method:'GET',
+      headers:{
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    }).then(res => {
+      if (res.ok) {
+        return res.json();
+      }
+      throw new Error(res.statusText);
+    }).then(((res:UserWord) => res));
+  }catch(err){console.log(err);}
+  return rawResponse;
+};
