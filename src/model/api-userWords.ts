@@ -1,4 +1,4 @@
-import type { Word, UserWord } from './app-types';
+import type { Word, UserWord, UserWordDifficulty } from './app-types';
 
 const API_ENDPOINT = 'https://rss-rs-lang.herokuapp.com';
 
@@ -28,19 +28,24 @@ export async function getUserWords (userId:string, token:string){
 
 // Create a user's Word
 
-export async function createUserWord (userId: string, word:Word, difficulty:string, token: string){
-  const newWord:UserWord = {
+export async function createUserWord (
+  userId: string,
+  token: string,
+  wordId: string,
+  word: string,
+  difficulty: UserWordDifficulty,
+){
+  const newWord: UserWord = {
     difficulty,
     optional:{
-      postDate:new Date(),
-      lastUpdatedDate: new Date(),
-      theWord: word.word,
-      wordId: word.id,
+      postDate: new Date().toISOString(),
+      theWord: word,
+      wordId,
     },
   };
   let rawResponse;
   try{
-    rawResponse = await fetch(`${API_ENDPOINT}/users/${userId}/words/${word.id}`, {
+    rawResponse = await fetch(`${API_ENDPOINT}/users/${userId}/words/${wordId}`, {
       method:'POST',
       headers:{
         'Authorization': `Bearer ${token}`,
@@ -97,8 +102,9 @@ export async function getUserWordById (userId:string, wordId:string, token:strin
 export async function updateUserWord (userId:string, token:string, updUserWord:UserWord){
   let rawResponse;
   const updatedWord = updUserWord;
-  updatedWord.optional.lastUpdatedDate = new Date();
-  try{
+  updatedWord.optional.lastUpdatedDate = new Date().toISOString();
+
+  try {
     rawResponse = fetch(`${API_ENDPOINT}/users/${userId}/words/${updatedWord.optional.wordId}`, {
       method: 'PUT',
       headers:{
@@ -112,11 +118,8 @@ export async function updateUserWord (userId:string, token:string, updUserWord:U
         return res.json();
       }
       throw new Error(res.statusText);
-    }).then((res:UserWord) =>
-    //  console.log('updateUserWord Response: ', res);
-      res,
-    );
-  }catch(err){console.log(err);}
+    }).then((res:UserWord) => res );
+  } catch(err) { console.log(err); }
   return rawResponse;
 }
 
@@ -193,3 +196,27 @@ export async function getUserAggregatedWordById (userId:string, wordId:string, t
   }catch(err){console.log(err);}
   return rawResponse;
 };
+
+export async function setUserWordDifficulty (
+  userId: string,
+  userToken: string,
+  wordId: string,
+  word: string,
+  difficulty: UserWordDifficulty,
+  isEntryExist?: boolean,
+) {
+  const isUserWordExisted =
+    (isEntryExist !== undefined)
+      ?  isEntryExist
+      : (!!(await getUserWordById (userId, wordId, userToken)));
+
+  const updUserWord: UserWord = {
+    difficulty,
+    optional:{
+      wordId,
+    },
+  };
+
+  if (isUserWordExisted) await updateUserWord(userId, userToken, updUserWord);
+  else await createUserWord(userId, userToken, wordId, word, difficulty);
+}

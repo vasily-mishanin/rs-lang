@@ -29,15 +29,15 @@ export interface Word {
 }
 
 export interface UserWord {
-  difficulty:string;
+  difficulty: UserWordDifficulty;
   optional:{
     numberOfMistakesSprint?: number;
     numberOfMistakesAudio?: number;
     numberOfRightGuessSprint?: number;
     numberOfRightGuessAudio?: number;
-    postDate?: Date;
-    lastUpdatedDate?: Date;
-    theWord:string;
+    postDate?: string;
+    lastUpdatedDate?: string;
+    theWord?:string;
     wordId:string;
   };
 }
@@ -75,3 +75,5 @@ export interface IUserStatistic {
   learnedWords: number;
   optional : IUserStats;
 }
+
+export type UserWordDifficulty = 'hard' | 'learned';

@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { getUserStatistic, updateUserStatistic } from '@/model/api-statistic';
-import { getUserAggregatedWords } from '@/model/api-userWords';
+import { getUserAggregatedWords, getUserWords } from '@/model/api-userWords';
 import { IUserStatistic } from '@/model/app-types';
 import { GAMES_EDU_PROGRESS } from '@/model/constants';
 import { ISprintWord } from '@/model/games-types';
@@ -9,12 +9,12 @@ export interface IGameStats {
   total: number;
 }
 
-function removeWordFormLearned (wordId: string) {
-  console.log('removing from learned word id: ', wordId );
+async function saveWordAsLearned (wordId: string) {
+  console.log('saveWordAsLearned: ', wordId );
 }
 
-function saveWordAsLearned (wordId: string) {
-  console.log('saveWordAsLearned: ', wordId );
+async function removeWordFormLearned (wordId: string) {
+  console.log('removing from learned word id: ', wordId );
 }
 
 export async function saveGameResultStats (
@@ -35,6 +35,9 @@ export async function saveGameResultStats (
     userToken,
     { filter: '{"$and":[{"userWord.difficulty":"hard"}]}' },
   );
+  const allWords = await getUserWords(    userId,    userToken  );
+
+  console.log('all: ', allWords);
 
   const isWordinListLearned = (wordId: string) =>
     (learnedWords?.find(el => el.id === wordId || el._id === wordId ));
@@ -45,11 +48,13 @@ export async function saveGameResultStats (
   const manageGuessStreak = (wordId: string, currentStreak: number) => {
     let streak = currentStreak;
     if (!(isWordinListLearned(wordId)) && currentStreak === GAMES_EDU_PROGRESS.guessWordToLearn) {
-      saveWordAsLearned(wordId);
+      saveWordAsLearned(wordId)
+        .catch(()=>{});
       streak = 0;
     }
     if (isWordinListHard(wordId) && currentStreak === GAMES_EDU_PROGRESS.guessHardWordToLearn) {
-      saveWordAsLearned(wordId);
+      saveWordAsLearned(wordId)
+        .catch(()=>{});
       streak = 0;
     }
     return streak;
@@ -82,7 +87,10 @@ export async function saveGameResultStats (
     }
     else currentProgress[el.id] = { guessed : 0, failed: 1, guessStreak: 0, word: el.word };
 
-    if (isWordinListLearned(el.id)) removeWordFormLearned(el.id);
+    if (isWordinListLearned(el.id)) {
+      removeWordFormLearned(el.id)
+        .catch(()=>{});
+    }
 
   });
 
