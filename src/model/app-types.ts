@@ -35,8 +35,8 @@ export interface UserWord {
     numberOfMistakesAudio?: number;
     numberOfRightGuessSprint?: number;
     numberOfRightGuessAudio?: number;
-    postDate?: Date;
-    lastUpdatedDate?: Date;
+    postDate?: string;
+    lastUpdatedDate?: string;
     theWord:string;
     wordId:string;
   };

@@ -1,5 +1,7 @@
 import { ReactLocation, Router, Navigate, Outlet } from '@tanstack/react-location';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { useEffect } from 'react';
 
 import TextbookGroup from './components/Textbook/TextbookGroup';
 import MainNavigation from './components/layout/MainNavigation';
@@ -19,14 +21,16 @@ import { MainPage } from './pages/MainPage/MainPage';
 import ProfilePage from './pages/ProfilePage';
 import { TeamPage } from './pages/TeamPage/TeamPage';
 import TextbookMainPage from './pages/TextbookMainPage/TextbookMainPage';
+import { fetchUserWords } from './store/userWordSlice';
 
 import type { LocationGenerics } from './model/app-types';
-import type { RootState } from './store/store';
+import type { RootState, AppDispatch } from './store/store';
 import type { Route } from '@tanstack/react-location';
 
 const App = ():JSX.Element => {
   const authState = useSelector((state: RootState) => state.authentication);
   const { isLoggedIn } = authState;
+  const dispatch = useDispatch<AppDispatch>();
 
   const location = new ReactLocation<LocationGenerics>();
 
@@ -79,6 +83,14 @@ const App = ():JSX.Element => {
 
   // console.log('APP', 'location', location);
   // console.log('APP', 'appRoutes', appRoutes);
+  useEffect(() => {
+    const userData = { userId:authState.userId, token:authState.token };
+    const  getUsersWords = async () => {
+      await dispatch(fetchUserWords(userData));
+    };
+    getUsersWords().catch(() => {});
+
+  }, []);
 
   const testFetch = async () => {
   // await apiUserWords.deleteUserWord(authState.userId, '5e9f5ee35eb9e72bc21b0065', authState.token);
