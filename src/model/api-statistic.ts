@@ -13,14 +13,19 @@ export async function getUserStatistic (userId:string, token:string){
     'Content-Type': 'application/json',
   };
 
-  const response = await fetch(url, { method, headers });
+  let result : IUserStatistic | undefined;
 
-  if (response.status === 200) {
-    return await response.json() as IUserStatistic;
+  try{
+    const response = await fetch(url, { method, headers });
+    if (response.status === 200) {
+      result =  await response.json() as IUserStatistic;
+    }
+  }
+  catch (e){
+    throw new Error();
   }
 
-  throw new Error(response.status.toString());
-
+  return result;
 }
 
 // Update user's statistic
@@ -36,13 +41,17 @@ export async function updateUserStatistic (userId:string, token:string, newStats
   };
   const body = JSON.stringify(newStats);
 
-  const response = await fetch(url, { method, headers, body });
+  let result : IUserStatistic | undefined;
 
-  if (response.status === 200) {
-    return await response.json() as IUserStatistic;
-  }
+  try{
+    const response = await fetch(url, { method, headers, body });
 
-  throw new Error(response.status.toString());
+    if (response.status === 200) {
+      result =  await response.json() as IUserStatistic;
+    }
+  } catch (e) {throw new Error();}
+
+  return result;
 
 }
 
@@ -51,10 +60,12 @@ export async function updateUserStatistic (userId:string, token:string, newStats
 export async function setUserStatistic (userId:string, token: string, stats: IUserStats) {
 
   const currentStatistic = await getUserStatistic(userId, token);
-  const newStatistic = { ...currentStatistic };
 
-  newStatistic.optional =  Object.assign(currentStatistic.optional, stats);
+  if(currentStatistic){
 
-  await updateUserStatistic(userId, token, newStatistic);
+    const newStatistic = { ...currentStatistic };
+    newStatistic.optional =  Object.assign(currentStatistic.optional, stats);
+    await updateUserStatistic(userId, token, newStatistic);
+  }
 
 }

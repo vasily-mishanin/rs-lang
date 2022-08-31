@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import ReactTooltip from 'react-tooltip';
 
 import * as apiUsersWords from '../../model/api-userWords';
+import { setUserWordDifficulty } from '../../model/api-userWords';
 import { PlayAudio } from '../PlayAudio/PlayAudio';
 
 import { API_ENDPOINT } from '@/model/api-words';
@@ -71,7 +72,7 @@ const WordCard = (props: { word: Word }): JSX.Element => {
   const handleHardWord = async () => {
 
     console.log('handleHardWord');
-    await apiUsersWords.createUserWord(authState.userId, wordObj, 'hard', authState.token).catch(() => {});
+    await setUserWordDifficulty(authState.userId, authState.token, wordObj.id, wordObj.word, 'hard').catch(() => {});
     const newWord:UserWord = {
       difficulty: 'hard',
       optional:{
@@ -88,7 +89,7 @@ const WordCard = (props: { word: Word }): JSX.Element => {
   const handleLearnedWord = async () => {
 
     console.log('handleLearnedWord');
-    await apiUsersWords.createUserWord(authState.userId, wordObj, 'learned', authState.token).catch(() => {});
+    await setUserWordDifficulty(authState.userId, authState.token, wordObj.id, wordObj.word, 'learned').catch(() => {});
     const newWord:UserWord = {
       difficulty: 'learned',
       optional:{
