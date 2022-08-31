@@ -76,4 +76,4 @@ export interface IUserStatistic {
   optional : IUserStats;
 }
 
-export type UserWordDifficulty = 'hard' | 'learned';
+export type UserWordDifficulty = 'hard' | 'learned' | '';
