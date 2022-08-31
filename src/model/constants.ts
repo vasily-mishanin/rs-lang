@@ -12,3 +12,8 @@ export const GAME_RULES = {
     TASKS_COUNT : 20,
   },
 };
+
+export const GAMES_EDU_PROGRESS = {
+  guessWordToLearn: 3,
+  guessHardWordToLearn: 5,
+};
