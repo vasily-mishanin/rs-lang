@@ -1,15 +1,17 @@
 import './WordCard.pcss';
 import { CheckIcon, PuzzleIcon } from '@heroicons/react/solid';
 import htmlParser from 'html-react-parser';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import ReactTooltip from 'react-tooltip';
 
 import * as apiUsersWords from '../../model/api-userWords';
 import { setUserWordDifficulty } from '../../model/api-userWords';
 import { PlayAudio } from '../PlayAudio/PlayAudio';
 
 import { API_ENDPOINT } from '@/model/api-words';
-import type { Word } from '@/model/app-types';
+import type { UserWord, Word } from '@/model/app-types';
 import { RootState } from '@/store/store';
+import { userWordsActions } from '@/store/userWordSlice';
 
 // export interface IconPack {
 //   hardWord: (props: React.SVGProps<SVGSVGElement>) => JSX.Element;
@@ -21,9 +23,12 @@ type TSVGIcon = {
 };
 
 const WordCard = (props: { word: Word }): JSX.Element => {
-  const authState = useSelector((state:RootState) => state.authentication);
-
   const { word: wordObj } = props;
+  const authState = useSelector((state:RootState) => state.authentication);
+  const userWordsState = useSelector((state:RootState) => state.userWords);
+  const wordInUsersWords = userWordsState.userWords.find(w => w.optional.wordId === wordObj.id);
+  const dispatch = useDispatch();
+
   const {
     // id,
     // group,
@@ -48,16 +53,54 @@ const WordCard = (props: { word: Word }): JSX.Element => {
   const hardWordIcon:TSVGIcon = { icon:PuzzleIcon };
   const learnedWord:TSVGIcon = { icon:CheckIcon };
 
+  const controlHardBtnClasses = () => {
+    const baseClass = 'usual hard';
+    if(wordInUsersWords && wordInUsersWords.difficulty === 'hard') {
+      return `${baseClass} active-hard`;
+    }
+    return baseClass;
+  };
+
+  const controlLearnedBtnClasses = () => {
+    const baseClass = 'usual learned';
+    if(wordInUsersWords && wordInUsersWords.difficulty === 'learned') {
+      return `${baseClass} active-learned`;
+    }
+    return baseClass;
+  };
+
   const handleHardWord = async () => {
+
     console.log('handleHardWord');
     await setUserWordDifficulty(authState.userId, authState.token, wordObj.id, wordObj.word, 'hard').catch(() => {});
-    // await apiUsersWords.createUserWord(authState.userId, wordObj, 'hard', authState.token).catch(() => {});
+    const newWord:UserWord = {
+      difficulty: 'hard',
+      optional:{
+        wordId: wordObj.id,
+        theWord: wordObj.word,
+        postDate: new Date().toISOString(),
+      },
+    };
+    dispatch(userWordsActions.addUserWord(newWord));
+
+    // else => update Word (state and server)
   };
 
   const handleLearnedWord = async () => {
+
     console.log('handleLearnedWord');
     await setUserWordDifficulty(authState.userId, authState.token, wordObj.id, wordObj.word, 'learned').catch(() => {});
-    // await apiUsersWords.createUserWord(authState.userId, wordObj, 'learned', authState.token).catch(() => {});
+    const newWord:UserWord = {
+      difficulty: 'learned',
+      optional:{
+        wordId: wordObj.id,
+        theWord: wordObj.word,
+        postDate: new Date().toISOString(),
+      },
+    };
+    dispatch(userWordsActions.addUserWord(newWord));
+
+    // else => update Word (state and server)
 
   };
 
@@ -76,12 +119,13 @@ const WordCard = (props: { word: Word }): JSX.Element => {
         <PlayAudio source={wordAudio} additionalSources={additionalAudio} type='single-button'/>
 
         { authState.isLoggedIn && <div className='word-card-controls'>
-          <button  type='button' onClick={() => {handleHardWord().catch(() => {});}}>
+          <button className={controlHardBtnClasses()}  type='button' onClick={() => {handleHardWord().catch(() => {});}} data-tip="Добавить в сложные">
             <hardWordIcon.icon/>
           </button>
-          <button type='button' onClick={()=>{handleLearnedWord().catch(()=>{});}}>
+          <button className={controlLearnedBtnClasses()} type='button' onClick={()=>{handleLearnedWord().catch(()=>{});}} data-tip="Добавить в изученные">
             <learnedWord.icon/>
           </button>
+
         </div> }
 
       </div>
@@ -96,7 +140,7 @@ const WordCard = (props: { word: Word }): JSX.Element => {
         <p>{htmlParser(textExample)}</p>
         <p>{textExampleTranslate}</p>
       </div>
-
+      <ReactTooltip type='info' delayShow={500}/>
     </article>
   );
 };

@@ -103,8 +103,7 @@ export async function updateUserWord (userId:string, token:string, updUserWord:U
   let rawResponse;
   const updatedWord = updUserWord;
   updatedWord.optional.lastUpdatedDate = new Date().toISOString();
-
-  try {
+  try{
     rawResponse = fetch(`${API_ENDPOINT}/users/${userId}/words/${updatedWord.optional.wordId}`, {
       method: 'PUT',
       headers:{
