@@ -121,14 +121,14 @@ export async function addWordsToStatistic (
 
 }
 
-async function saveEmptyStatistic (userId: string, userToken: string) {
+export const emptyStatistic: IUserStatistic  = {
+  learnedWords: 0,
+  optional: {
+    gamesWordsProgress: {},
+    wordsPerDay: {},
+  },
+};
 
-  const emptyStatistic: IUserStatistic  = {
-    learnedWords: 0,
-    optional: {
-      gamesWordsProgress: {},
-      wordsPerDay: {},
-    } };
-
+export async function saveEmptyStatistic (userId: string, userToken: string) {
   await updateUserStatistic(userId, userToken, emptyStatistic);
 }
