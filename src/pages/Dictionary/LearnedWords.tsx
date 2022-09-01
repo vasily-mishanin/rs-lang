@@ -17,7 +17,7 @@ const LearnedWords = (): JSX.Element => {
   // const groupPage = { group: '5', page:'0' };
 
   useEffect(() => {
-    apiUserWords.getUserAggregatedWords(authState.userId, authState.token, { filter })
+    apiUserWords.getUserAggregatedWords(authState.userId, authState.token, { filter, wordsPerPage:'600' })
       .then(res => {
         console.log(res);
         if(res){

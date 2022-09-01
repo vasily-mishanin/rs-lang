@@ -14,20 +14,16 @@ import type { UserWord, Word } from '@/model/app-types';
 import { RootState } from '@/store/store';
 import { userWordsActions } from '@/store/userWordSlice';
 
-// export interface IconPack {
-//   hardWord: (props: React.SVGProps<SVGSVGElement>) => JSX.Element;
-//   learnedWord: (props: React.SVGProps<SVGSVGElement>) => JSX.Element;
-// };
-
 type TSVGIcon = {
   icon:(props: React.SVGProps<SVGSVGElement>) => JSX.Element;
 };
 
 const WordCard = (props: { word: Word }): JSX.Element => {
-  const { word: wordObj } = props;
+  const { word:wordObj } = props;
+  const { id, _id: ID } = wordObj;
   const authState = useSelector((state:RootState) => state.authentication);
   const userWordsState = useSelector((state:RootState) => state.userWords);
-  const wordInUsersWords = userWordsState.userWords.find(w => w.optional.wordId === wordObj.id);
+  const wordInUsersWords = userWordsState.userWords.find(w => (w.optional.wordId === (id || ID)));
   const dispatch = useDispatch();
 
   const {
@@ -54,6 +50,46 @@ const WordCard = (props: { word: Word }): JSX.Element => {
   const hardWordIcon:TSVGIcon = { icon:PuzzleIcon };
   const learnedWord:TSVGIcon = { icon:CheckIcon };
 
+  const handleHardWord = async () => {
+
+    const wordId = wordObj.id || wordObj._id;
+    if(wordId){
+      console.log('handleHardWord');
+      await setUserWordDifficulty(authState.userId, authState.token, wordId, wordObj.word, 'hard').catch(() => {});
+
+      const newWord:UserWord = {
+        difficulty: 'hard',
+        optional:{
+          wordId,
+          theWord: wordObj.word,
+          postDate: new Date().toISOString(),
+        },
+      };
+      dispatch(userWordsActions.addUserWord(newWord));
+    }
+  };
+
+  const handleLearnedWord = async () => {
+
+    console.log('handleLearnedWord');
+    const wordId = wordObj.id || wordObj._id;
+    if(wordId){
+      await setUserWordDifficulty(authState.userId, authState.token, wordId, wordObj.word, 'learned').catch(() => {});
+
+      await addWordsToStatistic(authState.userId, authState.token, [{ id: wordObj.id, type:'learned' }]);
+
+    const newWord:UserWord = {
+        difficulty: 'learned',
+        optional:{
+          wordId,
+          theWord: wordObj.word,
+          postDate: new Date().toISOString(),
+        },
+      };
+      dispatch(userWordsActions.addUserWord(newWord));
+    }
+  };
+
   const controlHardBtnClasses = () => {
     const baseClass = 'usual hard';
     if(wordInUsersWords && wordInUsersWords.difficulty === 'hard') {
@@ -70,6 +106,7 @@ const WordCard = (props: { word: Word }): JSX.Element => {
     return baseClass;
   };
 
+<<<<<<< HEAD
   const handleHardWord = async () => {
 
     console.log('handleHardWord');
@@ -107,6 +144,8 @@ const WordCard = (props: { word: Word }): JSX.Element => {
 
   };
 
+=======
+>>>>>>> fe0b204 (fix: logic of learned and hard words)
   return (
     <article className="word-card">
       <div className='word-card-essence'>
