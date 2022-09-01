@@ -65,8 +65,12 @@ export async function saveGameResultStats (
     return streak;
   };
 
+  // TODO: Create empty user Stats on registration
   const currentStatistic = await getUserStatistic(userId, userToken)
-    || { learnedWords: 0, optional: { gamesWordsProgress:{} } };
+    || { learnedWords: 0, optional: {
+      gamesWordsProgress: {},
+      wordsPerDay: {},
+    } };
 
   const newStatistic: IUserStatistic = {
     learnedWords: 0,

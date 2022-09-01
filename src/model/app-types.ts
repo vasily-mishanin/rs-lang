@@ -66,14 +66,33 @@ export interface GameStatsProgressWord {
   failed: number;
   guessStreak : number;
 }
+
 export interface IUserStats {
-  // [index: string]: string ;
   gamesWordsProgress: ProgressWordMap;
+  wordsPerDay: WordsPerDayMap;
 }
 
-export interface IUserStatistic {
+export interface IUserStatisticResponse {
+  id: number;
   learnedWords: number;
   optional : IUserStats;
 }
 
-export type UserWordDifficulty = 'hard' | 'learned' | 'none';
+export type IUserStatistic = Omit<IUserStatisticResponse, 'id'>;
+
+export type UserWordDifficulty = 'hard' | 'learned' | 'none' | 'new';
+export type StatsWordDifficulty = 'new' | 'learned';
+
+export type WordStats = {
+  id: string;
+  word?: string;
+  type: StatsWordDifficulty;
+};
+
+export interface WordsPerDayMap {
+  [date: string] : DaylyWordStats;
+}
+
+export type DaylyWordStats =  {
+  [key in StatsWordDifficulty]: Array<string>;
+};
