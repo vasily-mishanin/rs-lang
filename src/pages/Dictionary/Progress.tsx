@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 
 import { getUserStatistic } from '@/model/api-statistic';
-import { GameStatsProgressWord, ProgressWordMap } from '@/model/app-types';
+import { GameStatsProgressWord } from '@/model/app-types';
 import { RootState } from '@/store/store';
 
 const Progress = (): JSX.Element => {
@@ -31,6 +31,7 @@ const Progress = (): JSX.Element => {
         <div className='w-2/12'>-{el.failed}</div>
         <div className='w-2/12'>+{el.guessed}</div>
         <div className='w-2/12'>++{el.guessStreak}</div>
+        <div className='w-2/12'>{el.lastAnswerWasCorrect? 'OK' : 'NO'}</div>
       </div>
 
     ))}

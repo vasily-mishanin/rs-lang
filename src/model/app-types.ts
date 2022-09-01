@@ -65,6 +65,7 @@ export interface GameStatsProgressWord {
   guessed: number;
   failed: number;
   guessStreak : number;
+  lastAnswerWasCorrect: boolean;
 }
 
 export interface IUserStats {

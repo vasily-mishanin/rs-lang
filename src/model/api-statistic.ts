@@ -55,6 +55,9 @@ export async function updateUserStatistic (userId:string, token:string, newStats
     }
   } catch (e) {throw new Error();}
 
+  // console.log('updateUserStatistic');
+  // console.log(result);
+
   return result;
 
 }
@@ -63,8 +66,7 @@ export async function updateUserStatistic (userId:string, token:string, newStats
 
 export async function setUserStatistic (userId:string, token: string, stats: IUserStats) {
 
-  const currentStatistic = await getUserStatistic(userId, token);
-
+  const currentStatistic = await getUserStatistic(userId, token) ;
   if(currentStatistic){
 
     const newStatistic = { ...currentStatistic };
@@ -72,6 +74,18 @@ export async function setUserStatistic (userId:string, token: string, stats: IUs
     await updateUserStatistic(userId, token, newStatistic);
   }
 
+}
+
+export const emptyStatistic: IUserStatistic  = {
+  learnedWords: 0,
+  optional: {
+    gamesWordsProgress: {},
+    wordsPerDay: {},
+  },
+};
+
+export async function saveEmptyStatistic (userId: string, userToken: string) {
+  await updateUserStatistic(userId, userToken, emptyStatistic);
 }
 
 export async function addWordsToStatistic (
@@ -87,14 +101,13 @@ export async function addWordsToStatistic (
   };
 
   const currentDate = new Date().toLocaleDateString('en-US');
-  const currentStatistic = await getUserStatistic(userId, userToken);
+  const currentStatistic = await getUserStatistic(userId, userToken) || emptyStatistic;
 
-  console.log('currentStst');
-  console.log(currentStatistic);
+  // console.log('currentStst');
+  // console.log(currentStatistic);
 
   if (currentStatistic) {
-    // currentStatistic.optional.wordsPerDay = {};
-    // currentStatistic.optional.wordsPerDay[currentDate] = update;
+    if (!currentStatistic.optional.wordsPerDay) currentStatistic.optional.wordsPerDay = {};
 
     const currentDateStats = currentStatistic.optional.wordsPerDay[currentDate];
 
@@ -112,23 +125,11 @@ export async function addWordsToStatistic (
       currentStatistic.optional.wordsPerDay[currentDate] = update;
     }
 
-    console.log('updating stats with: ');
-    console.log(currentStatistic);
+    // console.log('updating stats with: ');
+    // console.log(currentStatistic);
 
     await updateUserStatistic(userId, userToken, currentStatistic);
 
   }
 
-}
-
-export const emptyStatistic: IUserStatistic  = {
-  learnedWords: 0,
-  optional: {
-    gamesWordsProgress: {},
-    wordsPerDay: {},
-  },
-};
-
-export async function saveEmptyStatistic (userId: string, userToken: string) {
-  await updateUserStatistic(userId, userToken, emptyStatistic);
 }

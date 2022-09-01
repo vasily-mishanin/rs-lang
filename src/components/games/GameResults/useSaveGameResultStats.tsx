@@ -44,7 +44,7 @@ export async function useSaveGameResultStats (
       addWordsToStatistic(
         authState.userId,
         authState.token,
-        [ { id: word.id, type: 'learned' }],
+        [{ id: word.id, type: 'learned' }],
       ).catch(() => { });
     };
 
@@ -59,11 +59,9 @@ export async function useSaveGameResultStats (
         authState.token,
         newStats,
       ).catch(() => { });
-
     };
 
     const isWordinListLearned = (wordId: string) => !!(learnedWords.find(el => el === wordId));
-
     const isWordinListHard = (wordId: string) => !!(hardWords?.find(el => el === wordId));
 
     const manageGuessStreak = (word: ISprintWord, currentStreak: number) => {
@@ -72,23 +70,21 @@ export async function useSaveGameResultStats (
         !(isWordinListLearned(word.id))
         && currentStreak === GAMES_EDU_PROGRESS.guessWordToLearn
       ) {
-        saveWordAsLearned(word)
-          .catch(() => { });
+        saveWordAsLearned(word).catch(() => { });
         streak = 0;
       }
-      if (isWordinListHard(word.id) && currentStreak === GAMES_EDU_PROGRESS.guessHardWordToLearn) {
-        saveWordAsLearned(word)
-          .catch(() => { });
+      if (
+        isWordinListHard(word.id)
+        && currentStreak === GAMES_EDU_PROGRESS.guessHardWordToLearn
+      ) {
+        saveWordAsLearned(word).catch(() => { });
         streak = 0;
       }
       return streak;
     };
 
     const currentStatistic = await getUserStatistic(userId, userToken) || emptyStatistic;
-
-    const newStatistic = { ...currentStatistic };
-
-    const currentProgress = newStatistic.optional.gamesWordsProgress || {};
+    const currentProgress = currentStatistic.optional.gamesWordsProgress || {};
 
     const newWords = [...correctAnswers, ...wrongAnswers]
       .filter(el => (!isWordinListLearned(el.id) && !isWordinListHard(el.id)));
@@ -100,17 +96,31 @@ export async function useSaveGameResultStats (
         currentProgress[el.id].guessed += 1;
         const curStreak = currentProgress[el.id].guessStreak + 1;
         currentProgress[el.id].guessStreak = manageGuessStreak(el, curStreak);
+        currentProgress[el.id].lastAnswerWasCorrect = true;
       }
 
-      else currentProgress[el.id] = { guessed: 1, failed: 0, guessStreak: 1, word: el.word };
+      else currentProgress[el.id] = {
+        guessed: 1,
+        failed: 0,
+        guessStreak: 1,
+        word: el.word,
+        lastAnswerWasCorrect: true,
+      };
     });
 
     wrongAnswers.forEach(el => {
       if (currentProgress[el.id]) {
         currentProgress[el.id].failed += 1;
         currentProgress[el.id].guessStreak = 0;
+        currentProgress[el.id].lastAnswerWasCorrect = false;
       }
-      else currentProgress[el.id] = { guessed: 0, failed: 1, guessStreak: 0, word: el.word };
+      else currentProgress[el.id] = {
+        guessed: 0,
+        failed: 1,
+        guessStreak: 0,
+        word: el.word,
+        lastAnswerWasCorrect: false,
+      };
 
       if (isWordinListLearned(el.id)) {
         removeWordFormLearned(el)
@@ -119,6 +129,8 @@ export async function useSaveGameResultStats (
 
     });
 
+    const newStatistic = await getUserStatistic(userId, userToken) || emptyStatistic;
+    newStatistic.optional.gamesWordsProgress = currentProgress;
     await updateUserStatistic(userId, userToken, newStatistic);
 
   }
