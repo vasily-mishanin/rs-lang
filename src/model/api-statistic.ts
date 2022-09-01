@@ -120,3 +120,15 @@ export async function addWordsToStatistic (
   }
 
 }
+
+async function saveEmptyStatistic (userId: string, userToken: string) {
+
+  const emptyStatistic: IUserStatistic  = {
+    learnedWords: 0,
+    optional: {
+      gamesWordsProgress: {},
+      wordsPerDay: {},
+    } };
+
+  await updateUserStatistic(userId, userToken, emptyStatistic);
+}
