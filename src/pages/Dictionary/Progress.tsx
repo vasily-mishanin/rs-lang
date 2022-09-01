@@ -1,3 +1,4 @@
+import { XCircleIcon, BadgeCheckIcon } from '@heroicons/react/solid';
 import { useSelector } from 'react-redux';
 
 import { useEffect, useState } from 'react';
@@ -28,10 +29,17 @@ const Progress = (): JSX.Element => {
         key={i}
       >
         <div className='w-full'>{el.word}</div>
-        <div className='w-2/12'>-{el.failed}</div>
-        <div className='w-2/12'>+{el.guessed}</div>
-        <div className='w-2/12'>++{el.guessStreak}</div>
-        <div className='w-2/12'>{el.lastAnswerWasCorrect? 'OK' : 'NO'}</div>
+        <div className='w-2/12 flex'>
+          <XCircleIcon className='h-4 w-4 text-red-600' /> : {el.failed}</div>
+        <div className='w-2/12 flex'>
+          <BadgeCheckIcon className='h-4 w-4 text-green-600' /> : {el.guessed}</div>
+        <div className='w-2/12 flex'>
+         streak: <b>{el.guessStreak}</b></div>
+        <div className='w-2/12 flex'>
+          last: {el.lastAnswerWasCorrect
+            ? <BadgeCheckIcon className='h-4 w-4 text-green-600' />
+            : <XCircleIcon className='h-4 w-4 text-red-600' />}
+        </div>
       </div>
 
     ))}
