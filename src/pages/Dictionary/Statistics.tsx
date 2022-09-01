@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/Button/Button';
+import { saveEmptyStatistic } from '@/model/api-statistic';
 import { deleteUserWord, getUserWords, getUserWordsCount } from '@/model/api-userWords';
 import { RootState } from '@/store/store';
 
@@ -57,6 +58,10 @@ const Statistics = (): JSX.Element => {
     });
   };
 
+  const dropStats = async () => {
+    await saveEmptyStatistic(authState.userId, authState.token);
+  };
+
   useEffect(() => {
     loadData().catch(()=>{});
   }, []);
@@ -84,6 +89,11 @@ const Statistics = (): JSX.Element => {
           text='Drop New'
           buttonType='primary'
           onClick={dropNew}
+        />
+        <Button
+          text='Drop Statistic'
+          buttonType='primary'
+          onClick={dropStats}
         />
       </div>
 
