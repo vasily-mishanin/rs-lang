@@ -1,9 +1,8 @@
 import classNames from 'classnames';
 import { useSelector } from 'react-redux';
 
-import { useSaveGameResultStats } from './index';
-
 import { GameResultItem } from './GameResultItem/GameResultItem';
+import { useSaveGameResultStats } from './useSaveGameResultStats';
 
 import './GameResults.pcss';
 

@@ -80,7 +80,7 @@ export interface IUserStatisticResponse {
 
 export type IUserStatistic = Omit<IUserStatisticResponse, 'id'>;
 
-export type UserWordDifficulty = 'hard' | 'learned' | 'none' | 'new';
+export type UserWordDifficulty = 'hard' | 'learned' |  'new';
 export type StatsWordDifficulty = 'new' | 'learned';
 
 export type WordStats = {
