@@ -4,7 +4,7 @@ import { addWordsToStatistic, emptyStatistic, getUserStatistic, updateUserStatis
 import { getUserWords, setUserWordDifficulty } from '@/model/api-userWords';
 import { StatsWordDifficulty, WordStats } from '@/model/app-types';
 import { GAMES_EDU_PROGRESS } from '@/model/constants';
-import { ISprintWord } from '@/model/games-types';
+import { GameType, ISprintWord } from '@/model/games-types';
 import { RootState } from '@/store/store';
 
 export interface IGameStats {
@@ -12,7 +12,7 @@ export interface IGameStats {
 }
 
 export async function useSaveGameResultStats (
-  gameName: string,
+  game: GameType,
   userId: string,
   userToken: string,
   correctAnswers: ISprintWord[],
@@ -85,6 +85,7 @@ export async function useSaveGameResultStats (
 
     const currentStatistic = await getUserStatistic(userId, userToken) || emptyStatistic;
     const currentProgress = currentStatistic.optional.gamesWordsProgress || {};
+    const currentDate = new Date().toLocaleDateString('en-US');
 
     const newWords = [...correctAnswers, ...wrongAnswers]
       .filter(el => (!isWordinListLearned(el.id) && !isWordinListHard(el.id)));
@@ -131,6 +132,49 @@ export async function useSaveGameResultStats (
 
     const newStatistic = await getUserStatistic(userId, userToken) || emptyStatistic;
     newStatistic.optional.gamesWordsProgress = currentProgress;
+
+    const gameCounter = newStatistic.optional.gamesStatistic.gamesTotalCount[game] || 0;
+    newStatistic.optional.gamesStatistic.gamesTotalCount[game] = gameCounter + 1;
+
+    if (!newStatistic.optional.gamesStatistic.gamesPerDay) {
+      newStatistic.optional.gamesStatistic.gamesPerDay = {};
+    }
+    if (!newStatistic.optional.gamesStatistic.resultsPerDay) {
+      newStatistic.optional.gamesStatistic.resultsPerDay = {};
+    }
+
+    if (!newStatistic.optional.gamesStatistic.gamesPerDay[currentDate])
+      newStatistic.optional.gamesStatistic.gamesPerDay[currentDate] = { audio:0, sprint:0 };
+
+    const curDateGamesCount = newStatistic.optional.gamesStatistic.gamesPerDay[currentDate][game];
+
+    if (!curDateGamesCount) {
+      newStatistic.optional.gamesStatistic.gamesPerDay[currentDate][game] = 1;
+    } else {
+      newStatistic.optional.gamesStatistic.gamesPerDay[currentDate][game] += 1;
+    }
+
+    if (!newStatistic.optional.gamesStatistic.resultsPerDay[currentDate])
+      newStatistic.optional.gamesStatistic.resultsPerDay[currentDate] = {
+        audio: {
+          success: 0, fail: 0,
+        }, sprint: {
+          success: 0, fail: 0,
+        } };
+
+    const curDateResults = newStatistic.optional.gamesStatistic.resultsPerDay[currentDate][game];
+    if (!curDateResults) {
+      newStatistic.optional.gamesStatistic.resultsPerDay[currentDate][game] = {
+        success: correctAnswers.length,
+        fail: wrongAnswers.length,
+      };
+    } else {
+      newStatistic.optional.gamesStatistic.resultsPerDay[currentDate][game] = {
+        success: curDateResults.success + correctAnswers.length,
+        fail: curDateResults.fail + wrongAnswers.length,
+      };
+    }
+
     await updateUserStatistic(userId, userToken, newStatistic);
 
   }

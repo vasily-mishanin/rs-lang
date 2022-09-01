@@ -81,6 +81,11 @@ export const emptyStatistic: IUserStatistic  = {
   optional: {
     gamesWordsProgress: {},
     wordsPerDay: {},
+    gamesStatistic: {
+      gamesPerDay: {},
+      resultsPerDay: {},
+      gamesTotalCount: { audio: 0, sprint: 0 },
+    },
   },
 };
 
