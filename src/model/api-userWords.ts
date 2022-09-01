@@ -146,7 +146,10 @@ export type TAggrWordsQuery = {
   page?: string;
 };
 
-export type TAggrResponse = [{paginatedResults:Word []}];
+export type TAggrResponse = [{
+  paginatedResults: Word [];
+  totalCount: Array<{count: number}>;
+}];
 
 // GET user's aggregated WORDS
 
@@ -219,3 +222,33 @@ export async function setUserWordDifficulty (
   if (isUserWordExisted) await updateUserWord(userId, userToken, updUserWord);
   else await createUserWord(userId, userToken, wordId, word, difficulty);
 }
+
+export async function getUserWordsCount (
+  userId: string,
+  token: string,
+  wordType: UserWordDifficulty,
+){
+  const url = new URL (`${API_ENDPOINT}/users/${userId}/aggregatedWords`);
+  const filter = `filter={"$and":[{"userWord.difficulty":"${wordType}"}]}`;
+  const queryParams = new URLSearchParams(filter);
+  url.search = queryParams.toString(); // url + ? + params
+  let rawResponse;
+  try{
+    rawResponse = await fetch(url, {
+      method:'GET',
+      headers:{
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    }).then(res => {
+      if (res.ok) {
+        return res.json();
+      }
+      throw new Error(res.statusText);
+    }).then(((res:TAggrResponse) => res[0].totalCount[0].count ));
+
+  } catch (err) { console.log(err); }
+
+  return rawResponse;
+};

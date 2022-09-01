@@ -1,9 +1,9 @@
 import { useSelector } from 'react-redux';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/Button/Button';
-import { deleteUserWord, getUserWords } from '@/model/api-userWords';
+import { deleteUserWord, getUserWords, getUserWordsCount } from '@/model/api-userWords';
 import { RootState } from '@/store/store';
 
 const Statistics = (): JSX.Element => {
@@ -12,6 +12,10 @@ const Statistics = (): JSX.Element => {
   const learned = useRef<Array<string>>([]);
   const hard = useRef<Array<string>>([]);
   const neww = useRef<Array<string>>([]);
+
+  const [learnedCount, setLC] = useState<number>(0);
+  const [hardCount, setHC] = useState<number>(0);
+  const [newCount, setNC] = useState<number>(0);
 
   const authState = useSelector((state: RootState) => state.authentication);
 
@@ -22,6 +26,13 @@ const Statistics = (): JSX.Element => {
     learned.current = allWords!.filter(el => el.difficulty === 'learned').map(el => el.optional.wordId);
     hard.current = allWords!.filter(el => el.difficulty === 'hard').map(el => el.optional.wordId);
     neww.current = allWords!.filter(el => el.difficulty === 'new').map(el => el.optional.wordId);
+
+    const lc =  await getUserWordsCount(authState.userId, authState.token, 'learned');
+    if (lc) setLC(lc);
+    const hc =  await getUserWordsCount(authState.userId, authState.token, 'hard');
+    if (hc) setHC(hc);
+    const nc =  await getUserWordsCount(authState.userId, authState.token, 'new');
+    if (nc) setNC(nc);
 
   };
 
@@ -48,11 +59,16 @@ const Statistics = (): JSX.Element => {
 
   useEffect(() => {
     loadData().catch(()=>{});
-  });
+  }, []);
 
   return (
     <section className='difficult-words w-full flex flex-col items-center'>
       <h1>Debug and test tools</h1>
+
+      <p>Learned words count: {`${learnedCount}`}</p>
+      <p>Hard words count: {hardCount}</p>
+      <p>New words count: {newCount}</p>
+
       <div className="flex justify-around">
         <Button
           text='Drop Learned'
