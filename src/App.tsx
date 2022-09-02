@@ -9,6 +9,7 @@ import Spinner from './components/ui/Spinner';
 import * as apiUserWords from './model/api-userWords';
 import * as api from './model/api-words';
 import AuthPage from './pages/AuthPage';
+import DebugPage from './pages/Debug/Debug';
 import DictionaryPage from './pages/Dictionary/DictionaryPage';
 import DifficultWords from './pages/Dictionary/DifficultWords';
 import LearnedWords from './pages/Dictionary/LearnedWords';
@@ -64,6 +65,10 @@ const App = ():JSX.Element => {
         { path: 'progress', element: <Progress /> },
         { path: 'statistics', element: <Statistics /> },
       ],
+    },
+    {
+      path: '/debug',
+      element: isLoggedIn ? <DebugPage /> : <Navigate to="/debug" />,
     },
     {
       path: '/games',

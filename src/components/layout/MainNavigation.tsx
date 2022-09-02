@@ -77,6 +77,13 @@ const MainNavigation = ({ children }:React.PropsWithChildren): JSX.Element => {
             )}
             {isLoggedIn && (
               <li>
+                <Link to="/debug" getActiveProps={getActiveProps}>
+                  Debug
+                </Link>
+              </li>
+            )}
+            {isLoggedIn && (
+              <li>
                 <button type="button" onClick={logoutHandler}>
                 Logout
                 </button>
