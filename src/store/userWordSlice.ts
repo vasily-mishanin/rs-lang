@@ -42,7 +42,13 @@ const userWordsSlice = createSlice({
         state.userWords.push(action.payload);
       }
     },
+
+    deleteUserWord:(state, action: PayloadAction<{deletedWordId:string}>) => {
+      state.userWords =
+      state.userWords.filter(w => w.optional.wordId !== action.payload.deletedWordId);
+    },
   },
+
   extraReducers: builder => {
     builder.addCase(fetchUserWords.fulfilled, (state, action) => {
       state.userWords = action.payload || [];
