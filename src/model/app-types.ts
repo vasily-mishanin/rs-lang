@@ -1,5 +1,7 @@
 import { MakeGenerics } from '@tanstack/react-location';
 
+import { GameType } from './games-types';
+
 export interface User {
   userId?: string;
   email: string;
@@ -8,7 +10,7 @@ export interface User {
   message?: string;
   token?: string;
   refreshToken?: string;
-}
+};
 
 export interface Word {
   id: string;
@@ -26,7 +28,7 @@ export interface Word {
   wordTranslate: string;
   textMeaningTranslate: string;
   textExampleTranslate: string;
-}
+};
 
 export interface UserWord {
   difficulty: UserWordDifficulty;
@@ -40,7 +42,7 @@ export interface UserWord {
     theWord?:string;
     wordId:string;
   };
-}
+};
 
 export type LocationGenerics = MakeGenerics<{
   LoaderData: {
@@ -58,22 +60,61 @@ export type LocationGenerics = MakeGenerics<{
 
 export interface ProgressWordMap {
   [id: string] : GameStatsProgressWord;
-}
+};
 
 export interface GameStatsProgressWord {
   word?: string;
   guessed: number;
   failed: number;
   guessStreak : number;
-}
-export interface IUserStats {
-  // [index: string]: string ;
-  gamesWordsProgress: ProgressWordMap;
-}
+  lastAnswerWasCorrect: boolean;
+};
 
-export interface IUserStatistic {
+export interface IUserStats {
+  gamesWordsProgress: ProgressWordMap;
+  wordsPerDay: WordsPerDayMap;
+  gamesStatistic: GameStatisticMap;
+};
+
+export interface IUserStatisticResponse {
+  id: number;
   learnedWords: number;
   optional : IUserStats;
-}
+};
 
-export type UserWordDifficulty = 'hard' | 'learned' | '';
+export type IUserStatistic = Omit<IUserStatisticResponse, 'id'>;
+
+export type UserWordDifficulty = 'hard' | 'learned' |  'new';
+export type StatsWordDifficulty = 'new' | 'learned';
+
+export type WordStats = {
+  id: string;
+  word?: string;
+  type: StatsWordDifficulty;
+};
+
+export interface WordsPerDayMap {
+  [date: string] : DaylyWordStats;
+};
+
+export type DaylyWordStats =  {
+  [key in StatsWordDifficulty]: Array<string>;
+};
+
+export interface GameStatisticMap  {
+  gamesPerDay: GamesPerDayMap;
+  resultsPerDay: ResultsPerDayMap;
+  gamesTotalCount: {[key in GameType]: number};
+};
+
+export interface GamesPerDayMap {
+  [date: string] : {[key in GameType]: number};
+};
+
+export interface ResultsPerDayMap {
+  [date: string] : {
+    [key in GameType]: {
+      success: number;
+      fail: number;
+    }};
+};

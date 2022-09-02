@@ -2,7 +2,7 @@ export interface IGameResults {
   correctAnswers: ISprintWord[];
   wrongAnswers: ISprintWord[];
   score: string;
-  gameName: string;
+  gameName: GameType;
 }
 
 export interface ISprintWord {
@@ -19,7 +19,7 @@ export interface GameBodyProps {
   page: number;
   startedFromBook: boolean;
   onGameOver: (results: IGameResults) => void;
-  gameName: string;
+  gameName: GameType;
 }
 
 export interface PlaySoundItem {
@@ -33,3 +33,5 @@ export interface MButtonEvent {
   pickedValue: string;
   correctValue: string;
 }
+
+export type GameType = 'sprint' | 'audio';

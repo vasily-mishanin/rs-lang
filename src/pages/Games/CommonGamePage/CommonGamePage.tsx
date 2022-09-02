@@ -12,9 +12,8 @@ import { GameDifficulty } from '@/components/games/GameDifficulty/GameDifficulty
 import { GameResults } from '@/components/games/GameResults/GameResults';
 import { Button } from '@/components/ui/Button/Button';
 import type { LocationGenerics } from '@/model/app-types';
-import { IGameResults } from '@/model/games-types';
+import { GameType, IGameResults } from '@/model/games-types';
 
-export type GameType = 'sprint' | 'audio';
 type GameNameMap = {
   [key in GameType]: string ;
 };
@@ -117,7 +116,7 @@ export const CommonGamePage = ({ game }: GamePageProps): JSX.Element => {
                   page = {currPage}
                   startedFromBook = {startedFromTextBook}
                   onGameOver = {gameIsOver}
-                  gameName = {gameName[game]}
+                  gameName = {game}
                 />
         }
         {game === 'audio' &&
@@ -126,7 +125,7 @@ export const CommonGamePage = ({ game }: GamePageProps): JSX.Element => {
                   page = {currPage}
                   startedFromBook = {startedFromTextBook}
                   onGameOver = {gameIsOver}
-                  gameName = {gameName[game]}
+                  gameName = {game}
                 />
         }
 

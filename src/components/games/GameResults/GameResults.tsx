@@ -1,9 +1,8 @@
 import classNames from 'classnames';
 import { useSelector } from 'react-redux';
 
-import { saveGameResultStats } from './index';
-
 import { GameResultItem } from './GameResultItem/GameResultItem';
+import { useSaveGameResultStats } from './useSaveGameResultStats';
 
 import './GameResults.pcss';
 
@@ -23,8 +22,14 @@ export const GameResults =
     const resultDesision = getResultDesision();
 
     const authState = useSelector((state:RootState) => state.authentication);
-    if (authState.isLoggedIn)
-      saveGameResultStats(gameName, authState.userId, authState.token, correctAnswers, wrongAnswers);
+
+    useSaveGameResultStats(
+      gameName,
+      authState.userId,
+      authState.token,
+      correctAnswers,
+      wrongAnswers,
+    ).catch(()=>{});
 
     return (
       <div className="results">
