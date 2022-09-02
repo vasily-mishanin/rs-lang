@@ -16,9 +16,9 @@ export const TableCard = ({ heading, items, subheading }:TableCardProps ): JSX.E
   <div className="stats_card">
     <div className="stats_header">
       <div className="stats_heading">
-        <h3 className="text-lg font-medium leading-6 text-gray-900">{heading}</h3>
+        <h3 className="stats_title">{heading}</h3>
         {subheading && (
-          <p className="mt-1 max-w-2xl text-sm text-gray-500">{subheading}</p>
+          <p className="stats_subtitle">{subheading}</p>
         )}
       </div>
     </div>

@@ -113,8 +113,10 @@ export interface GamesPerDayMap {
 
 export interface ResultsPerDayMap {
   [date: string] : {
-    [key in GameType]: {
-      success: number;
-      fail: number;
-    }};
+    [key in GameType]: GameResStatsItem};
 };
+
+export interface GameResStatsItem  {
+  success: number;
+  fail: number;
+}

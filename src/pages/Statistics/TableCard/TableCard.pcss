@@ -1,5 +1,23 @@
     .stats_card {
-        @apply py-3;
+        @apply my-6;
+        box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
+    }
+
+
+    .stats_header {
+        @apply overflow-hidden bg-white shadow sm:rounded-lg;
+
+        & .stats_heading {
+            @apply px-4 py-5 sm:px-6 bg-violet-300;
+
+            & .stats_title {
+                @apply text-lg font-medium leading-6 text-gray-900;
+            }
+
+            & .stats_subtitle {
+                @apply mt-1 max-w-2xl text-sm text-gray-700;
+            }
+        }
     }
 
     .stats_table {
