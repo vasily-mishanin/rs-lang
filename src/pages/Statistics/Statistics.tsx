@@ -4,11 +4,13 @@ import { useSelector } from 'react-redux';
 
 import { useEffect, useState } from 'react';
 
+import { Graph } from './Graphic/Graphic';
 import { TableCard } from './TableCard/TableCard';
 
-import { getUserStatistic } from '@/model/api-statistic';
+import { emptyStatistic, getUserStatistic } from '@/model/api-statistic';
 import { getUserWordsCount } from '@/model/api-userWords';
-import { GameResStatsItem, GameStatsProgressWord, GameStatsTotal, IUserStatistic } from '@/model/app-types';
+import { GameResStatsItem, GamesPerDayMap, GameStatsTotal, IUserStatistic, ResultsPerDayMap, StatsWordDifficulty, WordsPerDayMap } from '@/model/app-types';
+import { GameType } from '@/model/games-types';
 import { RootState } from '@/store/store';
 
 const getWinPercent = (score: GameResStatsItem | undefined) => {
@@ -21,28 +23,36 @@ const getWinPercent = (score: GameResStatsItem | undefined) => {
   return '-';
 };
 
-const getFullWinPercent  = (stats: GameStatsTotal | undefined) =>{
+const getFullWinPercent = (stats: GameStatsTotal | undefined) => {
   if (stats) {
     const audio = getWinPercent(stats.audio);
     const sprint = getWinPercent(stats.sprint);
 
-    const total = ((audio !== '-')? +audio : 0) + ((sprint !== '-')? +sprint : 0) / 2;
+    const total = ((audio !== '-') ? +audio : 0) + ((sprint !== '-') ? +sprint : 0);
     return total.toFixed(1);
   }
 
-  return '-';
+  return 0;
 
 };
 
 const Statistics = (): JSX.Element => {
   const [learnedCount, setLC] = useState<number>(0);
   const [hardCount, setHC] = useState<number>(0);
-  // const [newCount, setNC] = useState<number>(0);
 
-  const [words, setWords] = useState<GameStatsProgressWord[]>([]);
+  // const [words, setWords] = useState<GameStatsProgressWord[]>([]);
   const [stats, setStats] = useState<IUserStatistic>();
 
+  const [graphWordsLabels, setgraphWordsLabels] = useState<string[]>([]);
+  const [graphWordsValues, setgraphWordsValues] = useState<number[]>([]);
+  const [graphWordsReady, setgraphDataReady] = useState<boolean>(false);
+
+  const [graphWinsLabels, setgraphWinsLabels] = useState<string[]>([]);
+  const [graphWinsValues, setgraphWinsValues] = useState<number[]>([]);
+  const [graphWinsReady, setgraphWinsReady] = useState<boolean>(false);
+
   const authState = useSelector((state: RootState) => state.authentication);
+  const currDate = new Date().toLocaleDateString('en-US');
 
   useEffect(() => {
     const loadData = async () => {
@@ -50,19 +60,59 @@ const Statistics = (): JSX.Element => {
       if (lc) setLC(lc);
       const hc = await getUserWordsCount(authState.userId, authState.token, 'hard');
       if (hc) setHC(hc);
-      // const nc =  await getUserWordsCount(authState.userId, authState.token, 'new');
-      // if (nc) setNC(nc);
 
-      const currentStatistic = await getUserStatistic(authState.userId, authState.token);
-      if (currentStatistic) setWords(Object.values(currentStatistic?.optional?.gamesWordsProgress));
+      const currentStatistic =
+        await getUserStatistic(authState.userId, authState.token) || emptyStatistic;
+
       if (currentStatistic) setStats(currentStatistic);
 
+      if (currentStatistic?.optional.wordsPerDay) {
+        const labels: string[] = [];
+        const values: number[] = [];
+        Object.entries(currentStatistic?.optional.wordsPerDay)
+          .forEach(([key, value]) => {
+            labels.push(key);
+            values.push(value.learned.length);
+          });
+        setgraphWordsLabels(labels);
+        setgraphWordsValues(values);
+        setgraphDataReady(true);
+      }
+
+      if (currentStatistic?.optional.gamesStatistic.resultsPerDay) {
+        const labels: string[] = [];
+        const values: number[] = [];
+        Object.entries(currentStatistic.optional.gamesStatistic.resultsPerDay)
+          .forEach(([key, value]) => {
+            labels.push(key);
+            values.push(+getFullWinPercent(value));
+          });
+        setgraphWinsLabels(labels);
+        setgraphWinsValues(values);
+        setgraphWinsReady(true);
+      }
     };
 
     loadData().catch(() => { });
-  }, [authState.userId, authState.token]);
+  }, [authState.userId, authState.token, currDate]);
 
-  const currDate = new Date().toLocaleDateString('en-US');
+  const getWordsCount = (
+    entry: WordsPerDayMap | undefined,
+    type: StatsWordDifficulty,
+  ) => (entry && Object.keys(entry).includes(currDate))
+    ? entry[currDate][type].length : 0;
+
+  const getData = (
+    entry: GamesPerDayMap | undefined,
+    game: GameType,
+  ) => (entry && Object.keys(entry).includes(currDate))
+    ? entry[currDate][game] : 0;
+
+  const getResData = (
+    entry: ResultsPerDayMap | undefined,
+    game: GameType,
+  ) => (entry && Object.keys(entry).includes(currDate))
+    ? entry[currDate][game] : undefined;
 
   return (
     <section className="stats">
@@ -74,7 +124,8 @@ const Statistics = (): JSX.Element => {
           items={[
             { title: 'Изученных слов', content: `${(learnedCount || '-')}` },
             { title: 'Слов, помеченных как сложные', content: `${(hardCount || '-')}` },
-            { title: 'Процент верных ответов',
+            {
+              title: 'Процент верных ответов',
               content: `${getFullWinPercent(stats?.optional.gamesStatistic.resultsTotal) || '-'}`,
             },
           ]}
@@ -85,13 +136,12 @@ const Statistics = (): JSX.Element => {
           items={[
             {
               title: 'Встречено новых слов',
-              content: `${(stats?.optional.wordsPerDay[currDate]?.new.length) || '-'}`,
+              content: `${getWordsCount(stats?.optional.wordsPerDay, 'new') || '-'}`,
             },
             {
               title: 'Изучено слов',
-              content: `${(stats?.optional.wordsPerDay[currDate]?.learned.length) || '-'}`,
+              content: `${getWordsCount(stats?.optional.wordsPerDay, 'learned') || '-'}`,
             },
-
           ]}
         />
 
@@ -115,14 +165,18 @@ const Statistics = (): JSX.Element => {
             {
               title: 'Процент верных ответов',
               content: [
-                { title: 'Спринт',
+                {
+                  title: 'Спринт',
                   content: getWinPercent(
                     stats?.optional.gamesStatistic.resultsTotal.sprint,
-                  ) },
-                { title: 'Аудиовызов',
+                  ),
+                },
+                {
+                  title: 'Аудиовызов',
                   content: getWinPercent(
                     stats?.optional.gamesStatistic.resultsTotal.audio,
-                  ) },
+                  ),
+                },
               ],
             },
             {
@@ -141,11 +195,11 @@ const Statistics = (): JSX.Element => {
               content: [
                 {
                   title: 'Спринт',
-                  content: `${stats?.optional.gamesStatistic.gamesPerDay[currDate]?.sprint || '-'}`,
+                  content: `${getData(stats?.optional.gamesStatistic.gamesPerDay, 'sprint') || '-'}`,
                 },
                 {
                   title: 'Аудиовызов',
-                  content: `${stats?.optional.gamesStatistic.gamesPerDay[currDate]?.audio || '-'}`,
+                  content: `${getData(stats?.optional.gamesStatistic.gamesPerDay, 'audio') || '-'}`,
                 },
               ],
             },
@@ -155,19 +209,38 @@ const Statistics = (): JSX.Element => {
                 {
                   title: 'Спринт',
                   content: getWinPercent(
-                    stats?.optional.gamesStatistic.resultsPerDay[currDate]?.sprint,
+                    getResData(stats?.optional.gamesStatistic.resultsPerDay, 'sprint'),
                   ),
                 },
                 {
                   title: 'Аудиовызов',
                   content: getWinPercent(
-                    stats?.optional.gamesStatistic.resultsPerDay[currDate]?.audio,
+                    getResData(stats?.optional.gamesStatistic.resultsPerDay, 'audio'),
                   ),
                 },
               ],
             },
           ]}
         />
+        {graphWordsReady && (
+          <Graph
+            heading='Изученные слова'
+            subheading='долгосрочная статитика'
+            labels={graphWordsLabels}
+            values={graphWordsValues}
+            label='Изученные слова'
+          />
+        )}
+
+        {graphWinsReady && (
+          <Graph
+            heading='Процент верных ответов'
+            subheading='долгосрочная статитика'
+            labels={graphWinsLabels}
+            values={graphWinsValues}
+            label='Процент верных ответов'
+          />
+        )}
 
       </div>
     </section>
