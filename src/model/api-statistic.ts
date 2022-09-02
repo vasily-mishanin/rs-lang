@@ -85,6 +85,11 @@ export const emptyStatistic: IUserStatistic  = {
       gamesPerDay: {},
       resultsPerDay: {},
       gamesTotalCount: { audio: 0, sprint: 0 },
+      bestStreak: 0,
+      resultsTotal: {
+        audio: { fail: 0, success: 0 },
+        sprint: { fail: 0, success: 0 },
+      },
     },
   },
 };
