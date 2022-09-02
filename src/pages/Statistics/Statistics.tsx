@@ -8,17 +8,30 @@ import { TableCard } from './TableCard/TableCard';
 
 import { getUserStatistic } from '@/model/api-statistic';
 import { getUserWordsCount } from '@/model/api-userWords';
-import { GameResStatsItem, GameStatsProgressWord, IUserStatistic } from '@/model/app-types';
+import { GameResStatsItem, GameStatsProgressWord, GameStatsTotal, IUserStatistic } from '@/model/app-types';
 import { RootState } from '@/store/store';
 
 const getWinPercent = (score: GameResStatsItem | undefined) => {
 
   if (score) {
     const total = score.fail + score.success;
-    return total ? (score.success / total * 100).toFixed(0) : '-';
+    return total ? (score.success / total * 100).toFixed(1) : '-';
   }
 
   return '-';
+};
+
+const getFullWinPercent  = (stats: GameStatsTotal | undefined) =>{
+  if (stats) {
+    const audio = getWinPercent(stats.audio);
+    const sprint = getWinPercent(stats.sprint);
+
+    const total = ((audio !== '-')? +audio : 0) + ((sprint !== '-')? +sprint : 0) / 2;
+    return total.toFixed(1);
+  }
+
+  return '-';
+
 };
 
 const Statistics = (): JSX.Element => {
@@ -61,6 +74,9 @@ const Statistics = (): JSX.Element => {
           items={[
             { title: 'Изученных слов', content: `${(learnedCount || '-')}` },
             { title: 'Слов, помеченных как сложные', content: `${(hardCount || '-')}` },
+            { title: 'Процент верных ответов',
+              content: `${getFullWinPercent(stats?.optional.gamesStatistic.resultsTotal) || '-'}`,
+            },
           ]}
         />
 
@@ -69,14 +85,13 @@ const Statistics = (): JSX.Element => {
           items={[
             {
               title: 'Встречено новых слов',
-              content: `${(stats?.optional.wordsPerDay[currDate].new.length) || '-'}`,
+              content: `${(stats?.optional.wordsPerDay[currDate]?.new.length) || '-'}`,
             },
             {
               title: 'Изучено слов',
-              content: `${(stats?.optional.wordsPerDay[currDate].learned.length) || '-'}`,
+              content: `${(stats?.optional.wordsPerDay[currDate]?.learned.length) || '-'}`,
             },
 
-            { title: 'Процент верных ответов', content: '??%' },
           ]}
         />
 
@@ -100,16 +115,19 @@ const Statistics = (): JSX.Element => {
             {
               title: 'Процент верных ответов',
               content: [
-                { title: 'Спринт', content: 'X' },
-                { title: 'Аудиовызов', content: 'Y' },
+                { title: 'Спринт',
+                  content: getWinPercent(
+                    stats?.optional.gamesStatistic.resultsTotal.sprint,
+                  ) },
+                { title: 'Аудиовызов',
+                  content: getWinPercent(
+                    stats?.optional.gamesStatistic.resultsTotal.audio,
+                  ) },
               ],
             },
             {
               title: 'Самая длинная серия правильных ответов',
-              content: [
-                { title: 'Спринт', content: 'Q' },
-                { title: 'Аудиовызов', content: 'W' },
-              ],
+              content: `${stats?.optional.gamesStatistic.bestStreak || '-'}`,
             },
           ]}
         />
@@ -123,11 +141,11 @@ const Statistics = (): JSX.Element => {
               content: [
                 {
                   title: 'Спринт',
-                  content: `${stats?.optional.gamesStatistic.gamesPerDay[currDate].sprint || '-'}`,
+                  content: `${stats?.optional.gamesStatistic.gamesPerDay[currDate]?.sprint || '-'}`,
                 },
                 {
                   title: 'Аудиовызов',
-                  content: `${stats?.optional.gamesStatistic.gamesPerDay[currDate].audio || '-'}`,
+                  content: `${stats?.optional.gamesStatistic.gamesPerDay[currDate]?.audio || '-'}`,
                 },
               ],
             },
@@ -137,22 +155,15 @@ const Statistics = (): JSX.Element => {
                 {
                   title: 'Спринт',
                   content: getWinPercent(
-                    stats?.optional.gamesStatistic.resultsPerDay[currDate].sprint,
+                    stats?.optional.gamesStatistic.resultsPerDay[currDate]?.sprint,
                   ),
                 },
                 {
                   title: 'Аудиовызов',
                   content: getWinPercent(
-                    stats?.optional.gamesStatistic.resultsPerDay[currDate].audio,
+                    stats?.optional.gamesStatistic.resultsPerDay[currDate]?.audio,
                   ),
                 },
-              ],
-            },
-            {
-              title: 'Самая длинная серия правильных ответов',
-              content: [
-                { title: 'Спринт', content: '??' },
-                { title: 'Аудиовызов', content: '??' },
               ],
             },
           ]}

@@ -105,8 +105,12 @@ export interface GameStatisticMap  {
   gamesPerDay: GamesPerDayMap;
   resultsPerDay: ResultsPerDayMap;
   gamesTotalCount: {[key in GameType]: number};
-  resultsTotal: {[key in GameType]: GameResStatsItem};
+  resultsTotal: GameStatsTotal;
   bestStreak: number;
+};
+
+export type GameStatsTotal  = {
+  [key in GameType]: GameResStatsItem;
 };
 
 export interface GamesPerDayMap {
