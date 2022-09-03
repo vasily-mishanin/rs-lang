@@ -7,6 +7,10 @@
 
     & .button_primary{
        @apply text-white bg-indigo-600 hover:bg-indigo-700;
+
+       &:hover {
+         @apply text-slate-300 bg-indigo-700;
+       }
     }
 
     & .button_secondary{
@@ -14,11 +18,19 @@
     }
     
     & .button_accept{
-       @apply text-white bg-green-600 hover:bg-green-500;
+       @apply text-white bg-green-600;
+
+       &:hover {
+         @apply  text-slate-300 bg-green-500;
+       }
     }
 
     & .button_decline{
-       @apply text-white bg-red-600 hover:bg-red-500;
+       @apply text-white bg-red-600;
+       
+       &:hover {
+         @apply  text-slate-300 bg-red-500;
+       }
     }
 
 }
