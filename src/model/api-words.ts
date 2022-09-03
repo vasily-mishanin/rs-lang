@@ -35,3 +35,26 @@ export function getWords (group: string, page: string) {
     })
     .finally(() => {});
 }
+
+export async function getWordsAsync (group: string, page: string){
+
+  const url = new URL(`${API_ENDPOINT}/words`);
+  const params = [
+    ['group', group],
+    ['page', page],
+  ];
+  const queryParams = new URLSearchParams(params);
+  url.search = queryParams.toString();
+
+  let result: Word[] = [];
+  try{
+    const response = await fetch(url, { method: 'GET' });
+
+    if (response.status === 200) {
+      result =  await response.json() as Word[];
+    }
+  } catch (e) {throw new Error();}
+
+  return result;
+
+}
