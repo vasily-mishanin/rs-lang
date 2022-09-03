@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { Graph } from './Graphic/Graphic';
 import { TableCard } from './TableCard/TableCard';
 
-import { emptyStatistic, getUserStatistic } from '@/model/api-statistic';
+import { emptyStats, getUserStatistic } from '@/model/api-statistic';
 import { getUserWordsCount } from '@/model/api-userWords';
 import { GameResStatsItem, GamesPerDayMap, GameStatsTotal, IUserStatistic, ResultsPerDayMap, StatsWordDifficulty, WordsPerDayMap } from '@/model/app-types';
 import { GameType } from '@/model/games-types';
@@ -35,7 +35,10 @@ const getFullWinPercent = (stats: GameStatsTotal | undefined) => {
     const audio = getWinPercent(stats.audio);
     const sprint = getWinPercent(stats.sprint);
 
-    const total = (((audio !== '-') ? +audio : 0) + ((sprint !== '-') ? +sprint : 0)) / 2;
+    let total = 0;
+
+    if ((audio !== '-') && (sprint !== '-')) total = ((+audio + +sprint)/2);
+    else total = (((audio !== '-') ? +audio : 0) + ((sprint !== '-') ? +sprint : 0));
 
     return total.toFixed(1);
   }
@@ -70,7 +73,7 @@ const Statistics = (): JSX.Element => {
       if (hc) setHC(hc);
 
       const currentStatistic =
-        await getUserStatistic(authState.userId, authState.token) || emptyStatistic;
+        await getUserStatistic(authState.userId, authState.token) || emptyStats();
 
       if (currentStatistic) setStats(currentStatistic);
 
