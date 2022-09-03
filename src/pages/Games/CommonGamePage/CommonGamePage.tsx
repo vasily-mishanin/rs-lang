@@ -12,6 +12,7 @@ import { GameDifficulty } from '@/components/games/GameDifficulty/GameDifficulty
 import { GameResults } from '@/components/games/GameResults/GameResults';
 import { Button } from '@/components/ui/Button/Button';
 import type { LocationGenerics } from '@/model/app-types';
+import { DEFAULT_GROUP_COUNT, PAGES_PER_GROUP } from '@/model/constants';
 import { GameType, IGameResults } from '@/model/games-types';
 
 type GameNameMap = {
@@ -73,23 +74,25 @@ export const CommonGamePage = ({ game }: GamePageProps): JSX.Element => {
   useEffect(() => {
     if (firstRun) {
 
-      page.current = pageFromSearch || '';
-      group.current = groupFromSearch || '';
+      page.current = (pageFromSearch !== undefined) ?  pageFromSearch : '-1';
+      group.current = (groupFromSearch !== undefined) ?  groupFromSearch : '-1';
 
-      if (page.current && group.current){
-        if (+page.current >=0 && +page.current <= 29 && +group.current >=0 && +group.current <= 5) {
-          setLevel(+group.current);
-          setCurrPage(+page.current);
+      if ( +page.current >= 0
+            && +page.current < PAGES_PER_GROUP
+            && +group.current >=0
+            && +group.current < DEFAULT_GROUP_COUNT
+      ) {
+        setLevel(+group.current);
+        setCurrPage(+page.current);
 
-          setgameStarted(true);
-          setstartedFromTextBook(true);
-        }
+        setgameStarted(true);
+        setstartedFromTextBook(true);
       }
 
       setFirstRun(false);
 
     }
-  }, [firstRun, searchParams]);
+  }, [firstRun, groupFromSearch, pageFromSearch, searchParams]);
 
   return (
     <div className="game">
