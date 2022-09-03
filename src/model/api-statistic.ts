@@ -24,6 +24,10 @@ export async function getUserStatistic (userId:string, token:string){
         optional: res.optional,
       };
     }
+    else if (response.status === 404 ) {
+      await saveEmptyStatistic(userId, token);
+      return emptyStats();
+    }
   }
   catch (e){
     throw new Error();
@@ -94,8 +98,32 @@ export const emptyStatistic: IUserStatistic  = {
   },
 };
 
+const emptyStats = () => {
+  const currDate = new Date().toLocaleDateString('en-US');
+  const wordsPerDay = { [currDate]: { learned: [], new: [] } };
+
+  return {
+    learnedWords: 0,
+    optional: {
+      gamesWordsProgress: {},
+      wordsPerDay,
+      gamesStatistic: {
+        gamesPerDay: {},
+        resultsPerDay: {},
+        gamesTotalCount: { audio: 0, sprint: 0 },
+        bestStreak: 0,
+        resultsTotal: {
+          audio: { fail: 0, success: 0 },
+          sprint: { fail: 0, success: 0 },
+        },
+      },
+    },
+  };
+
+};
+
 export async function saveEmptyStatistic (userId: string, userToken: string) {
-  await updateUserStatistic(userId, userToken, emptyStatistic);
+  await updateUserStatistic(userId, userToken, emptyStats());
 }
 
 export async function addWordsToStatistic (
@@ -113,7 +141,7 @@ export async function addWordsToStatistic (
   const currentDate = new Date().toLocaleDateString('en-US');
   const currentStatistic = await getUserStatistic(userId, userToken) || emptyStatistic;
 
-  // console.log('currentStst');
+  // console.log('current Stats');
   // console.log(currentStatistic);
 
   if (currentStatistic) {
