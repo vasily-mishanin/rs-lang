@@ -256,6 +256,10 @@ export const AudioTrainBody = (
               <div className="streak_ask_cell">
                 <PlayAudio
                   source={task ? FILESTORAGE_URL + task.audio : ''}
+                  additionalSources = {task ? [
+                    FILESTORAGE_URL + task.audioMeaning!,
+                    FILESTORAGE_URL + task.audioExample!,
+                  ] : []}
                   type='single-button'
                 />
               </div>
