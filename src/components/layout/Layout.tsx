@@ -1,13 +1,10 @@
 import React from 'react';
+import './Layout.pcss';
 
-import MainNavigation from './MainNavigation';
-
-const Layout = (props: React.PropsWithChildren): JSX.Element => {
-  const { children } = props;
-  return <>
-    <MainNavigation />
-    <main>{children}</main>
-  </>;
-};
+const Layout = ({ children }:React.PropsWithChildren): JSX.Element => (
+  <main className="content">
+    {children}
+  </main>
+);
 
 export default Layout;

@@ -4,7 +4,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 
 import TextbookGroup from './components/Textbook/TextbookGroup';
+import Layout from './components/layout/Layout';
 import MainNavigation from './components/layout/MainNavigation';
+import { StatsManager } from './components/tools/StatsManager/StatsManager';
 import Spinner from './components/ui/Spinner';
 import * as api from './model/api-words';
 import AuthPage from './pages/AuthPage';
@@ -83,8 +85,6 @@ const App = ():JSX.Element => {
     { path: '*', element: <Navigate to="/" /> },
   ];
 
-  // console.log('APP', 'location', location);
-  // console.log('APP', 'appRoutes', appRoutes);
   useEffect(() => {
     const userData = { userId:authState.userId, token:authState.token };
     const  getUsersWords = async () => {
@@ -94,22 +94,6 @@ const App = ():JSX.Element => {
 
   }, [authState.token, authState.userId, dispatch]);
 
-  const testFetch = async () => {
-  // await apiUserWords.deleteUserWord(authState.userId, '5e9f5ee35eb9e72bc21b0065', authState.token);
-  // const oldWord = await apiUserWords.getUserWordById(authState.userId, '5e9f5ee35eb9e72bc21b0066', authState.token).catch(() => {});
-  // const optPrev = oldWord?.optional;
-  // if(optPrev){
-  //   await apiUserWords
-  //     .updateUserWord(authState.userId, authState.token, { difficulty: 'hard', optional:{ ...optPrev, numberOfMistakesSprint: 47 } })
-  //     .catch(() => {});
-  // }
-
-    // const obtainedWord = await apiUserWords.getUserAggregatedWordById(authState.userId, '5e9f5ee35eb9e72bc21af4a3', authState.token);
-    // const oneMore = await apiUserWords.getUserWordById(authState.userId, '5e9f5ee35eb9e72bc21af4a3', authState.token);
-    // console.log(obtainedWord, oneMore);
-  };
-  testFetch().catch(() => {});
-
   return (
     <Router
       location={location}
@@ -117,8 +101,13 @@ const App = ():JSX.Element => {
       defaultPendingElement={<Spinner />}
       defaultPendingMs={10}
     >
-      <MainNavigation/>
-      <Outlet />
+      <MainNavigation />
+
+      <Layout >
+        <Outlet />
+      </Layout>
+
+      <StatsManager/>
     </Router>
   );
 };
