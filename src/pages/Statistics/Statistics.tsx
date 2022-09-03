@@ -28,7 +28,8 @@ const getFullWinPercent = (stats: GameStatsTotal | undefined) => {
     const audio = getWinPercent(stats.audio);
     const sprint = getWinPercent(stats.sprint);
 
-    const total = ((audio !== '-') ? +audio : 0) + ((sprint !== '-') ? +sprint : 0);
+    const total = (((audio !== '-') ? +audio : 0) + ((sprint !== '-') ? +sprint : 0)) / 2;
+
     return total.toFixed(1);
   }
 
@@ -225,7 +226,7 @@ const Statistics = (): JSX.Element => {
         {graphWordsReady && (
           <Graph
             heading='Изученные слова'
-            subheading='долгосрочная статитика'
+            subheading='Долгосрочная статитика'
             labels={graphWordsLabels}
             values={graphWordsValues}
             label='Изученные слова'
@@ -235,7 +236,7 @@ const Statistics = (): JSX.Element => {
         {graphWinsReady && (
           <Graph
             heading='Процент верных ответов'
-            subheading='долгосрочная статитика'
+            subheading='Долгосрочная статитика'
             labels={graphWinsLabels}
             values={graphWinsValues}
             label='Процент верных ответов'
