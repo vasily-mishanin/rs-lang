@@ -1,5 +1,6 @@
 import { VolumeOffIcon, VolumeUpIcon , XCircleIcon, BadgeCheckIcon } from '@heroicons/react/solid';
 import { useSelector } from 'react-redux';
+import ReactTooltip from 'react-tooltip';
 
 import { useEffect, useRef, useState } from 'react';
 
@@ -199,10 +200,13 @@ export const AudioTrainBody = (
     <div className="audiogame">
       <div className="audiogame_info" >
         <div className="audiogame_controls">
-          <GameControlButton
-            icons={{ 'first': VolumeUpIcon, 'second': VolumeOffIcon }}
-            onChange={value => setGameSound(value)}
-          />
+          <div className="control_wrapper" data-tip="Звуковые эффекты">
+            <GameControlButton
+              icons={{ 'first': VolumeUpIcon, 'second': VolumeOffIcon }}
+              onChange={value => setGameSound(value)}
+            />
+          </div>
+
         </div>
         <div className='audiogame_score'>
           <div className="score_cell">
@@ -310,7 +314,7 @@ export const AudioTrainBody = (
       <PlaySoundEffect
         playEvent={playSoundItem!}
       />
-
+      <ReactTooltip/>
     </div>
 
   );

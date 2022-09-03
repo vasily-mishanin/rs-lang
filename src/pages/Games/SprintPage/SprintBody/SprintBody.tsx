@@ -1,6 +1,7 @@
 import { VolumeOffIcon, VolumeUpIcon } from '@heroicons/react/solid';
 import classNames from 'classnames';
 import { useSelector } from 'react-redux';
+import ReactTooltip from 'react-tooltip';
 
 import { useEffect, useRef, useState } from 'react';
 
@@ -190,10 +191,12 @@ export const SprintBody = (
     <div className="sprint">
       <div className="sprint_info" >
         <div className="sprint_controls">
-          <GameControlButton
-            icons={{ 'first': VolumeUpIcon, 'second': VolumeOffIcon }}
-            onChange={value => setGameSound(value)}
-          />
+          <div className="control_wrapper" data-tip="Звуковые эффекты">
+            <GameControlButton
+              icons={{ 'first': VolumeUpIcon, 'second': VolumeOffIcon }}
+              onChange={value => setGameSound(value)}
+            />
+          </div>
         </div>
         <div className='sprint_score'>
           <span className="score_text">Результат: </span>
@@ -267,7 +270,7 @@ export const SprintBody = (
       <PlaySoundEffect
         playEvent={playSoundItem!}
       />
-
+      <ReactTooltip/>
     </div>
 
   );
