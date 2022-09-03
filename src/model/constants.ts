@@ -18,3 +18,5 @@ export const GAMES_EDU_PROGRESS = {
   guessWordToLearn: 3,
   guessHardWordToLearn: 5,
 };
+
+export const SCHOOL_LINK = 'https://rs.school/js/';

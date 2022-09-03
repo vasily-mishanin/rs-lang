@@ -4,9 +4,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 
 import TextbookGroup from './components/Textbook/TextbookGroup';
+import { Footer } from './components/layout/Footer/Footer';
 import Layout from './components/layout/Layout';
 import MainNavigation from './components/layout/MainNavigation';
-import { StatsManager } from './components/tools/StatsManager/StatsManager';
 import Spinner from './components/ui/Spinner';
 import * as api from './model/api-words';
 import AuthPage from './pages/AuthPage';
@@ -107,7 +107,7 @@ const App = ():JSX.Element => {
         <Outlet />
       </Layout>
 
-      <StatsManager/>
+      <Footer/>
     </Router>
   );
 };

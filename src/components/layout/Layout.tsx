@@ -1,4 +1,3 @@
-import React from 'react';
 import './Layout.pcss';
 
 const Layout = ({ children }:React.PropsWithChildren): JSX.Element => (
