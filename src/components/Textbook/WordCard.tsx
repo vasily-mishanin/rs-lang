@@ -8,6 +8,7 @@ import * as apiUsersWords from '../../model/api-userWords';
 import { setUserWordDifficulty } from '../../model/api-userWords';
 import { PlayAudio } from '../PlayAudio/PlayAudio';
 
+import { addWordsToStatistic } from '@/model/api-statistic';
 import { API_ENDPOINT } from '@/model/api-words';
 import type { UserWord, Word } from '@/model/app-types';
 import { RootState } from '@/store/store';
@@ -90,6 +91,8 @@ const WordCard = (props: { word: Word }): JSX.Element => {
 
     console.log('handleLearnedWord');
     await setUserWordDifficulty(authState.userId, authState.token, wordObj.id, wordObj.word, 'learned').catch(() => {});
+    await addWordsToStatistic(authState.userId, authState.token, [{ id: wordObj.id, type:'learned' }]);
+
     const newWord:UserWord = {
       difficulty: 'learned',
       optional:{

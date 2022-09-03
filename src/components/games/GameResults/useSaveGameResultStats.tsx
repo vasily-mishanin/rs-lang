@@ -92,10 +92,16 @@ export async function useSaveGameResultStats (
 
     saveWordsAsNew(newWords);
 
+    let bestStreak = 0;
+    const setBestStreak = (value: number) => {
+      if (value > bestStreak) bestStreak = value;
+    };
+
     correctAnswers.forEach(el => {
       if (currentProgress[el.id]) {
         currentProgress[el.id].guessed += 1;
         const curStreak = currentProgress[el.id].guessStreak + 1;
+        setBestStreak(curStreak);
         currentProgress[el.id].guessStreak = manageGuessStreak(el, curStreak);
         currentProgress[el.id].lastAnswerWasCorrect = true;
       }
@@ -135,6 +141,13 @@ export async function useSaveGameResultStats (
 
     const gameCounter = newStatistic.optional.gamesStatistic.gamesTotalCount[game] || 0;
     newStatistic.optional.gamesStatistic.gamesTotalCount[game] = gameCounter + 1;
+
+    const resultsTotal = newStatistic.optional.gamesStatistic.resultsTotal[game];
+    resultsTotal.fail += wrongAnswers.length;
+    resultsTotal.success += correctAnswers.length;
+
+    const currentBestStreak = newStatistic.optional.gamesStatistic.bestStreak || 0;
+    newStatistic.optional.gamesStatistic.bestStreak = (currentBestStreak < bestStreak)? bestStreak : currentBestStreak;
 
     if (!newStatistic.optional.gamesStatistic.gamesPerDay) {
       newStatistic.optional.gamesStatistic.gamesPerDay = {};

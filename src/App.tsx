@@ -6,19 +6,19 @@ import { useEffect } from 'react';
 import TextbookGroup from './components/Textbook/TextbookGroup';
 import MainNavigation from './components/layout/MainNavigation';
 import Spinner from './components/ui/Spinner';
-import * as apiUserWords from './model/api-userWords';
 import * as api from './model/api-words';
 import AuthPage from './pages/AuthPage';
+import DebugPage from './pages/Debug/Debug';
 import DictionaryPage from './pages/Dictionary/DictionaryPage';
 import DifficultWords from './pages/Dictionary/DifficultWords';
 import LearnedWords from './pages/Dictionary/LearnedWords';
 import Progress from './pages/Dictionary/Progress';
-import Statistics from './pages/Dictionary/Statistics';
 import GameAudio from './pages/Games/GameAudio';
 import GameSprint from './pages/Games/GameSprint';
 import GamesPage from './pages/Games/GamesPage';
 import { MainPage } from './pages/MainPage/MainPage';
 import ProfilePage from './pages/ProfilePage';
+import Statistics from './pages/Statistics/Statistics';
 import { TeamPage } from './pages/TeamPage/TeamPage';
 import TextbookMainPage from './pages/TextbookMainPage/TextbookMainPage';
 import { fetchUserWords } from './store/userWordSlice';
@@ -66,6 +66,10 @@ const App = ():JSX.Element => {
       ],
     },
     {
+      path: '/debug',
+      element: isLoggedIn ? <DebugPage /> : <Navigate to="/debug" />,
+    },
+    {
       path: '/games',
       element: <GamesPage />,
       children: [
@@ -90,7 +94,7 @@ const App = ():JSX.Element => {
     };
     getUsersWords().catch(() => {});
 
-  }, []);
+  }, [authState.token, authState.userId, dispatch]);
 
   const testFetch = async () => {
   // await apiUserWords.deleteUserWord(authState.userId, '5e9f5ee35eb9e72bc21b0065', authState.token);
@@ -102,9 +106,9 @@ const App = ():JSX.Element => {
   //     .catch(() => {});
   // }
 
-    const obtainedWord = await apiUserWords.getUserAggregatedWordById(authState.userId, '5e9f5ee35eb9e72bc21af4a3', authState.token);
-    const oneMore = await apiUserWords.getUserWordById(authState.userId, '5e9f5ee35eb9e72bc21af4a3', authState.token);
-    console.log(obtainedWord, oneMore);
+    // const obtainedWord = await apiUserWords.getUserAggregatedWordById(authState.userId, '5e9f5ee35eb9e72bc21af4a3', authState.token);
+    // const oneMore = await apiUserWords.getUserWordById(authState.userId, '5e9f5ee35eb9e72bc21af4a3', authState.token);
+    // console.log(obtainedWord, oneMore);
   };
   testFetch().catch(() => {});
 
