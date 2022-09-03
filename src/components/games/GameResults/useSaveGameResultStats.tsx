@@ -1,6 +1,8 @@
 import { useSelector } from 'react-redux';
 
-import { addWordsToStatistic, emptyStatistic, getUserStatistic, updateUserStatistic } from '@/model/api-statistic';
+import { addWordsToStats } from './index';
+
+import { emptyStats, getUserStatistic, updateUserStatistic } from '@/model/api-statistic';
 import { getUserWords, setUserWordDifficulty } from '@/model/api-userWords';
 import { StatsWordDifficulty, WordStats } from '@/model/app-types';
 import { GAMES_EDU_PROGRESS } from '@/model/constants';
@@ -23,6 +25,14 @@ export async function useSaveGameResultStats (
 
   if (authState.isLoggedIn) {
 
+    // Get current stats
+
+    const currentStatistic = await getUserStatistic(userId, userToken) || emptyStats();
+    const currentProgress = currentStatistic.optional.gamesWordsProgress || {};
+    const currentDate = new Date().toLocaleDateString('en-US');
+
+    // Get user words data
+
     const allWords = await getUserWords(userId, userToken);
     const learnedWords = allWords!.filter(el => el.difficulty === 'learned').map(el => el.optional.wordId);
     const hardWords = allWords!.filter(el => el.difficulty === 'hard').map(el => el.optional.wordId);
@@ -34,18 +44,13 @@ export async function useSaveGameResultStats (
     };
 
     const removeWordFormLearned = async (word: ISprintWord) => {
-      // await deleteUserWord(userId, wordId, userToken);
       await setWordDifficulty(word, 'new');
     };
 
     const saveWordAsLearned = async (word: ISprintWord) => {
       await setWordDifficulty(word, 'learned');
 
-      addWordsToStatistic(
-        authState.userId,
-        authState.token,
-        [{ id: word.id, type: 'learned' }],
-      ).catch(() => { });
+      addWordsToStats([{ id: word.id, type: 'learned' }], currentStatistic);
     };
 
     const saveWordsAsNew = (words: ISprintWord[]) => {
@@ -54,11 +59,7 @@ export async function useSaveGameResultStats (
       });
 
       const newStats: WordStats[] = words.map(el => ({ id: el.id, type: 'new' }));
-      addWordsToStatistic(
-        authState.userId,
-        authState.token,
-        newStats,
-      ).catch(() => { });
+      addWordsToStats(newStats, currentStatistic);
     };
 
     const isWordinListLearned = (wordId: string) => !!(learnedWords.find(el => el === wordId));
@@ -83,19 +84,20 @@ export async function useSaveGameResultStats (
       return streak;
     };
 
-    const currentStatistic = await getUserStatistic(userId, userToken) || emptyStatistic;
-    const currentProgress = currentStatistic.optional.gamesWordsProgress || {};
-    const currentDate = new Date().toLocaleDateString('en-US');
+    // Define beststreak
+    let bestStreak = 0;
+    const setBestStreak = (value: number) => {
+      if (value > bestStreak) bestStreak = value;
+    };
+
+    // Save new words
 
     const newWords = [...correctAnswers, ...wrongAnswers]
       .filter(el => (!isWordinListLearned(el.id) && !isWordinListHard(el.id)));
 
     saveWordsAsNew(newWords);
 
-    let bestStreak = 0;
-    const setBestStreak = (value: number) => {
-      if (value > bestStreak) bestStreak = value;
-    };
+    // Loop thru answers
 
     correctAnswers.forEach(el => {
       if (currentProgress[el.id]) {
@@ -106,13 +108,17 @@ export async function useSaveGameResultStats (
         currentProgress[el.id].lastAnswerWasCorrect = true;
       }
 
-      else currentProgress[el.id] = {
-        guessed: 1,
-        failed: 0,
-        guessStreak: 1,
-        word: el.word,
-        lastAnswerWasCorrect: true,
-      };
+      else {
+        setBestStreak(1);
+
+        currentProgress[el.id] = {
+          guessed: 1,
+          failed: 0,
+          guessStreak: 1,
+          word: el.word,
+          lastAnswerWasCorrect: true,
+        };
+      }
     });
 
     wrongAnswers.forEach(el => {
@@ -136,7 +142,8 @@ export async function useSaveGameResultStats (
 
     });
 
-    const newStatistic = await getUserStatistic(userId, userToken) || emptyStatistic;
+    // const newStatistic = await getUserStatistic(userId, userToken) || emptyStats();
+    const newStatistic = currentStatistic;
     newStatistic.optional.gamesWordsProgress = currentProgress;
 
     const gameCounter = newStatistic.optional.gamesStatistic.gamesTotalCount[game] || 0;
@@ -147,7 +154,7 @@ export async function useSaveGameResultStats (
     resultsTotal.success += correctAnswers.length;
 
     const currentBestStreak = newStatistic.optional.gamesStatistic.bestStreak || 0;
-    newStatistic.optional.gamesStatistic.bestStreak = (currentBestStreak < bestStreak)? bestStreak : currentBestStreak;
+    newStatistic.optional.gamesStatistic.bestStreak = (currentBestStreak < bestStreak) ? bestStreak : currentBestStreak;
 
     if (!newStatistic.optional.gamesStatistic.gamesPerDay) {
       newStatistic.optional.gamesStatistic.gamesPerDay = {};
@@ -157,7 +164,7 @@ export async function useSaveGameResultStats (
     }
 
     if (!newStatistic.optional.gamesStatistic.gamesPerDay[currentDate])
-      newStatistic.optional.gamesStatistic.gamesPerDay[currentDate] = { audio:0, sprint:0 };
+      newStatistic.optional.gamesStatistic.gamesPerDay[currentDate] = { audio: 0, sprint: 0 };
 
     const curDateGamesCount = newStatistic.optional.gamesStatistic.gamesPerDay[currentDate][game];
 
@@ -173,7 +180,8 @@ export async function useSaveGameResultStats (
           success: 0, fail: 0,
         }, sprint: {
           success: 0, fail: 0,
-        } };
+        },
+      };
 
     const curDateResults = newStatistic.optional.gamesStatistic.resultsPerDay[currentDate][game];
     if (!curDateResults) {
