@@ -246,7 +246,11 @@ export async function getUserWordsCount (
         return res.json();
       }
       throw new Error(res.statusText);
-    }).then(((res:TAggrResponse) => res[0].totalCount[0].count ));
+    }).then(((res:TAggrResponse) => {
+      if (res[0].totalCount.length > 0){
+        return res[0].totalCount[0].count;
+      } return 0;
+    }));
 
   } catch (err) { console.log(err); }
 
