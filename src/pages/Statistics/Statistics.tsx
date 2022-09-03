@@ -35,7 +35,10 @@ const getFullWinPercent = (stats: GameStatsTotal | undefined) => {
     const audio = getWinPercent(stats.audio);
     const sprint = getWinPercent(stats.sprint);
 
-    const total = (((audio !== '-') ? +audio : 0) + ((sprint !== '-') ? +sprint : 0)) / 2;
+    let total = 0;
+
+    if ((audio !== '-') && (sprint !== '-')) total = ((+audio + +sprint)/2);
+    else total = (((audio !== '-') ? +audio : 0) + ((sprint !== '-') ? +sprint : 0));
 
     return total.toFixed(1);
   }
