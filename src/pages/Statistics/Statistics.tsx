@@ -13,6 +13,13 @@ import { GameResStatsItem, GamesPerDayMap, GameStatsTotal, IUserStatistic, Resul
 import { GameType } from '@/model/games-types';
 import { RootState } from '@/store/store';
 
+const cumulativeSum = (arr: number[]) => arr.reduce((p, c, i)=>{
+  const pp = (i > 0)? (p[p.length-1] as number) + c : c;
+  const a: number[] = [...p];
+  a.push(pp);
+  return a;
+}, []);
+
 const getWinPercent = (score: GameResStatsItem | undefined) => {
 
   if (score) {
@@ -224,19 +231,28 @@ const Statistics = (): JSX.Element => {
           ]}
         />
         {graphWordsReady && (
-          <Graph
-            heading='Изученные слова'
-            subheading='Долгосрочная статитика'
-            labels={graphWordsLabels}
-            values={graphWordsValues}
-            label='Изученные слова'
-          />
+          <>
+            <Graph
+              heading='Изученные слова по дням'
+              labels={graphWordsLabels}
+              values={graphWordsValues}
+              label='Изученные слова'
+            />
+
+            <Graph
+              heading='Изученные слова нарастающим итогом'
+              labels={graphWordsLabels}
+              values={cumulativeSum(graphWordsValues)}
+              label='Изученные слова'
+            />
+          </>
+
         )}
 
         {graphWinsReady && (
           <Graph
-            heading='Процент верных ответов'
-            subheading='Долгосрочная статитика'
+            heading='Процент верных ответов в мини играх'
+            subheading='Долгосрочная статитика по дням'
             labels={graphWinsLabels}
             values={graphWinsValues}
             label='Процент верных ответов'

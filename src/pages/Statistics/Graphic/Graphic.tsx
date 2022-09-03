@@ -1,3 +1,5 @@
+import './Graphic.pcss';
+
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -96,7 +98,12 @@ export const Graph = ({ subheading, heading, labels, values, label }: GraphProps
           )}
         </div>
       </div>
-      <Line options={options} data={data} />
+      <div className="chart_container">
+        <div className="chart_wrapper">
+          <Line options={options} data={data} />
+        </div>
+      </div>
+
     </div>
 
   );};
