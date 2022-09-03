@@ -11,10 +11,14 @@ export const CTABlock = (): JSX.Element => (
       <Button
         text='Учиться'
         buttonType='primary'
+        elementType='link'
+        href='/textbook'
       />
       <Button
         text='Играть'
         buttonType='secondary'
+        elementType='link'
+        href='/games'
       />
     </div>
   </div>
