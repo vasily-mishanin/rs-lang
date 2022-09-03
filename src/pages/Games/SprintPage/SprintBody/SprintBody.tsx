@@ -1,9 +1,10 @@
 import { VolumeOffIcon, VolumeUpIcon } from '@heroicons/react/solid';
 import classNames from 'classnames';
+import { useSelector } from 'react-redux';
 
 import { useEffect, useRef, useState } from 'react';
 
-import { getRandomIndex, loadWords, getRandomPage } from '../../CommonGamePage/index';
+import { getRandomIndex, loadWords, getRandomPage, loadWordsWithoutLearned } from '../../CommonGamePage/index';
 import { StreakCounter } from '../StreakCounter/StreakCounter';
 import { Timer } from '../Timer/Timer';
 
@@ -16,6 +17,7 @@ import { useOnKeyUp } from '@/hooks/useOnKeyUpDocument';
 import { Word } from '@/model/app-types';
 import { FILESTORAGE_URL, GAME_RULES } from '@/model/constants';
 import { GameBodyProps, IGameResults, ISprintWord, PlaySoundItem } from '@/model/games-types';
+import { RootState } from '@/store/store';
 
 const { BASE_SCORE } = GAME_RULES.sprint;
 const { MAX_MULTIPLIER } = GAME_RULES.sprint;
@@ -48,6 +50,8 @@ export const SprintBody = (
 
   const correctAnswers = useRef<ISprintWord[]>([]);
   const wrongAnswers = useRef<ISprintWord[]>([]);
+
+  const authState = useSelector((state:RootState) => state.authentication);
 
   const gameOver = () => {
     const gameResults: IGameResults = {
@@ -97,15 +101,28 @@ export const SprintBody = (
     if (firstRun) {
       usedPages.current.push(page);
 
-      loadWords(level, page)
-        .then((data: Word[])=>{
+      const initData = (data: Word[]) => {
+        wordList.current = [...data];
+        currentWords.current = [...data];
+        setFirstRun(false);
+        getAssignment();
+      };
 
-          wordList.current = [...data];
-          currentWords.current = [...data];
-          setFirstRun(false);
-          getAssignment();
+      if (startedFromBook) {
 
-        }).catch(()=>{});
+        loadWordsWithoutLearned(level, page, authState.userId, authState.token)
+          .then((data: Word[])=>{
+            initData(data);
+          }).catch(()=>{});
+
+      } else {
+
+        loadWords(level, page)
+          .then((data: Word[])=>{
+            initData(data);
+          }).catch(()=>{});
+      }
+
     }
   }, [firstRun, level, page]);
 

@@ -1,8 +1,9 @@
 import { VolumeOffIcon, VolumeUpIcon , XCircleIcon, BadgeCheckIcon } from '@heroicons/react/solid';
+import { useSelector } from 'react-redux';
 
 import { useEffect, useRef, useState } from 'react';
 
-import { getRandomIndex, loadWords } from '../../CommonGamePage/index';
+import { getRandomIndex, loadWords, loadWordsWithoutLearned } from '../../CommonGamePage/index';
 
 import { PlayAudio } from '@/components/PlayAudio/PlayAudio';
 import { PlaySoundEffect } from '@/components/PlaySoundEffect/PlaySoundEffect';
@@ -12,13 +13,13 @@ import { GameControlButton } from '@/components/ui/GameControlButton/GameControl
 import { MarkButton } from '@/components/ui/MarkButton/MarkButton';
 import { useOnKeyUp } from '@/hooks/useOnKeyUpDocument';
 import { Word } from '@/model/app-types';
-import { FILESTORAGE_URL, GAME_RULES } from '@/model/constants';
+import { FILESTORAGE_URL } from '@/model/constants';
 import { IGameResults, GameBodyProps, ISprintWord, PlaySoundItem, MButtonEvent } from '@/model/games-types';
-
 import './AudioTrainBody.pcss';
+import { RootState } from '@/store/store';
 
 export const AudioTrainBody = (
-  { level, onGameOver, page, gameName }: GameBodyProps): JSX.Element => {
+  { level, onGameOver, page, gameName, startedFromBook }: GameBodyProps): JSX.Element => {
 
   const [firstRun, setFirstRun] = useState(true);
   const [score, setScore] = useState(0);
@@ -28,6 +29,7 @@ export const AudioTrainBody = (
 
   const [task, setTask] = useState<ISprintWord>();
   const [taskCounter, setTaskCounter] = useState(0);
+  const [taskTotal, setTaskTotal] = useState(0);
 
   const [buttonEvent, setButtonEvent] = useState<MButtonEvent>();
   const [showCorrectAnswer, setshowCorrectAnswer] = useState(false);
@@ -46,11 +48,13 @@ export const AudioTrainBody = (
 
   const lastPickedAnswer = useRef('');
 
+  const authState = useSelector((state:RootState) => state.authentication);
+
   const gameOver = () => {
     const gameResults: IGameResults = {
       correctAnswers: correctAnswers.current,
       wrongAnswers: wrongAnswers.current,
-      score: `${score}/${GAME_RULES.audiogame.TASKS_COUNT}`,
+      score: `${score}/${taskTotal}`,
       gameName,
     };
 
@@ -157,16 +161,30 @@ export const AudioTrainBody = (
     if (firstRun) {
       usedPages.current.push(page);
 
-      loadWords(level, page)
-        .then((data: Word[]) => {
+      const initData = (data: Word[]) => {
+        wordList.current = [...data];
+        currentWords.current = [...data];
+        setTaskTotal(data.length);
+        setFirstRun(false);
+        resetAnswerButtons();
+        getAssignment();
+      };
 
-          wordList.current = [...data];
-          currentWords.current = [...data];
-          setFirstRun(false);
-          resetAnswerButtons();
-          getAssignment();
+      if (startedFromBook) {
 
-        }).catch(() => { });
+        loadWordsWithoutLearned(level, page, authState.userId, authState.token)
+          .then((data: Word[]) => {
+            initData(data);
+          }).catch(() => { });
+
+      } else {
+
+        loadWords(level, page)
+          .then((data: Word[]) => {
+            initData(data);
+          }).catch(() => { });
+      }
+
     }
   }, [firstRun, level, page]);
 
@@ -208,7 +226,7 @@ export const AudioTrainBody = (
 
         </div>
         <div className="audiogame_progress">
-          {taskCounter}/{GAME_RULES.audiogame.TASKS_COUNT}
+          {taskCounter}/{taskTotal}
         </div>
       </div>
 
