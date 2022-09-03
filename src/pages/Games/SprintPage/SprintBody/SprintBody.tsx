@@ -1,9 +1,11 @@
 import { VolumeOffIcon, VolumeUpIcon } from '@heroicons/react/solid';
 import classNames from 'classnames';
+import { useSelector } from 'react-redux';
+import ReactTooltip from 'react-tooltip';
 
 import { useEffect, useRef, useState } from 'react';
 
-import { getRandomIndex, loadWords, getRandomPage } from '../../CommonGamePage/index';
+import { getRandomIndex, loadWords, getRandomPage, loadWordsWithoutLearned } from '../../CommonGamePage/index';
 import { StreakCounter } from '../StreakCounter/StreakCounter';
 import { Timer } from '../Timer/Timer';
 
@@ -16,6 +18,7 @@ import { useOnKeyUp } from '@/hooks/useOnKeyUpDocument';
 import { Word } from '@/model/app-types';
 import { FILESTORAGE_URL, GAME_RULES } from '@/model/constants';
 import { GameBodyProps, IGameResults, ISprintWord, PlaySoundItem } from '@/model/games-types';
+import { RootState } from '@/store/store';
 
 const { BASE_SCORE } = GAME_RULES.sprint;
 const { MAX_MULTIPLIER } = GAME_RULES.sprint;
@@ -48,6 +51,8 @@ export const SprintBody = (
 
   const correctAnswers = useRef<ISprintWord[]>([]);
   const wrongAnswers = useRef<ISprintWord[]>([]);
+
+  const authState = useSelector((state:RootState) => state.authentication);
 
   const gameOver = () => {
     const gameResults: IGameResults = {
@@ -97,15 +102,28 @@ export const SprintBody = (
     if (firstRun) {
       usedPages.current.push(page);
 
-      loadWords(level, page)
-        .then((data: Word[])=>{
+      const initData = (data: Word[]) => {
+        wordList.current = [...data];
+        currentWords.current = [...data];
+        setFirstRun(false);
+        getAssignment();
+      };
 
-          wordList.current = [...data];
-          currentWords.current = [...data];
-          setFirstRun(false);
-          getAssignment();
+      if (startedFromBook) {
 
-        }).catch(()=>{});
+        loadWordsWithoutLearned(level, page, authState.userId, authState.token)
+          .then((data: Word[])=>{
+            initData(data);
+          }).catch(()=>{});
+
+      } else {
+
+        loadWords(level, page)
+          .then((data: Word[])=>{
+            initData(data);
+          }).catch(()=>{});
+      }
+
     }
   }, [firstRun, level, page]);
 
@@ -173,10 +191,12 @@ export const SprintBody = (
     <div className="sprint">
       <div className="sprint_info" >
         <div className="sprint_controls">
-          <GameControlButton
-            icons={{ 'first': VolumeUpIcon, 'second': VolumeOffIcon }}
-            onChange={value => setGameSound(value)}
-          />
+          <div className="control_wrapper" data-tip="Звуковые эффекты">
+            <GameControlButton
+              icons={{ 'first': VolumeUpIcon, 'second': VolumeOffIcon }}
+              onChange={value => setGameSound(value)}
+            />
+          </div>
         </div>
         <div className='sprint_score'>
           <span className="score_text">Результат: </span>
@@ -222,6 +242,10 @@ export const SprintBody = (
           <div className="streak_ask_cell">
             <PlayAudio
               source={task ? FILESTORAGE_URL + task.audio : ''}
+              additionalSources = {task ? [
+                FILESTORAGE_URL + task.audioMeaning!,
+                FILESTORAGE_URL + task.audioExample!,
+              ] : []}
               type='single-button'
             />
           </div>
@@ -246,7 +270,7 @@ export const SprintBody = (
       <PlaySoundEffect
         playEvent={playSoundItem!}
       />
-
+      <ReactTooltip/>
     </div>
 
   );

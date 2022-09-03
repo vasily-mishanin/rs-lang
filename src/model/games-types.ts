@@ -9,6 +9,8 @@ export interface ISprintWord {
   id: string;
   word: string;
   audio: string;
+  audioMeaning? :string;
+  audioExample?: string;
   image: string;
   wordTranslate: string;
   translateProposal?: string[];
