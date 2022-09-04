@@ -1,5 +1,4 @@
 /* eslint-disable no-underscore-dangle */
-
 import './WordCard.pcss';
 import { CheckIcon, PuzzleIcon } from '@heroicons/react/solid';
 import htmlParser from 'html-react-parser';
@@ -64,7 +63,6 @@ const WordCard = React.memo((props:IWordCard): JSX.Element => {
 
   // console.log('wordInUsersWords', wordInUsersWords);
   const dispatch = useDispatch();
-  // const [cardState, setCardState] = useState<TWordCardState>(wordInUsersWords?.difficulty);
 
   const audioSources = [audio, audioMeaning, audioExample].map(source=>`${API_ENDPOINT}/${source}`);
   const wordAudio = audioSources[0];
@@ -77,8 +75,6 @@ const WordCard = React.memo((props:IWordCard): JSX.Element => {
     // one more click on same button -> remove the word from user's
 
     if(wordInUsersWords?.difficulty === 'hard'){
-
-      // unMark ?
 
       await apiUsersWords.
         deleteUserWord(authState.userId, wordInUsersWords.optional.wordId, authState.token)
@@ -106,8 +102,6 @@ const WordCard = React.memo((props:IWordCard): JSX.Element => {
 
     // one more click on same button -> remove the word from user's
     if(wordInUsersWords?.difficulty === 'learned'){
-
-      // unMark ?
 
       await apiUsersWords.
         deleteUserWord(authState.userId, wordInUsersWords.optional.wordId, authState.token)
