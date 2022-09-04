@@ -54,8 +54,8 @@ const WordCard = React.memo((props:IWordCard): JSX.Element => {
   let wordProgress;
   if(renderedWordId){
     wordProgress = userStatsState.userProgress[renderedWordId];
-    console.log('userProgress', userStatsState.userProgress);
-    console.log('wordProgress', wordProgress);
+    // console.log('userProgress', userStatsState.userProgress);
+    // console.log('wordProgress', wordProgress);
   }
 
   const wordInUsersWords = userWordsState.userWords.

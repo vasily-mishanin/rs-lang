@@ -1,3 +1,4 @@
+import { ClockIcon, PuzzleIcon } from '@heroicons/react/outline';
 import { useMatch, useNavigate, Link } from '@tanstack/react-location';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -13,6 +14,10 @@ import type { RootState } from '@/store/store';
 import { userStatsActions } from '@/store/userStatsSlice';
 
 import './TextbookGroup.pcss';
+
+type TSVGIcon = {
+  icon:(props: React.SVGProps<SVGSVGElement>) => JSX.Element;
+};
 
 const TOTAL_WORDS = 3600;
 const TOTAL_GROUPS = 6;
@@ -38,7 +43,7 @@ const TextbookGroup = (): JSX.Element => {
       }
       return acc;
     }, 0);
-    console.log('countAllLeranedWords', countAllLeranedWords());
+    // console.log('countAllLeranedWords', countAllLeranedWords());
     currentPageIsDone = countAllLeranedWords() === currentWords.length;
   }
 
@@ -50,7 +55,7 @@ const TextbookGroup = (): JSX.Element => {
         let pagesLearningStatus;
         const idOfAllWordsOfThisGroup = await  apiWords.getIdOfAllWordsOfTheGroup(params.group)
           .catch(() => {});
-        console.log('idOfAllWordsOfThisGroup', idOfAllWordsOfThisGroup);
+        //  console.log('idOfAllWordsOfThisGroup', idOfAllWordsOfThisGroup);
 
         if(idOfAllWordsOfThisGroup){
           pagesLearningStatus =   idOfAllWordsOfThisGroup.map(pageWordsIds => {
@@ -73,12 +78,12 @@ const TextbookGroup = (): JSX.Element => {
           }
         }
         pagesLearningStatus = pagesLearningStatus?.map(p => p===20);
-        console.log('pagesLearningStatus', pagesLearningStatus);
+        // console.log('pagesLearningStatus', pagesLearningStatus);
         if(pagesLearningStatus){
           dispatch( userStatsActions.initializeGroupLearningStatus(
             { group:params.group, pagesLearningStatus }),
           );
-          console.log('userLearnedVolume', userStatsState.userLearnedPages);
+          // console.log('userLearnedVolume', userStatsState.userLearnedPages);
         }
         return pagesLearningStatus;
       };
@@ -105,12 +110,11 @@ const TextbookGroup = (): JSX.Element => {
     return path;
   };
 
+  const puzzleIcon:TSVGIcon = { icon:PuzzleIcon };
+  const clockIcon:TSVGIcon = { icon:ClockIcon };
+
   return (
     <section className={`textbook-group ${currentPageIsDone ? 'group-done': ''}`}>
-      <h1>
-        {params.group && parseInt(params.group, 10) + 1} - {' '}
-        {params.page && parseInt(params.page, 10) + 1}
-      </h1>
       <div className="textbook-group-controls">
         <Pagination
           totalElements={WORDS_PER_GROUP}
@@ -122,8 +126,13 @@ const TextbookGroup = (): JSX.Element => {
         />
         {!currentPageIsDone && (
           <div className="textbook-group-games-links">
-            <Link to={gamePath('sprint')}>Sprint</Link>
-            <Link to={gamePath('audio')}>Audio</Link>
+            <Link to={gamePath('sprint')}>
+              <clockIcon.icon/>
+              Sprint</Link>
+            <Link to={gamePath('audio')}>
+              <puzzleIcon.icon/>
+              Audio
+            </Link>
           </div>
         )}
       </div>

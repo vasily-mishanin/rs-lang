@@ -1,20 +1,30 @@
 .textbook-group{
+     @apply pt-2;
 
+    @apply rounded;
     
     &-controls{
-        @apply flex justify-around mb-10;
+        @apply flex justify-around mb-10 items-center p-2;
     }
 
     &-games-links{
         a {
-            @apply p-4 m-3 rounded bg-emerald-400 ; 
+            @apply p-2 m-2 rounded bg-gray-300 shadow-md inline-block; 
+
+            & svg {
+                @apply  stroke-violet-400;
+            }
+        }
+
+        a:hover{
+            @apply  shadow-blue-400;
         }
     }
 
 
 
     &.group-done {
-        @apply bg-red-300;
+        @apply bg-gradient-to-br from-green-200;
       }
 
    
