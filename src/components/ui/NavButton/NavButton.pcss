@@ -13,15 +13,22 @@
     }
 
     & .navbutton_title {
-        @apply text-base font-medium text-gray-900;
+        @apply text-lg font-medium text-gray-900;
     }
 
     & .navbutton_descr {
-        @apply mt-1 text-sm text-gray-500;
+        @apply mt-1 text-sm text-gray-500 font-extralight ;
     }
 
     & .navbutton_icon {
         @apply h-6 w-6 flex-shrink-0 text-indigo-600;
+
+        
+
+    }
+
+    & .active .navbutton_icon{
+        @apply fill-indigo-600;
     }
 
 }
