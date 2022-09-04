@@ -12,12 +12,13 @@ import type { RootState } from '@/store/store';
 const LearnedWords = (): JSX.Element => {
   const [words, setWords] = useState<Word []>([]);
   const authState = useSelector((state: RootState) => state.authentication);
+  const userWordsState = useSelector((state:RootState) => state.userWords);
 
   const filter = '{"$and":[{"userWord.difficulty":"learned"}]}';
   // const groupPage = { group: '5', page:'0' };
 
   useEffect(() => {
-    apiUserWords.getUserAggregatedWords(authState.userId, authState.token, { filter })
+    apiUserWords.getUserAggregatedWords(authState.userId, authState.token, { filter, wordsPerPage:'600' })
       .then(res => {
         console.log(res);
         if(res){
@@ -25,7 +26,7 @@ const LearnedWords = (): JSX.Element => {
         }
       })
       .catch(() => {});
-  }, [authState.userId, authState.token]);
+  }, [authState.userId, authState.token, userWordsState.userWords]);
 
   return (<section className='difficult-words'>
     <h1>Learned Words</h1>

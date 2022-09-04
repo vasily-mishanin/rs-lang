@@ -1,8 +1,11 @@
+/* eslint-disable no-underscore-dangle */
 import './WordCard.pcss';
 import { CheckIcon, PuzzleIcon } from '@heroicons/react/solid';
 import htmlParser from 'html-react-parser';
 import { useDispatch, useSelector } from 'react-redux';
 import ReactTooltip from 'react-tooltip';
+
+import React from 'react';
 
 import * as apiUsersWords from '../../model/api-userWords';
 import { setUserWordDifficulty } from '../../model/api-userWords';
@@ -14,24 +17,20 @@ import type { UserWord, Word } from '@/model/app-types';
 import { RootState } from '@/store/store';
 import { userWordsActions } from '@/store/userWordSlice';
 
-// export interface IconPack {
-//   hardWord: (props: React.SVGProps<SVGSVGElement>) => JSX.Element;
-//   learnedWord: (props: React.SVGProps<SVGSVGElement>) => JSX.Element;
-// };
-
 type TSVGIcon = {
   icon:(props: React.SVGProps<SVGSVGElement>) => JSX.Element;
 };
 
-const WordCard = (props: { word: Word }): JSX.Element => {
-  const { word: wordObj } = props;
-  const authState = useSelector((state:RootState) => state.authentication);
-  const userWordsState = useSelector((state:RootState) => state.userWords);
-  const wordInUsersWords = userWordsState.userWords.find(w => w.optional.wordId === wordObj.id);
-  const dispatch = useDispatch();
+interface IWordCard {
+  word: Word;
+}
 
+const WordCard = React.memo((props:IWordCard): JSX.Element => {
+  console.log('CARD');
+  const { word:wordObj } = props;
   const {
-    // id,
+    id,
+    _id:ID,
     // group,
     // page,
     word,
@@ -46,6 +45,24 @@ const WordCard = (props: { word: Word }): JSX.Element => {
     textMeaningTranslate,
     textExampleTranslate,
   } = wordObj;
+  const renderedWordId = id || ID;
+
+  const authState = useSelector((state:RootState) => state.authentication);
+  const userWordsState = useSelector((state:RootState) => state.userWords);
+  const userStatsState = useSelector((state:RootState) => state.userStats);
+
+  let wordProgress;
+  if(renderedWordId){
+    wordProgress = userStatsState.userProgress[renderedWordId];
+    console.log('userProgress', userStatsState.userProgress);
+    console.log('wordProgress', wordProgress);
+  }
+
+  const wordInUsersWords = userWordsState.userWords.
+    find(w => (w.optional.wordId === (renderedWordId)));
+
+  // console.log('wordInUsersWords', wordInUsersWords);
+  const dispatch = useDispatch();
 
   const audioSources = [audio, audioMeaning, audioExample].map(source=>`${API_ENDPOINT}/${source}`);
   const wordAudio = audioSources[0];
@@ -53,6 +70,60 @@ const WordCard = (props: { word: Word }): JSX.Element => {
 
   const hardWordIcon:TSVGIcon = { icon:PuzzleIcon };
   const learnedWord:TSVGIcon = { icon:CheckIcon };
+
+  const handleHardWord = async () => {
+    // one more click on same button -> remove the word from user's
+
+    if(wordInUsersWords?.difficulty === 'hard'){
+
+      await apiUsersWords.
+        deleteUserWord(authState.userId, wordInUsersWords.optional.wordId, authState.token)
+        .catch(() => {});
+      dispatch(userWordsActions.deleteUserWord({ deletedWordId:wordInUsersWords.optional.wordId }));
+
+    } else if(renderedWordId){
+      await setUserWordDifficulty(authState.userId, authState.token, renderedWordId, wordObj.word, 'hard').catch(() => {});
+
+      const newWord:UserWord = {
+        difficulty: 'hard',
+        optional:{
+          wordId: renderedWordId,
+          theWord: wordObj.word,
+          postDate: new Date().toISOString(),
+        },
+      };
+
+      dispatch(userWordsActions.addUserWord(newWord));
+    }
+
+  };
+
+  const handleLearnedWord = async () => {
+
+    // one more click on same button -> remove the word from user's
+    if(wordInUsersWords?.difficulty === 'learned'){
+
+      await apiUsersWords.
+        deleteUserWord(authState.userId, wordInUsersWords.optional.wordId, authState.token)
+        .catch(() => {});
+      dispatch(userWordsActions.deleteUserWord({ deletedWordId:wordInUsersWords.optional.wordId }));
+
+    } else if(renderedWordId){
+      await setUserWordDifficulty(authState.userId, authState.token, renderedWordId, wordObj.word, 'learned').catch(() => {});
+      await addWordsToStatistic(authState.userId, authState.token, [{ id: wordObj.id, type:'learned' }]);
+
+      const newWord:UserWord = {
+        difficulty: 'learned',
+        optional:{
+          wordId:renderedWordId,
+          theWord: wordObj.word,
+          postDate: new Date().toISOString(),
+        },
+      };
+      dispatch(userWordsActions.addUserWord(newWord));
+    }
+
+  };
 
   const controlHardBtnClasses = () => {
     const baseClass = 'usual hard';
@@ -70,42 +141,7 @@ const WordCard = (props: { word: Word }): JSX.Element => {
     return baseClass;
   };
 
-  const handleHardWord = async () => {
-
-    console.log('handleHardWord');
-    await setUserWordDifficulty(authState.userId, authState.token, wordObj.id, wordObj.word, 'hard').catch(() => {});
-    const newWord:UserWord = {
-      difficulty: 'hard',
-      optional:{
-        wordId: wordObj.id,
-        theWord: wordObj.word,
-        postDate: new Date().toISOString(),
-      },
-    };
-    dispatch(userWordsActions.addUserWord(newWord));
-
-    // else => update Word (state and server)
-  };
-
-  const handleLearnedWord = async () => {
-
-    console.log('handleLearnedWord');
-    await setUserWordDifficulty(authState.userId, authState.token, wordObj.id, wordObj.word, 'learned').catch(() => {});
-    await addWordsToStatistic(authState.userId, authState.token, [{ id: wordObj.id, type:'learned' }]);
-
-    const newWord:UserWord = {
-      difficulty: 'learned',
-      optional:{
-        wordId: wordObj.id,
-        theWord: wordObj.word,
-        postDate: new Date().toISOString(),
-      },
-    };
-    dispatch(userWordsActions.addUserWord(newWord));
-
-    // else => update Word (state and server)
-
-  };
+  const lastGuessBadgeClasses = `word-card-progress-badge ${wordProgress?.lastAnswerWasCorrect ? 'text-green-400' : 'text-yellow-600'}`;
 
   return (
     <article className="word-card">
@@ -119,21 +155,44 @@ const WordCard = (props: { word: Word }): JSX.Element => {
             {wordTranslate}
           </p>
         </div>
+
         <PlayAudio source={wordAudio} additionalSources={additionalAudio} type='single-button'/>
 
-        { authState.isLoggedIn && <div className='word-card-controls'>
-          <button className={controlHardBtnClasses()}  type='button' onClick={() => {handleHardWord().catch(() => {});}} data-tip="Добавить в сложные">
-            <hardWordIcon.icon/>
-          </button>
-          <button className={controlLearnedBtnClasses()} type='button' onClick={()=>{handleLearnedWord().catch(()=>{});}} data-tip="Добавить в изученные">
-            <learnedWord.icon/>
-          </button>
+        { authState.isLoggedIn && (
+          <div className='word-card-controls'>
+            <button className={controlHardBtnClasses()}
+              type='button'
+              onClick={() => {handleHardWord().catch(() => {});}}
+              data-tip="Добавить в сложные или удалить из сложных">
+              <hardWordIcon.icon/>
+            </button>
+            <button className={controlLearnedBtnClasses()}
+              type='button'
+              onClick={()=>{handleLearnedWord().catch(()=>{});}}
+              data-tip="Добавить в изученные или удалить из изученных">
+              <learnedWord.icon/>
+            </button>
 
-        </div> }
-
+          </div>
+        )}
       </div>
 
-      <img src={`${API_ENDPOINT}/${image}`} alt={word} />
+      <div className='word-card-image-wrapper'>
+        {authState.isLoggedIn && wordProgress && (
+          <div className="word-card-progress">
+            <span className="word-card-progress-badge text-green-400" data-tip="Правильных ответов в играх">
+              {wordProgress?.guessed}
+            </span>
+            <span className="word-card-progress-badge text-yellow-600" data-tip="Ошибок">
+              {wordProgress?.failed}
+            </span>
+            <span className={lastGuessBadgeClasses} data-tip="Поледний ответ">
+              {wordProgress?.lastAnswerWasCorrect ? '+' : '-'}
+            </span>
+          </div>
+        )}
+        <img src={`${API_ENDPOINT}/${image}`} alt={word} />
+      </div>
 
       <div>
         <hr />
@@ -143,8 +202,10 @@ const WordCard = (props: { word: Word }): JSX.Element => {
         <p>{htmlParser(textExample)}</p>
         <p>{textExampleTranslate}</p>
       </div>
+
       <ReactTooltip type='info' delayShow={500}/>
+
     </article>
   );
-};
+});
 export default WordCard;

@@ -1,6 +1,7 @@
 .groups-list {
-  display: flex;
-  gap: 0.25rem;
+
+  @apply flex justify-center gap-2;
+
 
   li {
     @apply flex justify-center  border-b-2 rounded bg-violet-400 w-6  w-20 h-28;
@@ -14,5 +15,9 @@
   a{
     width:100%;
     height:100%;
+  }
+
+  .active {
+    @apply bg-green-200;
   }
 }

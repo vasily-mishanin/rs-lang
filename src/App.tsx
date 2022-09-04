@@ -20,6 +20,7 @@ import { MainPage } from './pages/MainPage/MainPage';
 import ProfilePage from './pages/Profile/ProfilePage';
 import { TeamPage } from './pages/TeamPage/TeamPage';
 import TextbookMainPage from './pages/TextbookMainPage/TextbookMainPage';
+import { fetchUsersStats } from './store/userStatsSlice';
 import { fetchUserWords } from './store/userWordSlice';
 
 import type { LocationGenerics } from './model/app-types';
@@ -27,6 +28,7 @@ import type { RootState, AppDispatch } from './store/store';
 import type { Route } from '@tanstack/react-location';
 
 const App = ():JSX.Element => {
+  console.log('APP');
   const authState = useSelector((state: RootState) => state.authentication);
   const { isLoggedIn } = authState;
   const dispatch = useDispatch<AppDispatch>();
@@ -90,25 +92,13 @@ const App = ():JSX.Element => {
     const  getUsersWords = async () => {
       await dispatch(fetchUserWords(userData));
     };
+    const getUserStatistic = async () => {
+      await dispatch(fetchUsersStats(userData));
+    };
     getUsersWords().catch(() => {});
+    getUserStatistic().catch(() => {});
 
   }, [authState.token, authState.userId, dispatch]);
-
-  const testFetch = async () => {
-  // await apiUserWords.deleteUserWord(authState.userId, '5e9f5ee35eb9e72bc21b0065', authState.token);
-  // const oldWord = await apiUserWords.getUserWordById(authState.userId, '5e9f5ee35eb9e72bc21b0066', authState.token).catch(() => {});
-  // const optPrev = oldWord?.optional;
-  // if(optPrev){
-  //   await apiUserWords
-  //     .updateUserWord(authState.userId, authState.token, { difficulty: 'hard', optional:{ ...optPrev, numberOfMistakesSprint: 47 } })
-  //     .catch(() => {});
-  // }
-
-    // const obtainedWord = await apiUserWords.getUserAggregatedWordById(authState.userId, '5e9f5ee35eb9e72bc21af4a3', authState.token);
-    // const oneMore = await apiUserWords.getUserWordById(authState.userId, '5e9f5ee35eb9e72bc21af4a3', authState.token);
-    // console.log(obtainedWord, oneMore);
-  };
-  testFetch().catch(() => {});
 
   return (
     <Router

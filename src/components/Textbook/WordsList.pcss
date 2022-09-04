@@ -1,18 +1,23 @@
 
 
 .words-list {
-  @apply flex flex-1 flex-wrap gap-4 justify-center;
+  @apply pt-10 flex flex-1 flex-wrap gap-4 justify-center;
   
 
   &-item:nth-child(even){
-    & img {
+    & .word-card-image-wrapper img {
       transform: rotate(2deg);
     }
   }
 
   &-item:nth-child(3){
-    & img {
+    & .word-card-image-wrapper img {
       transform: rotate(-2deg);
     }
   }
+
+  &.list-done {
+    @apply bg-green-200;
+  }
 }
+

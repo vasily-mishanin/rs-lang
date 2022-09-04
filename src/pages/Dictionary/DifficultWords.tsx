@@ -12,20 +12,20 @@ import type { RootState } from '@/store/store';
 const DifficultWords = (): JSX.Element =>{
   const [words, setWords] = useState<Word[]>([]);
   const authState = useSelector((state: RootState) => state.authentication);
+  const userWordsState = useSelector((state:RootState) => state.userWords);
 
-  const filter = '{"$and":[{"userWord.difficulty":"hard"}]}';
-  // const groupPage = { group: '5', page:'0' };
+  const filter = '{"$and":[{"userWord.difficulty":"hard"}]}'; // 'hard' words
 
   useEffect(() => {
-    apiUserWords.getUserAggregatedWords(authState.userId, authState.token, { filter })
+    apiUserWords.getUserAggregatedWords(authState.userId, authState.token, { filter, wordsPerPage: '600' })
       .then(res => {
-        console.log(res);
+        console.log('getUserAggregatedWords', res);
         if(res){
           setWords(res);
         }
       })
       .catch(() => {});
-  }, []);
+  }, [authState.userId, authState.token, userWordsState.userWords]);
 
   return <section className='difficult-words'>
     <h1>DifficultWords</h1>

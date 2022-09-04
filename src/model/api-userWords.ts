@@ -144,6 +144,7 @@ export type TAggrWordsQuery = {
   filter?: string;
   group?:string ;
   page?: string;
+  wordsPerPage?: string;
 };
 
 export type TAggrResponse = [{
