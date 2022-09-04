@@ -58,7 +58,7 @@ export const Footer = (): JSX.Element => {
               </div>
             </div>
 
-            <div className="footer_year">&copy; 2022</div>
+            <div className="footer_year">2022</div>
 
             <div className="footer_copyrights">
               {ghLinks.map((el, i) => (
