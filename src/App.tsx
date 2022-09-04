@@ -6,7 +6,6 @@ import { useEffect } from 'react';
 import TextbookGroup from './components/Textbook/TextbookGroup';
 import MainNavigation from './components/layout/MainNavigation';
 import Spinner from './components/ui/Spinner';
-import * as apiUsers from './model/api-users';
 import * as api from './model/api-words';
 import AuthPage from './pages/AuthPage';
 import DebugPage from './pages/Debug/Debug';
@@ -21,6 +20,7 @@ import { MainPage } from './pages/MainPage/MainPage';
 import ProfilePage from './pages/Profile/ProfilePage';
 import { TeamPage } from './pages/TeamPage/TeamPage';
 import TextbookMainPage from './pages/TextbookMainPage/TextbookMainPage';
+import { fetchUsersStats } from './store/userStatsSlice';
 import { fetchUserWords } from './store/userWordSlice';
 
 import type { LocationGenerics } from './model/app-types';
@@ -28,6 +28,7 @@ import type { RootState, AppDispatch } from './store/store';
 import type { Route } from '@tanstack/react-location';
 
 const App = ():JSX.Element => {
+  console.log('APP');
   const authState = useSelector((state: RootState) => state.authentication);
   const { isLoggedIn } = authState;
   const dispatch = useDispatch<AppDispatch>();
@@ -91,7 +92,11 @@ const App = ():JSX.Element => {
     const  getUsersWords = async () => {
       await dispatch(fetchUserWords(userData));
     };
+    const getUserStatistic = async () => {
+      await dispatch(fetchUsersStats(userData));
+    };
     getUsersWords().catch(() => {});
+    getUserStatistic().catch(() => {});
 
   }, [authState.token, authState.userId, dispatch]);
 

@@ -32,8 +32,30 @@ export function getWords (group: string, page: string) {
     .then((words: Word[]) => words)
     .catch(err => {
       console.log(err);
-    })
-    .finally(() => {});
+    });
+}
+
+export async function getIdOfAllWordsOfTheGroup (group:string) {
+  const PAGES_PER_GROUP = 30;
+  const PAGES = Array.from([...Array(PAGES_PER_GROUP).keys()]);
+  console.log('group', group);
+  console.log('pages', PAGES);
+
+  const wordsOfThisGroupByPages = await Promise.all(
+    PAGES.map(p =>  getWords(group, p.toString())),
+  );
+
+  if(wordsOfThisGroupByPages){
+    return wordsOfThisGroupByPages.map(pageWordsArray => {
+      if(pageWordsArray){
+        return pageWordsArray.map(word => word.id); // ARRAY of Ids
+      }
+      return pageWordsArray;
+    });
+  }
+
+  return wordsOfThisGroupByPages;
+
 }
 
 export async function getWordsAsync (group: string, page: string){

@@ -14,7 +14,6 @@ export interface PlayAudioProps {
 }
 
 export const PlayAudio = ({ source, additionalSources, type }: PlayAudioProps): JSX.Element => {
-  console.log('PLAYAUDIO');
   const [isPlaying, setIsPlaying] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);

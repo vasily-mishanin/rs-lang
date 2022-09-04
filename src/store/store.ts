@@ -1,12 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
 
 import authenticationSlice from './authSlice'; // authSlice.ts -> export default authSlice;
+import userStatsSlice from './userStatsSlice';
 import userWordsSlice from './userWordSlice';
 
 export const store = configureStore({
   reducer: {
     authentication: authenticationSlice.reducer,
     userWords: userWordsSlice.reducer,
+    userStats: userStatsSlice.reducer,
   },
 });
 

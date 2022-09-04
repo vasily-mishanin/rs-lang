@@ -5,10 +5,20 @@ interface IPagination {
   totalElements: number;
   elementsPerPage: number;
   paginate: (n: number) => void;
+  currentPageNumber: number;
+  currentPageIsDone: boolean;
+  pagesStatus:boolean[];
 }
 const Pagination = React.memo((props: IPagination): JSX.Element => {
   console.log('Pagination');
-  const { totalElements, elementsPerPage, paginate } = props;
+  const {
+    totalElements,
+    elementsPerPage,
+    paginate,
+    currentPageNumber,
+    currentPageIsDone,
+    pagesStatus,
+  } = props;
   const pageNumbers: number[] = Array.from(
     [...Array(totalElements / elementsPerPage).keys()],
     key => key + 1,
@@ -18,11 +28,27 @@ const Pagination = React.memo((props: IPagination): JSX.Element => {
     e.preventDefault();
     paginate(pageNumber);
   };
+
+  const pageLinkClasses = (page:number) => {
+    if(currentPageNumber === page-1){
+      return 'pagelink-active';
+    }
+
+    if(currentPageNumber === page-1 && currentPageIsDone){
+      return 'pagelink-done';
+    }
+
+    if(pagesStatus){
+      return pagesStatus[page-1] ? 'pagelink-done' : '';
+    }
+    return '';
+  };
+
   return (
     <nav>
       <ul className="pages-list">
         {pageNumbers.map(pageNumber => (
-          <li key={pageNumber}>
+          <li key={pageNumber} className={pageLinkClasses(pageNumber)}>
             <a onClick={e => pageClickHandler(e, pageNumber)} href="!#">
               {pageNumber}
             </a>

@@ -3,11 +3,10 @@ import { Outlet, Link } from '@tanstack/react-location';
 
 import './TextbookMainPage.pcss';
 
-// import { useState } from 'react';
-
-// import type { RootState } from '@/store/store';
+// import { LocationGenerics } from '@/model/app-types';
 // 6 groups, 30 pages, 20 words
 const TextbookMainPage = (): JSX.Element => {
+  //  const { data: { words: currentWords }, params:{ group, page } } = useMatch<LocationGenerics>();
   console.log('TextbookMainPage');
   // const isLoggedIn = useSelector((state: RootState) => state.authentication.isLoggedIn);
 
@@ -18,9 +17,9 @@ const TextbookMainPage = (): JSX.Element => {
     <section>
       <h1>TextbookMainPage</h1>
       <ul className="groups-list">
-        {groups.map(group => (
-          <li key={group}>
-            <Link to={`/textbook/${group}/${START_PAGE}`}>{group + 1}</Link>
+        {groups.map(gr => (
+          <li key={gr}>
+            <Link to={`/textbook/${gr}/${START_PAGE}`}>{gr + 1}</Link>
           </li>
         ))}
       </ul>
