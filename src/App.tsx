@@ -4,11 +4,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 
 import TextbookGroup from './components/Textbook/TextbookGroup';
+import { Footer } from './components/layout/Footer/Footer';
+import Layout from './components/layout/Layout';
 import MainNavigation from './components/layout/MainNavigation';
 import Spinner from './components/ui/Spinner';
 import * as api from './model/api-words';
 import AuthPage from './pages/AuthPage';
-import DebugPage from './pages/Debug/Debug';
 import DictionaryPage from './pages/Dictionary/DictionaryPage';
 import DifficultWords from './pages/Dictionary/DifficultWords';
 import LearnedWords from './pages/Dictionary/LearnedWords';
@@ -65,10 +66,10 @@ const App = ():JSX.Element => {
         { path: 'progress', element: <Progress /> },
       ],
     },
-    {
-      path: '/debug',
-      element: isLoggedIn ? <DebugPage /> : <Navigate to="/debug" />,
-    },
+    // {
+    //   path: '/debug',
+    //   element: isLoggedIn ? <DebugPage /> : <Navigate to="/debug" />,
+    // },
     {
       path: '/games',
       element: <GamesPage />,
@@ -85,8 +86,6 @@ const App = ():JSX.Element => {
     { path: '*', element: <Navigate to="/" /> },
   ];
 
-  // console.log('APP', 'location', location);
-  // console.log('APP', 'appRoutes', appRoutes);
   useEffect(() => {
     const userData = { userId:authState.userId, token:authState.token };
     const  getUsersWords = async () => {
@@ -107,8 +106,13 @@ const App = ():JSX.Element => {
       defaultPendingElement={<Spinner />}
       defaultPendingMs={10}
     >
-      <MainNavigation/>
-      <Outlet />
+      <MainNavigation />
+
+      <Layout >
+        <Outlet />
+      </Layout>
+
+      <Footer/>
     </Router>
   );
 };

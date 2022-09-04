@@ -15,15 +15,21 @@ export const linkImageMap: LinkTypeMap = {
 export interface SocialLinkProps {
   type: LinkType;
   link: string;
+  text? : string;
 }
 
-export const SocialLink = ({ type, link  }: SocialLinkProps): JSX.Element => (
+export const SocialLink = ({ type, link, text  }: SocialLinkProps): JSX.Element => (
   <div className="social_link">
-    <a href={link}>
+    <a
+      className='social_a'
+      href={link}
+      target="_blank" rel="noreferrer"
+    >
       <img className='social_image'
         src={linkImageMap[type]}
         alt="gitHub profile"
       />
+      {text}
     </a>
   </div>
 

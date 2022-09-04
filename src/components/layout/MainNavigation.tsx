@@ -34,16 +34,19 @@ const MainNavigation = ({ children }:React.PropsWithChildren): JSX.Element => {
         </Link>
         <nav>
           <ul>
-            <li>
-              <Link to="/team" getActiveProps={getActiveProps}>
-                Команда
-              </Link>
-            </li>
+
             <li>
               <Link to="/textbook" getActiveProps={getActiveProps}>
                 Учебник
               </Link>
             </li>
+
+            <li>
+              <Link to="/games" getActiveProps={getActiveProps}>
+              Игры
+              </Link>
+            </li>
+
             {isLoggedIn && (
               <li>
                 <Link to="/dictionary" getActiveProps={getActiveProps}>
@@ -51,11 +54,21 @@ const MainNavigation = ({ children }:React.PropsWithChildren): JSX.Element => {
                 </Link>
               </li>
             )}
+
+            {isLoggedIn && (
+              <li>
+                <Link to="/profile" getActiveProps={getActiveProps}>
+                Профиль ({authState.user.name})
+                </Link>
+              </li>
+            )}
+
             <li>
-              <Link to="/games" getActiveProps={getActiveProps}>
-              Игры
+              <Link to="/team" getActiveProps={getActiveProps}>
+                О нас
               </Link>
             </li>
+
             {!isLoggedIn && (
               <li>
                 <Link to="/auth" getActiveProps={getActiveProps}>
@@ -63,20 +76,7 @@ const MainNavigation = ({ children }:React.PropsWithChildren): JSX.Element => {
                 </Link>
               </li>
             )}
-            {isLoggedIn && (
-              <li>
-                <Link to="/profile" getActiveProps={getActiveProps}>
-                Профиль {authState.user.name}
-                </Link>
-              </li>
-            )}
-            {isLoggedIn && (
-              <li>
-                <Link to="/debug" getActiveProps={getActiveProps}>
-                  Debug
-                </Link>
-              </li>
-            )}
+
             {isLoggedIn && (
               <li>
                 <button type="button" onClick={logoutHandler}>
@@ -84,6 +84,7 @@ const MainNavigation = ({ children }:React.PropsWithChildren): JSX.Element => {
                 </button>
               </li>
             )}
+
           </ul>
         </nav>
       </header>
