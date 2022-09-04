@@ -26,13 +26,13 @@ const WordsList = React.memo(({ words }: IWordsList): JSX.Element => {
     return acc;
   }, 0);
   const markedWordsNumber = countAllLeranedWords();
+  const listIsDone = markedWordsNumber === words.length && markedWordsNumber > 0;
 
   console.log('LIST', markedWordsNumber);
 
-  const wordsListClasses = `words-list ${markedWordsNumber === words.length ? 'list-done' : ''}`;
-
   return (
-    <ul className={wordsListClasses}>
+    <ul className='words-list'>
+      {listIsDone && <span className='list-done'>DONE</span>}
       {words.map(word => {
         /* eslint no-underscore-dangle: ["error", { "allow": ["_id"] }]*/
         const id = word.id ? word.id : word._id;

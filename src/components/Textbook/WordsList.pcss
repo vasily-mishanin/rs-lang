@@ -1,7 +1,7 @@
 
 
 .words-list {
-  @apply pt-10 flex flex-1 flex-wrap gap-4 justify-center;
+  @apply pt-10 flex flex-1 flex-wrap gap-4 justify-center relative pb-10;
   
 
   &-item:nth-child(even){
@@ -16,8 +16,8 @@
     }
   }
 
-  &.list-done {
-    @apply bg-green-200;
+  .list-done {
+    @apply absolute w-20 left-0 -top-16 text-center bg-yellow-300 -rotate-45 font-extrabold text-xl inline-block; 
   }
 }
 

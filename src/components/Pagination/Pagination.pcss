@@ -1,14 +1,17 @@
 .pages-list {
-  display: flex;
-  gap: 0.25rem;
+  @apply flex flex-wrap gap-1 px-20;
 
   li {
-    @apply border-b-2 rounded bg-yellow-300 w-6 text-center;
+    @apply border-b-2 rounded bg-yellow-300 w-7 text-center;
     cursor: pointer;
 
     a{
       @apply inline-block;
       width: 100%;
+    }
+
+    &:hover {
+      @apply bg-violet-200;
     }
 
   }
@@ -20,4 +23,6 @@
   .pagelink-active{
     @apply bg-violet-300;
   }
+
+ 
 }
