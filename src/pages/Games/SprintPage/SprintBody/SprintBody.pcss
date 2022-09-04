@@ -1,6 +1,7 @@
 .sprint {
-   @apply w-3/5 bg-sky-100 px-5 py-2 border border-transparent shadow rounded-lg;
+   @apply w-3/5 bg-sky-100 px-5 py-2 border border-transparent shadow rounded-lg ;
    box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
+   height: 38rem;
    
     & .sprint_info {
         @apply flex justify-between items-center;
@@ -31,7 +32,7 @@
     }
 
     & .sprint_streak {
-        @apply py-1 text-2xl flex items-center w-full;
+        @apply py-1 text-2xl flex items-center w-full my-4;
 
         & .streak_line_cell {
             @apply w-full px-4;
@@ -43,7 +44,7 @@
     }
 
     & .sprint_picture {
-        @apply text-7xl my-3;
+        @apply text-7xl my-5;
     }
 
     & .smile_animate {
@@ -51,7 +52,7 @@
     }
 
     & .sprint_ask {
-        @apply flex items-center py-2 w-full justify-center;
+        @apply flex items-center py-2 w-full justify-center my-4;
 
         & .streak_ask_cell {
             @apply w-full justify-center text-center;
@@ -63,7 +64,7 @@
     }
 
     & .sprint_answer {
-        @apply text-2xl text-blue-500 font-semibold	 py-2 ;
+        @apply text-2xl text-blue-500 font-semibold	 py-2 my-4;
     }
 
     & .sprint_buttons {
