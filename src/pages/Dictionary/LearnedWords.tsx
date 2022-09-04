@@ -29,7 +29,6 @@ const LearnedWords = (): JSX.Element => {
   }, [authState.userId, authState.token, userWordsState.userWords]);
 
   return (<section className='difficult-words'>
-    <h1>Learned Words</h1>
     {words.length > 0 && <WordsList words={words}/>}
   </section>);
 };
