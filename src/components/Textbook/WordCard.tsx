@@ -54,8 +54,8 @@ const WordCard = React.memo((props:IWordCard): JSX.Element => {
   let wordProgress;
   if(renderedWordId){
     wordProgress = userStatsState.userProgress[renderedWordId];
-    // console.log('userProgress', userStatsState.userProgress);
-    // console.log('wordProgress', wordProgress);
+    console.log('userProgress', userStatsState.userProgress);
+    console.log('wordProgress', wordProgress);
   }
 
   const wordInUsersWords = userWordsState.userWords.
@@ -178,7 +178,7 @@ const WordCard = React.memo((props:IWordCard): JSX.Element => {
       </div>
 
       <div className='word-card-image-wrapper'>
-        {authState.isLoggedIn && (
+        {authState.isLoggedIn && wordProgress && (
           <div className="word-card-progress">
             <span className="word-card-progress-badge text-green-400" data-tip="Правильных ответов в играх">
               {wordProgress?.guessed}

@@ -46,6 +46,7 @@ const userStatsSlice = createSlice({
   extraReducers:builder => {
     builder.addCase(fetchUsersStats.fulfilled, (state, action) => {
       const stats = action.payload?.optional.gamesWordsProgress;
+      console.log('stats', stats);
       if(stats){
         state.userProgress = stats;
       }
