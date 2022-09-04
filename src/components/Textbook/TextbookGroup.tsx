@@ -45,7 +45,6 @@ const TextbookGroup = (): JSX.Element => {
   useEffect(() => {
 
     if(params.page === '0'){
-      console.log('GROUP EFFECT -> 30 Requests');
 
       const wordsIdsByPages = async () => {
         let pagesLearningStatus;
@@ -58,7 +57,7 @@ const TextbookGroup = (): JSX.Element => {
             if(pageWordsIds){
               const wordsFromThisPageInUsersWords =
                pageWordsIds.filter(id => userWordsState.userWords
-                 .find(w => w.optional.wordId === id));
+                 .find(w => w.optional.wordId === id && w.difficulty !== 'new'));
               return wordsFromThisPageInUsersWords;
             }
             return pageWordsIds;
