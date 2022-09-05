@@ -55,8 +55,6 @@ const App = ():JSX.Element => {
 
   if(isLoggedIn){
     setTimeout(() =>{
-      console.log(authState);
-      console.log('REFRESH');
       apiUsers.getNewTokensForTheUser(authState.userId, authState.refreshToken)
         .then(res=>{
           if(res && res.token && res.refreshToken){
@@ -133,12 +131,15 @@ const App = ():JSX.Element => {
     }
 
     const userData = { userId:authState.userId, token:authState.token };
+
     const  getUsersWords = async () => {
       await dispatch(fetchUserWords(userData));
     };
+
     const getUserStatistic = async () => {
       await dispatch(fetchUsersStats(userData));
     };
+
     getUsersWords().catch(() => {});
     getUserStatistic().catch(() => {});
 

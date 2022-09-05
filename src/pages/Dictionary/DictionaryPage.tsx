@@ -20,7 +20,7 @@ const DictionaryPage = (): JSX.Element => {
 
   return   <section className='dictionary'>
 
-    <div className="flex w-full justify-center my-8">
+    <div className="flex w-full justify-center my-8 words-mobile">
 
       <NavButton
         href='difficult'

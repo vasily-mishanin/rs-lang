@@ -1,7 +1,11 @@
 // import { useSelector } from 'react-redux';
-import { Outlet, Link } from '@tanstack/react-location';
+import { Link, Outlet } from '@tanstack/react-location';
+import { useDispatch, useSelector } from 'react-redux';
 
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
+
+import { AppDispatch, RootState } from '@/store/store';
+import { fetchUsersStats } from '@/store/userStatsSlice';
 
 import './TextbookMainPage.pcss';
 
@@ -11,8 +15,8 @@ const TextbookMainPage = (): JSX.Element => {
   console.log('TextbookMainPage');
 
   const [activeGroup, setActiveGroup] = useState<number>();
-
-  console.log('TextbookMainPage - group', activeGroup);
+  const authState = useSelector((state:RootState) => state.authentication);
+  const dispatch = useDispatch<AppDispatch>();
 
   const START_PAGE = 0;
   const NUMBER_OF_GROUPS = 6;
@@ -22,6 +26,18 @@ const TextbookMainPage = (): JSX.Element => {
     console.log('handleGroupClick');
     setActiveGroup(groupNumber);
   };
+
+  useEffect(() => {
+
+    const userData = { userId:authState.userId, token:authState.token };
+
+    const getUserStatistic = async () => {
+      await dispatch(fetchUsersStats(userData));
+    };
+
+    getUserStatistic().catch(() => {});
+
+  }, [authState.token, authState.userId, dispatch]);
 
   return (
     <section className="textbook">
