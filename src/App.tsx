@@ -98,7 +98,7 @@ const App = ():JSX.Element => {
     },
     {
       path: '/dictionary',
-      element: isLoggedIn ? <DictionaryPage /> : <Navigate to="/textbook" />,
+      element: <DictionaryPage/>,
       children: [
         { path: 'difficult', element: <DifficultWords /> },
         { path: 'learned', element: <LearnedWords /> },
@@ -120,8 +120,8 @@ const App = ():JSX.Element => {
         },
       ],
     },
-    { path: '/auth', element: !isLoggedIn ? <AuthPage /> : <Navigate to="/profile" /> },
-    { path: '/profile', element: isLoggedIn ? <ProfilePage /> : <Navigate to="/auth" /> },
+    { path: '/auth', element: <AuthPage /> },
+    { path: '/profile', element: <ProfilePage /> },
     { path: '*', element: <Navigate to="/" /> },
   ];
 

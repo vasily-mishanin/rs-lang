@@ -8,6 +8,8 @@ import './TextbookMainPage.pcss';
 const cities = ['SAR', 'NZ', 'AU', 'CA', 'US', 'UK'];
 
 const TextbookMainPage = (): JSX.Element => {
+  console.log('TextbookMainPage');
+
   const [activeGroup, setActiveGroup] = useState<number>();
 
   console.log('TextbookMainPage - group', activeGroup);
