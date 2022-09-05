@@ -8,6 +8,7 @@ import { Footer } from './components/layout/Footer/Footer';
 import Layout from './components/layout/Layout';
 import MainNavigation from './components/layout/MainNavigation';
 import Spinner from './components/ui/Spinner';
+import * as apiUsers from './model/api-users';
 import * as api from './model/api-words';
 import AuthPage from './pages/AuthPage';
 import DictionaryPage from './pages/Dictionary/DictionaryPage';
@@ -21,6 +22,7 @@ import { MainPage } from './pages/MainPage/MainPage';
 import ProfilePage from './pages/Profile/ProfilePage';
 import { TeamPage } from './pages/TeamPage/TeamPage';
 import TextbookMainPage from './pages/TextbookMainPage/TextbookMainPage';
+import { authActions } from './store/authSlice';
 import { fetchUsersStats } from './store/userStatsSlice';
 import { fetchUserWords } from './store/userWordSlice';
 
@@ -28,11 +30,44 @@ import type { LocationGenerics } from './model/app-types';
 import type { RootState, AppDispatch } from './store/store';
 import type { Route } from '@tanstack/react-location';
 
+const LOGIN_EXPIRATION_TIME = 4 * 3600 * 1000; // 4 hours
+const REFRESH_LOGIN_TIME = 3 * 3600 * 1000;
+
+const isLoginExpired = () => {
+  const currentTime = new Date().getTime();
+  const token = localStorage.getItem('token');
+  const lastLoginDate = localStorage.getItem('authDate');
+  let lastLoginTime = 0;
+  if(typeof lastLoginDate === 'string'){
+    lastLoginTime = new Date(lastLoginDate).getTime();
+  }
+  if(token && (currentTime - lastLoginTime) > LOGIN_EXPIRATION_TIME){
+    return true;
+  }
+  return false;
+};
+
 const App = ():JSX.Element => {
   console.log('APP');
   const authState = useSelector((state: RootState) => state.authentication);
   const { isLoggedIn } = authState;
   const dispatch = useDispatch<AppDispatch>();
+
+  if(isLoggedIn){
+    setTimeout(() =>{
+      console.log(authState);
+      console.log('REFRESH');
+      apiUsers.getNewTokensForTheUser(authState.userId, authState.refreshToken)
+        .then(res=>{
+          if(res && res.token && res.refreshToken){
+            const newTokens = { newToken:res.token, refreshToken:res.refreshToken };
+            dispatch(authActions.refreshTokens(newTokens));
+            window.location.reload();
+          }
+        })
+        .catch(() => {});
+    }, REFRESH_LOGIN_TIME);
+  }
 
   const location = new ReactLocation<LocationGenerics>();
 
@@ -87,6 +122,12 @@ const App = ():JSX.Element => {
   ];
 
   useEffect(() => {
+
+    if(isLoginExpired()){
+      dispatch(authActions.logout());
+      window.location.reload();
+    }
+
     const userData = { userId:authState.userId, token:authState.token };
     const  getUsersWords = async () => {
       await dispatch(fetchUserWords(userData));

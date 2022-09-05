@@ -126,7 +126,8 @@ export async function getNewTokensForTheUser (userId:string, refreshToken:string
       }
       throw new Error(message);
     }).then((data:User) => data);
-  }catch(err){console.log(err);};
-  console.log('NEW TOKENS', rawResponse);
+  } catch(err){
+    console.log(err);
+  };
   return rawResponse;
 }
