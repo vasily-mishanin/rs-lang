@@ -60,8 +60,12 @@ const App = ():JSX.Element => {
       apiUsers.getNewTokensForTheUser(authState.userId, authState.refreshToken)
         .then(res=>{
           if(res && res.token && res.refreshToken){
-            const newTokens = { newToken:res.token, refreshToken:res.refreshToken };
-            dispatch(authActions.refreshTokens(newTokens));
+            const refreshData = {
+              newToken:res.token,
+              refreshToken:res.refreshToken,
+              newAuthDate: new Date().toISOString(),
+            };
+            dispatch(authActions.refreshTokens(refreshData));
             window.location.reload();
           }
         })
