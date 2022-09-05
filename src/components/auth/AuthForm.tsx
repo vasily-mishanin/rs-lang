@@ -89,6 +89,7 @@ const AuthForm = (): JSX.Element => {
             userId,
             isLoggedIn:!!token,
             user:{ name:res.name ? res.name : '' },
+            authDate: new Date().toISOString(),
           };
           dispatch(authActions.login(authState));
           navigate({ to: '/profile', replace: true });
@@ -100,36 +101,36 @@ const AuthForm = (): JSX.Element => {
 
   return (
     <section className="auth">
-      <h2>{formIsLogin ? 'Login' : 'Sign Up'}</h2>
+      <h1>{formIsLogin ? 'Вход' : 'Регистрация'}</h1>
       <form onSubmit={submitHandler}>
         {!formIsLogin && (
           <div className="control">
             <label htmlFor="name">
-              Your Name
-              <input ref={nameInputRef} type="text" id="name" required />
+              Ваше имя
+              <input ref={nameInputRef} type="text" id="name" required  placeholder='Имя'/>
             </label>
           </div>
         )}
         <div className="control">
           <label htmlFor="email">
-            Your Email
-            <input ref={emailInputRef} type="email" id="email" required />
+            Электронная почта
+            <input ref={emailInputRef} type="email" id="email" required placeholder='youremail@service.smth'/>
           </label>
         </div>
         <div className="control">
           <label htmlFor="password">
-            Your Password
-            <input ref={passwordInputRef} type="password" id="password" required minLength={5} />
+            Пароль
+            <input ref={passwordInputRef} type="password" id="password" required minLength={8} placeholder='минимум 8 символов'/>
           </label>
         </div>
         <div className="actions">
           {isLoading ? (
-            <p>Sending Request ...</p>
+            <p>Отправка запроса ...</p>
           ) : (
-            <button type="submit">{formIsLogin ? 'LogIn' : 'Sign Up'}</button>
+            <button type="submit">{formIsLogin ? 'Войти' : 'Зарегистрироваться'}</button>
           )}
           <button type="button" className="toggle" onClick={switchAuthModeHandler}>
-            {formIsLogin ? 'Create new account' : 'Login with existing account'}
+            {formIsLogin ? 'Создать новый аккаунт' : 'Войти'}
           </button>
         </div>
       </form>
