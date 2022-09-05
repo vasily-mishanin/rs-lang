@@ -51,11 +51,11 @@ const Statistics = (): JSX.Element => {
   const [learnedCount, setLC] = useState<number>(0);
   const [hardCount, setHC] = useState<number>(0);
 
-  // const [words, setWords] = useState<GameStatsProgressWord[]>([]);
   const [stats, setStats] = useState<IUserStatistic>();
 
   const [graphWordsLabels, setgraphWordsLabels] = useState<string[]>([]);
   const [graphWordsValues, setgraphWordsValues] = useState<number[]>([]);
+  const [graphNewWordsValues, setgraphNewWordsValues] = useState<number[]>([]);
   const [graphWordsReady, setgraphDataReady] = useState<boolean>(false);
 
   const [graphWinsLabels, setgraphWinsLabels] = useState<string[]>([]);
@@ -79,14 +79,17 @@ const Statistics = (): JSX.Element => {
 
       if (currentStatistic?.optional.wordsPerDay) {
         const labels: string[] = [];
-        const values: number[] = [];
+        const learned: number[] = [];
+        const newWords: number[] = [];
         Object.entries(currentStatistic?.optional.wordsPerDay)
           .forEach(([key, value]) => {
             labels.push(key);
-            values.push(value.learned.length);
+            learned.push(value.learned.length);
+            newWords.push(value.new.length);
           });
         setgraphWordsLabels(labels);
-        setgraphWordsValues(values);
+        setgraphWordsValues(learned);
+        setgraphNewWordsValues(newWords);
         setgraphDataReady(true);
       }
 
@@ -236,10 +239,10 @@ const Statistics = (): JSX.Element => {
         {graphWordsReady && (
           <>
             <Graph
-              heading='Изученные слова по дням'
+              heading='Новые слова по дням'
               labels={graphWordsLabels}
-              values={graphWordsValues}
-              label='Изученные слова'
+              values={graphNewWordsValues}
+              label='Новые слова'
             />
 
             <Graph
