@@ -19,7 +19,6 @@ const DifficultWords = (): JSX.Element =>{
   useEffect(() => {
     apiUserWords.getUserAggregatedWords(authState.userId, authState.token, { filter, wordsPerPage: '600' })
       .then(res => {
-        console.log('getUserAggregatedWords', res);
         if(res){
           setWords(res);
         }
@@ -27,8 +26,11 @@ const DifficultWords = (): JSX.Element =>{
       .catch(() => {});
   }, [authState.userId, authState.token, userWordsState.userWords]);
 
-  return <section className='difficult-words'>
-    <WordsList words={words}/>
-  </section>;
+  return (
+    <section className='difficult-words'>
+      {words.length > 0 && <WordsList words={words}/>}
+      {(words.length === 0) && <p>Здесь пока ничего нет</p>}
+    </section>
+  );
 };
 export default DifficultWords;

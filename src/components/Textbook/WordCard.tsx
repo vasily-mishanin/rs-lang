@@ -26,7 +26,7 @@ interface IWordCard {
 }
 
 const WordCard = React.memo((props:IWordCard): JSX.Element => {
-  console.log('CARD');
+  // console.log('CARD');
   const { word:wordObj } = props;
   const {
     id,
@@ -55,7 +55,7 @@ const WordCard = React.memo((props:IWordCard): JSX.Element => {
   if(renderedWordId){
     wordProgress = userStatsState.userProgress[renderedWordId];
     // console.log('userProgress', userStatsState.userProgress);
-    // console.log('wordProgress', wordProgress);
+    // console.log('wordProgress', wordProgress, renderedWordId);
   }
 
   const wordInUsersWords = userWordsState.userWords.
