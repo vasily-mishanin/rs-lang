@@ -15,7 +15,9 @@ const errorMessage = (status: number) =>
 
 const AuthForm = (): JSX.Element => {
   // TODO validation
-  const [formIsLogin, setFormIsLogin] = useState(true);
+  const [formIsLogin, setFormIsLogin] = useState({ login:true, fisrtLogin:false });
+  const [authError, setAuthError] = useState(false);
+  const [userExisted, setUserExisted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -26,16 +28,26 @@ const AuthForm = (): JSX.Element => {
   const passwordInputRef = useRef<HTMLInputElement>(null);
 
   const switchAuthModeHandler = () => {
-    setFormIsLogin(prevState => !prevState);
+    setFormIsLogin(prevState => ({ fisrtLogin:false, login: !prevState.login }));
+    setAuthError(false);
+    setUserExisted(false);
+  };
+
+  const showMessageToNewUser = () => {
+    setFormIsLogin(prevState => ({ ...prevState, fisrtLogin: true }));
+  };
+
+  const removeMessageToNewUser = () => {
+    setFormIsLogin(prevState => ({ ...prevState, fisrtLogin: false }));
   };
 
   const submitHandler = (e: FormEvent) => {
-    console.log('submitHandler');
+    // console.log('submitHandler');
     e.preventDefault();
     const enteredEmail = emailInputRef.current!.value;
     const enteredPassword = passwordInputRef.current!.value;
 
-    if (!formIsLogin) {
+    if (!formIsLogin.login) {
       // SIGN UP
       const enteredName = nameInputRef.current!.value;
       const newUser: User = {
@@ -51,13 +63,19 @@ const AuthForm = (): JSX.Element => {
           if (res.ok) {
             return res.json();
           }
+          if(res.status === 417){
+            setUserExisted(true);
+            throw new Error();
+          }
           throw new Error();
         })
         .then((res: User) => {
-          console.log('registerUser', res);
+          // console.log('registerUser', res);
           dispatch(authActions.create({ name:res.name ? res.name : '', email:res.email ? res.email : '' }));
           // switch to Login Form to sign in
           switchAuthModeHandler();
+          showMessageToNewUser();
+          setUserExisted(false);
         })
         .catch(err => console.error(err));
     } else {
@@ -81,7 +99,7 @@ const AuthForm = (): JSX.Element => {
           const token = res.token ? res.token : '';
           const refreshToken = res.refreshToken ? res.refreshToken : '';
           const userId = res.userId ? res.userId : '';
-          console.log('signInUser:', res);
+          // console.log('signInUser:', res);
           const authState = {
             message,
             token,
@@ -91,19 +109,25 @@ const AuthForm = (): JSX.Element => {
             user:{ name:res.name ? res.name : '' },
             authDate: new Date().toISOString(),
           };
+          removeMessageToNewUser();
+          setAuthError(false);
           dispatch(authActions.login(authState));
-          navigate({ to: '/profile', replace: true });
+          navigate({ to: '/profile' });
           window.location.reload(); // bad
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+          console.log(err);
+          setAuthError(true);
+        });
     }
   };
 
   return (
     <section className="auth">
-      <h1>{formIsLogin ? 'Вход' : 'Регистрация'}</h1>
+      {formIsLogin.fisrtLogin && <h2 className='text-green-600'><i>Отлично! Теперь можете войти, используя указанные данные</i></h2>}
+      <h1>{formIsLogin.login ? 'Вход' : 'Регистрация'}</h1>
       <form onSubmit={submitHandler}>
-        {!formIsLogin && (
+        {!formIsLogin.login && (
           <div className="control">
             <label htmlFor="name">
               Ваше имя
@@ -122,15 +146,17 @@ const AuthForm = (): JSX.Element => {
             Пароль
             <input ref={passwordInputRef} type="password" id="password" required minLength={8} placeholder='минимум 8 символов'/>
           </label>
+          {authError && (<p className='text-red-400'><b><i>Неверные логин или пароль</i></b></p>)}
+          {userExisted && (<p className='text-red-400'><b><i>Пользователь с такими данными уже зарегистрирован</i></b></p>)}
         </div>
         <div className="actions">
           {isLoading ? (
             <p>Отправка запроса ...</p>
           ) : (
-            <button type="submit">{formIsLogin ? 'Войти' : 'Зарегистрироваться'}</button>
+            <button type="submit">{formIsLogin.login ? 'Войти' : 'Зарегистрироваться'}</button>
           )}
           <button type="button" className="toggle" onClick={switchAuthModeHandler}>
-            {formIsLogin ? 'Создать новый аккаунт' : 'Войти'}
+            {formIsLogin.login ? 'Создать новый аккаунт' : 'Войти'}
           </button>
         </div>
       </form>
